@@ -12,9 +12,10 @@
           nativeBuildInputs = with pkgs; [
             bun
             biome
-            nodePackages.typescript
+            typescript
             nodePackages.typescript-language-server
-            nodePackages.svelte-language-server
+            tailwindcss-language-server
+            svelte-language-server
           ];
         };
       });
