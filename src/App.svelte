@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Counter from "./lib/Counter.svelte";
+  import Editor from "./components/Editor.svelte";
 </script>
 
 <main>
-  <div>
-    <Counter />
+  <div class="p-2">
+    <Editor />
   </div>
 </main>
 
