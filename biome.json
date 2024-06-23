@@ -12,6 +12,9 @@
       },
       "correctness": {
         "noSelfAssign": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   },

@@ -1,4 +1,3 @@
-import Code from "@tiptap/extension-code";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Link from "@tiptap/extension-link";
 import TaskItem from "@tiptap/extension-task-item";
@@ -7,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
 import { Markdown } from "tiptap-markdown";
 import { GlobalNodeId } from "./GlobalNodeId";
+import { InlineCode } from "./InlineCode";
 
 const EvalCodeBlock = CodeBlockLowlight
 
@@ -24,16 +24,11 @@ export const getExtensions = () => [
     protocols: ['http', 'https', 'mailto'],
     openOnClick: true,
     linkOnPaste: true,
-    // validate: (url) => true,
     HTMLAttributes: { class: 'text-violet-900 underline' },
   }),
 
   GlobalNodeId,
-  Code.configure({
-    HTMLAttributes: {
-      class: 'bg-slate-800 text-violet-300',
-    },
-  }),
+  InlineCode,
   EvalCodeBlock.configure({
     defaultLanguage: 'javascript',
     lowlight: createLowlight(common),

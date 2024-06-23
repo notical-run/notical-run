@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
   import { Editor } from "@tiptap/core";
   import type { Node } from "@tiptap/pm/model";
+  import { onDestroy, onMount } from "svelte";
   import "highlight.js/styles/tokyo-night-dark.css";
   import { getExtensions } from "./extensions";
 
@@ -10,9 +10,13 @@
 
 ## Code and shit
 
-Some inline \`code snippet here\`
+Some inline \`state.counter\`
 
 \`state.counter = 1\`
+
+\`201 * 7\`
+
+\`window.navigator\`
 
 \`\`\`
 const hello = "world";
@@ -37,18 +41,26 @@ Testing *more* **stuff** [here](https://google.com).
   const isEvalable = (node: Node) =>
     [null, "javascript"].includes(node.attrs.language);
 
-  const evaluateBlocks = (editor: Editor) => {
-    console.log(">>>> on update...");
+  (window as any).state ??= {};
 
-    const walkNode = (node: Node) => {
+  const evaluateBlocks = (editor: Editor) => {
+    console.log(">>>> on update...", editor.state.doc.toJSON());
+
+    const walkNode = (node: Node, pos: number) => {
       if (node.type.name === "codeBlock" && isEvalable(node)) {
-        console.log(">>> code bloc", node.attrs, node.textContent);
+        // console.log(">>> code bloc", node.attrs, node.textContent);
         return;
       }
       if (node.isText) {
-        const nodeMark = node.marks.find((m) => m.type.name === "code");
+        const nodeMark = node.marks.find((m) => m.type.name === "inlineCode");
         if (nodeMark) {
-          console.log(">>> inline cod", nodeMark?.attrs, node.text);
+          const result = new Function(`return ${node.text};`)();
+          console.log(node.text, result);
+          const tr = editor.state.tr;
+          nodeMark.removeFromSet(node.marks);
+          (nodeMark as any).attrs = { ...nodeMark.attrs, result };
+          nodeMark.addToSet(node.marks);
+          editor.view.dispatch(tr);
           return;
         }
       }
@@ -63,6 +75,7 @@ Testing *more* **stuff** [here](https://google.com).
       extensions: getExtensions(),
       editorProps: {
         attributes: {
+          spellcheck: "false",
           class:
             "prose prose-base mx-auto focus:outline-none p-4 border border-gray-200",
         },
