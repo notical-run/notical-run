@@ -1,14 +1,14 @@
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import Link from "@tiptap/extension-link";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
-import StarterKit from "@tiptap/starter-kit";
-import { common, createLowlight } from "lowlight";
-import { Markdown } from "tiptap-markdown";
-import { GlobalNodeId } from "./GlobalNodeId";
-import { InlineCode } from "./InlineCode";
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import Link from '@tiptap/extension-link';
+import TaskItem from '@tiptap/extension-task-item';
+import TaskList from '@tiptap/extension-task-list';
+import StarterKit from '@tiptap/starter-kit';
+import { common, createLowlight } from 'lowlight';
+import { Markdown } from 'tiptap-markdown';
+import { GlobalNodeId } from './GlobalNodeId';
+import { InlineCode } from './InlineCode';
 
-const EvalCodeBlock = CodeBlockLowlight
+const EvalCodeBlock = CodeBlockLowlight;
 
 export const getExtensions = () => [
   StarterKit.configure({ codeBlock: false, code: false }),
@@ -35,18 +35,18 @@ export const getExtensions = () => [
     exitOnTripleEnter: false,
     HTMLAttributes: {
       class: 'hljs',
-    }
+    },
   }),
 
   TaskItem.configure({
     nested: true,
     HTMLAttributes: {
       class: 'flex items-start justify-start gap-3 [&_p]:my-0',
-    }
+    },
   }),
   TaskList.configure({
     HTMLAttributes: {
       class: 'list-none pl-1',
-    }
+    },
   }),
 ];

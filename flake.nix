@@ -11,7 +11,6 @@
        devShell = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
             bun
-            biome
             typescript
             nodePackages.typescript-language-server
             tailwindcss-language-server

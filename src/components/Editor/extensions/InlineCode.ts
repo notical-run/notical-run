@@ -1,7 +1,7 @@
-import { mergeAttributes } from "@tiptap/core";
-import Code from "@tiptap/extension-code";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { Decoration, DecorationSet } from "@tiptap/pm/view";
+import { mergeAttributes } from '@tiptap/core';
+import Code from '@tiptap/extension-code';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -34,19 +34,17 @@ export const InlineCode = Code.extend({
         renderHTML: attributes => ({ 'data-result': attributes.result }),
         keepOnSplit: false,
       },
-    }
+    };
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       'code',
-      mergeAttributes(
-        this.options.HTMLAttributes,
-        HTMLAttributes,
-        { class: 'bg-slate-800 text-violet-300' }
-      ),
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        class: 'bg-slate-800 text-violet-300',
+      }),
       0,
-    ]
+    ];
   },
 
   addProseMirrorPlugins() {
@@ -55,10 +53,10 @@ export const InlineCode = Code.extend({
         key: new PluginKey('inlineCodeViewPlugin'),
         props: {
           decorations: state => {
-            const decorations: Decoration[] = []
+            const decorations: Decoration[] = [];
 
             state.doc.descendants((node, pos) => {
-              const mark = node.marks.find(m => m.type.name === this.name)
+              const mark = node.marks.find(m => m.type.name === this.name);
               if (!mark) return;
 
               const resultStr = toEvaluatedString(mark.attrs.result);
@@ -72,16 +70,15 @@ export const InlineCode = Code.extend({
                       'bg-violet-200 text-slate-500',
                       'before:content-[":_"] after:content-["_"]',
                     ].join(' '),
-                  })
-                })
-              )
-            })
+                  });
+                }),
+              );
+            });
 
-            return DecorationSet.create(state.doc, decorations)
+            return DecorationSet.create(state.doc, decorations);
           },
         },
       }),
-    ]
+    ];
   },
-})
-
+});

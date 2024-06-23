@@ -1,8 +1,8 @@
-import { Node } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+import { Node } from '@tiptap/core';
+import { Plugin } from '@tiptap/pm/state';
 
-const nodeTypes = new Set(['codeBlock'])
-const markTypes = new Set(['code', 'inlineCode'])
+const nodeTypes = new Set(['codeBlock']);
+const markTypes = new Set(['code', 'inlineCode']);
 
 export const GlobalNodeId = Node.create({
   name: 'globalNodeId',
@@ -25,21 +25,21 @@ export const GlobalNodeId = Node.create({
           initializedNodeIDs: { default: false },
         },
       },
-    ]
+    ];
   },
 
   addProseMirrorPlugins() {
     return [
       new Plugin({
         appendTransaction(_transactions, oldState, newState) {
-          if (newState.doc === oldState.doc) return
+          if (newState.doc === oldState.doc) return;
 
-          const { tr } = newState
+          const { tr } = newState;
           newState.doc.descendants((node, pos, _parent) => {
             if (nodeTypes.has(node.type.name) && !node.attrs.nodeId) {
-              tr.setNodeAttribute(pos, 'nodeId', `${Math.random()}`)
+              tr.setNodeAttribute(pos, 'nodeId', `${Math.random()}`);
             } else if (node.isText) {
-              const nodeMark = node.marks.find((m) => markTypes.has(m.type.name));
+              const nodeMark = node.marks.find(m => markTypes.has(m.type.name));
               if (nodeMark) {
                 if (!nodeMark.attrs.nodeId) {
                   nodeMark.removeFromSet(node.marks);
@@ -51,11 +51,11 @@ export const GlobalNodeId = Node.create({
                 }
               }
             }
-          })
+          });
 
-          return tr
+          return tr;
         },
       }),
-    ]
+    ];
   },
-})
+});
