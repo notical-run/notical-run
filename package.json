@@ -46,6 +46,8 @@
     "highlight.js": "^11.9.0",
     "lowlight": "^3.1.0",
     "prosemirror-markdown": "^1.13.0",
+    "quickjs-emscripten": "^0.29.2",
+    "quickjs-emscripten-core": "^0.29.2",
     "tiptap-markdown": "^0.8.10"
   }
 }

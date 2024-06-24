@@ -4,49 +4,60 @@
   import { onDestroy, onMount } from "svelte";
   import "highlight.js/styles/tokyo-night-dark.css";
   import { getExtensions } from "./extensions";
+  import { QuickJSWASMModule, newQuickJSWASMModuleFromVariant, newVariant, RELEASE_SYNC, QuickJSContext  } from "quickjs-emscripten";
+  import wasmLocation from "@jitl/quickjs-wasmfile-release-sync/wasm?url"
+
+  const variant = newVariant(RELEASE_SYNC, { wasmLocation })
+
+  export async function getQuickJS() {
+    return await newQuickJSWASMModuleFromVariant(variant)
+  }
 
   const testContent = `
 # Hello world
 
 ## Code and shit
 
-Some inline \`state.counter\`
+\`globalThis.state ??= {}\`
 
-\`state.counter = 1\`
+Some inline \`state.num\`
 
-\`201 * 7\`
+\`state.num = 2\`
 
-\`window.navigator\`
+\`[201 * state.num, state.num]\`
+
+\`window\`
 
 \`\`\`
 const hello = "world";
 console.log(hello);
 \`\`\`
-
-## Stuff
-Testing *more* **stuff** [here](https://google.com).
-
-- Testing
-- Testing
-
----
-
-- [ ] Hello World!
-- [ ] Foobar Baz
 `;
 
   let element: HTMLElement | undefined;
   let editor: Editor | undefined;
+  let quickJS: QuickJSWASMModule | undefined;
 
   const isEvalable = (node: Node) =>
     [null, "javascript"].includes(node.attrs.language);
 
-  (window as any).state ??= {};
+  let quickVM: QuickJSContext | undefined;
+  const evaluateJS = (code: string) => {
+    if (!quickJS) return;
+    quickVM ??= quickJS.newContext();
+
+    const result = quickVM.evalCode(code)
+    const valueHandle = quickVM.unwrapResult(result)
+    const value = quickVM.dump(valueHandle)
+
+    valueHandle.dispose()
+    return value
+  }
 
   const evaluateBlocks = (editor: Editor) => {
     console.log(">>>> on update...", editor.state.doc.toJSON());
 
-    const walkNode = (node: Node, pos: number) => {
+    const walkNode = (node: Node) => {
       if (node.type.name === "codeBlock" && isEvalable(node)) {
         // console.log(">>> code bloc", node.attrs, node.textContent);
         return;
@@ -54,7 +65,12 @@ Testing *more* **stuff** [here](https://google.com).
       if (node.isText) {
         const nodeMark = node.marks.find((m) => m.type.name === "inlineCode");
         if (nodeMark) {
-          const result = new Function(`return ${node.text};`)();
+          let result = null;
+          try {
+            result = evaluateJS(node.text ?? 'null');
+          } catch(e) {
+            result = `${e}`
+          }
           console.log(node.text, result);
           const tr = editor.state.tr;
           nodeMark.removeFromSet(node.marks);
@@ -70,6 +86,10 @@ Testing *more* **stuff** [here](https://google.com).
   };
 
   onMount(() => {
+    getQuickJS().then((qjs) => {
+      quickJS = qjs;
+      evaluateBlocks(editor!);
+    });
     editor = new Editor({
       element: element,
       extensions: getExtensions(),

@@ -68,7 +68,7 @@ export const InlineCode = Code.extend({
                     textContent: resultStr,
                     className: [
                       'bg-violet-200 text-slate-500',
-                      'before:content-[":_"] after:content-["_"]',
+                      'before:content-[":"] before:pr-1 after:content-none pr-1',
                     ].join(' '),
                   });
                 }),

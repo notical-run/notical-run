@@ -1,0 +1,38 @@
+* Curent
+** Evaluation
+   - ( ) Use quickjs for runtime
+   - ( ) Evaluate code blocks
+** Others
+   - ( ) Save the doc in localstorage for testing persistance
+
+* Later
+** Evaluation
+   - ( ) Use signals for evaluation
+   - ( ) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
+** View manipulation
+   - ( ) Insert below curent block
+   - ( ) Limited node querying
+   - ( ) Insert near queried node
+   - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
+** Others
+   - ( ) Figure out how to do buttons consistent with md (link)
+   --- Exports from a code block show up as buttons under it?
+   --- If export accepts args, show a prompt asking for values?
+** Modules
+   - ( ) Allow `import`-ing other notes (provide state/behavior + exports?)
+   - ( ) Button next to import stmnt to open the note
+** Capabilities
+   - ( ) Permission based capabilities (Ask user if a feature can be used)
+   - ( ) Disable permission request if user is the author
+   - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
+   - ( ) Keybindings
+
+* Improvements
+  - ( ) Debounce evaluation checks
+  - ( ) Truncate the inline result decoration
+  - ( ) Value/Error distinction in result decoration
+
+* Maybe
+  - ( ) Support images with image upload
+  - ( ) Buttons for wysiwyg
+  - ( ) Debug view for showing current state
