@@ -13,11 +13,12 @@ Some inline \`state.num\`
 
 \`[201 * state.num, state.num]\`
 
-\`({...state})\`
+\`({ ...state })\`
 
 \`\`\`
-export const increment = () => state.num = (state.num ?? 0) + 1;
-export const decrement = () => state.num = (state.num ?? 0) - 1;
+export default () => state.num = 0;
+export const increment = () => state.num = state.num + 1;
+export const decrement = () => state.num = state.num - 1;
 \`\`\`
 `;
 

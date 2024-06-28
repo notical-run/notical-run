@@ -2,7 +2,7 @@ import type { Mark, Node } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/core';
 import { evalExpression } from '../../utils/eval-expression';
 import { evalModule } from '../../utils/eval-module';
-import { createStore } from 'solid-js/store';
+import { Result } from '../../utils/result';
 
 const isEvalable = (node: Node) =>
   [null, 'javascript'].includes(node.attrs.language);
@@ -28,53 +28,43 @@ export const evaluateAllNodes = (editor: Editor) => {
   console.log('>>>> on update...', editor.state.doc.toJSON());
 
   const walkNode = async (node: Node, pos: number) => {
+    // Code block
     if (node.type.name === 'codeBlock' && isEvalable(node)) {
       const previousCode = nodeCodeCache.get(node.attrs.nodeId);
       if (previousCode === node.textContent) return;
 
-      let exports = null;
-      try {
-        nodeCodeCache.set(node.attrs.nodeId, node.textContent);
-        exports = await evalModule(
-          node.textContent || 'null',
-          node.attrs.nodeId,
-        );
-      } catch (e) {
-        exports = `${e}`;
-      }
+      nodeCodeCache.set(node.attrs.nodeId, node.textContent);
+
+      const exports = await evalModule(
+        node.textContent || 'null',
+        node.attrs.nodeId,
+      );
+
       const tr = editor.state.tr;
       editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+
       return;
     }
 
+    // Inline code
     if (node.isText) {
       const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
       if (!nodeMark) return;
       const previousCode = nodeCodeCache.get(nodeMark.attrs.nodeId);
       if (previousCode === node.textContent) return;
 
-      let result = null;
-      try {
-        nodeCodeCache.set(nodeMark.attrs.nodeId, node.textContent);
-        result = await evalExpression(node.text || 'null', result => {
-          const mark = findMarkById(editor, nodeMark.attrs.nodeId);
-          if (mark) {
-            const tr = editor.state.tr;
-            mark.removeFromSet(node.marks);
-            (mark as any).attrs = { ...mark.attrs, result };
-            mark.addToSet(node.marks);
-            editor.view.dispatch(tr);
-          }
-        });
-      } catch (e) {
-        result = `${e}`;
+      nodeCodeCache.set(nodeMark.attrs.nodeId, node.textContent);
+
+      await evalExpression(node.text || 'null', result => {
+        const mark = findMarkById(editor, nodeMark.attrs.nodeId);
+        if (!mark) return;
+
         const tr = editor.state.tr;
-        nodeMark.removeFromSet(node.marks);
-        (nodeMark as any).attrs = { ...nodeMark.attrs, result };
-        nodeMark.addToSet(node.marks);
+        mark.removeFromSet(node.marks);
+        (mark as any).attrs = { ...mark.attrs, result };
+        mark.addToSet(node.marks);
         editor.view.dispatch(tr);
-      }
-      return;
+      });
     }
   };
 

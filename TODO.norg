@@ -4,18 +4,17 @@
    - (x) Evaluate code blocks
    - (x) Exports as buttons
    - (x) Use signals for evaluation
-   - ( ) Fix issue with `state` object returning extra keys
+   - (x) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
+   - (x) Fix issue with solidjs root
 ** Others
    - ( ) Save the doc in localstorage for testing persistance
 
 * Later
-** Evaluation
-   - ( ) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
 ** View manipulation
    - ( ) Insert below curent block
+   - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
    - ( ) Limited node querying
    - ( ) Insert near queried node
-   - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
 ** Others
    - ( ) Figure out how to do buttons consistent with md (link)
    --- Exports from a code block show up as buttons under it?

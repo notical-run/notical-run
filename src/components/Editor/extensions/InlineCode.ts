@@ -2,6 +2,7 @@ import { mergeAttributes } from '@tiptap/core';
 import Code from '@tiptap/extension-code';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
+import { Result } from '../../../utils/result';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -48,6 +49,25 @@ export const InlineCode = Code.extend({
   },
 
   addProseMirrorPlugins() {
+    const getDecoration = (result: Result<Error, any>) => {
+      if (Result.isErr(result))
+        return Object.assign(document.createElement('code'), {
+          textContent: `${result.error}`,
+          className: [
+            'bg-red-100 text-red-500',
+            'before:content-[":"] before:pr-1 after:content-none pr-1',
+          ].join(' '),
+        });
+
+      return Object.assign(document.createElement('code'), {
+        textContent: toEvaluatedString(result.value),
+        className: [
+          'bg-violet-200 text-slate-500',
+          'before:content-[":"] before:pr-1 after:content-none pr-1',
+        ].join(' '),
+      });
+    };
+
     return [
       new Plugin({
         key: new PluginKey('inlineCodeViewPlugin'),
@@ -58,20 +78,12 @@ export const InlineCode = Code.extend({
             state.doc.descendants((node, pos) => {
               const mark = node.marks.find(m => m.type.name === this.name);
               if (!mark) return;
-
-              const resultStr = toEvaluatedString(mark.attrs.result);
-              if (resultStr === null) return;
+              if (mark.attrs.result === null) return;
 
               decorations.push(
-                Decoration.widget(pos + node.nodeSize, () => {
-                  return Object.assign(document.createElement('code'), {
-                    textContent: resultStr,
-                    className: [
-                      'bg-violet-200 text-slate-500',
-                      'before:content-[":"] before:pr-1 after:content-none pr-1',
-                    ].join(' '),
-                  });
-                }),
+                Decoration.widget(pos + node.nodeSize, () =>
+                  getDecoration(mark.attrs.result),
+                ),
               );
             });
 

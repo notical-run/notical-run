@@ -27,29 +27,43 @@ export const getQuickVM = async () => {
     throw new Error('No quickjs buddy');
   }
 
+  const internalsKey = '_internals';
+  const stateKey = 'state';
+
   if (!quickVM) {
     quickVM = quickJS.newContext();
 
     quickVM
       .unwrapResult(
         quickVM.evalCode(
-          `(() => {
-  globalThis.state = new Proxy({}, {
+          `;(() => {
+  const proxyState = new Proxy({}, {
     get(target, key) {
       if (key === 'toJSON') return target;
-      return getState(key);
+      return ${internalsKey}.getState(key);
     },
     set(target, key, value) {
-      setState(key, value);
+      ${internalsKey}.setState(key, value);
       target[key] = value;
       return value;
     },
   })
-})()`,
+  Object.defineProperty(globalThis, '${stateKey}', {
+    value: proxyState,
+    writable: false,
+  })
+
+  Object.defineProperty(globalThis, '${internalsKey}', {
+    value: {},
+    writable: false,
+  })
+})();`,
         ),
       )
       .dispose();
   }
+
+  const internals = quickVM.getProp(quickVM.global, internalsKey);
 
   const setStateHandle = quickVM.newFunction('setState', (keyH, valH) => {
     const key = quickVM?.dump(keyH);
@@ -62,7 +76,7 @@ export const getQuickVM = async () => {
     keyH.dispose();
     valH.dispose();
   });
-  quickVM.setProp(quickVM.global, 'setState', setStateHandle);
+  quickVM.setProp(internals, 'setState', setStateHandle);
   setStateHandle.dispose();
 
   const getStateHandle = quickVM.newFunction('getState', keyH => {
@@ -75,7 +89,7 @@ export const getQuickVM = async () => {
     const result = quickVM?.evalCode(JSON.stringify(val) ?? 'null');
     return quickVM?.unwrapResult(result);
   });
-  quickVM.setProp(quickVM.global, 'getState', getStateHandle);
+  quickVM.setProp(internals, 'getState', getStateHandle);
   getStateHandle.dispose();
 
   return quickVM;
