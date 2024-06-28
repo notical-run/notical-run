@@ -1,4 +1,3 @@
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Link from '@tiptap/extension-link';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
@@ -7,8 +6,7 @@ import { common, createLowlight } from 'lowlight';
 import { Markdown } from 'tiptap-markdown';
 import { GlobalNodeId } from './GlobalNodeId';
 import { InlineCode } from './InlineCode';
-
-const EvalCodeBlock = CodeBlockLowlight;
+import { CodeBlock } from './CodeBlock';
 
 export const getExtensions = () => [
   StarterKit.configure({ codeBlock: false, code: false }),
@@ -29,7 +27,7 @@ export const getExtensions = () => [
 
   GlobalNodeId,
   InlineCode,
-  EvalCodeBlock.configure({
+  CodeBlock.configure({
     defaultLanguage: 'javascript',
     lowlight: createLowlight(common),
     exitOnTripleEnter: false,

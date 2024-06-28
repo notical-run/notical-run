@@ -8,6 +8,7 @@ import {
   RELEASE_SYNC,
 } from 'quickjs-emscripten';
 import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
+import { get, writable, type Writable } from 'svelte/store';
 
 const variant = newVariant(RELEASE_SYNC, { wasmLocation });
 
@@ -21,11 +22,59 @@ export async function getQuickJS() {
 const isEvalable = (node: Node) =>
   [null, 'javascript'].includes(node.attrs.language);
 
+const stateStore: Record<string, Writable<any>> = {};
+
 let quickVM: QuickJSContext | undefined;
 const evaluateJS = async (code: string) => {
   const quickJS = await getQuickJS();
   if (!quickJS) return;
-  quickVM ??= quickJS.newContext();
+  if (!quickVM) {
+    quickVM = quickJS.newContext();
+    const setStateHandle = quickVM.newFunction('setState', (keyH, valH) => {
+      const key = quickVM?.dump(keyH);
+      const val = quickVM?.dump(valH);
+      if (!stateStore[key]) {
+        stateStore[key] = writable(val);
+      } else {
+        stateStore[key].set(val);
+      }
+      keyH.dispose();
+      valH.dispose();
+    });
+    const getStateHandle = quickVM.newFunction('getState', keyH => {
+      const key = quickVM?.dump(keyH);
+      if (!stateStore[key]) {
+        stateStore[key] = writable(undefined);
+      }
+      // onSubscribe(stateStore[key].subscribe(onUpdate));
+      const val = get(stateStore[key]);
+      if (typeof val === 'number') return quickVM?.newNumber(val);
+      if (typeof val === 'string') return quickVM?.newString(val);
+      if (typeof val === 'boolean') return val ? quickVM?.true : quickVM?.false;
+      // TODO: MOOOAR
+      return quickVM?.undefined;
+    });
+    quickVM.setProp(quickVM.global, 'setState', setStateHandle);
+    quickVM.setProp(quickVM.global, 'getState', getStateHandle);
+    quickVM
+      .unwrapResult(
+        quickVM.evalCode(
+          `
+const _target = {};
+globalThis.state = new Proxy(_target, {
+  get(_, key) { return getState(key); },
+  set(_, key, value) {
+    setState(key, value);
+    _target[key] = value;
+    return value;
+  },
+})
+          `,
+        ),
+      )
+      .dispose();
+    setStateHandle.dispose();
+  }
 
   const result = quickVM.evalCode(code);
   const valueHandle = quickVM.unwrapResult(result);
@@ -35,12 +84,25 @@ const evaluateJS = async (code: string) => {
   return value;
 };
 
-export const evaluateBlocks = (editor: Editor) => {
+const nodeCodeCache = new Map<string, string>();
+
+export const evaluateAllNodes = (editor: Editor) => {
   console.log('>>>> on update...', editor.state.doc.toJSON());
 
-  const walkNode = async (node: Node) => {
+  const walkNode = async (node: Node, pos: number) => {
     if (node.type.name === 'codeBlock' && isEvalable(node)) {
-      // console.log(">>> code bloc", node.attrs, node.textContent);
+      const previousCode = nodeCodeCache.get(node.attrs.nodeId);
+      if (previousCode === node.textContent) return;
+
+      let result = null;
+      try {
+        nodeCodeCache.set(node.attrs.nodeId, node.textContent);
+        result = await evaluateJS(node.textContent || 'null');
+      } catch (e) {
+        result = `${e}`;
+      }
+      const tr = editor.state.tr;
+      editor.view.dispatch(tr.setNodeAttribute(pos, 'result', result));
       return;
     }
 
@@ -53,7 +115,7 @@ export const evaluateBlocks = (editor: Editor) => {
         } catch (e) {
           result = `${e}`;
         }
-        console.log(node.text, result);
+        // console.log(node.text, result);
         const tr = editor.state.tr;
         nodeMark.removeFromSet(node.marks);
         (nodeMark as any).attrs = { ...nodeMark.attrs, result };
@@ -64,7 +126,7 @@ export const evaluateBlocks = (editor: Editor) => {
     }
   };
 
-  editor.state.doc.content.descendants(node => {
-    walkNode(node);
+  editor.state.doc.content.descendants((node, pos) => {
+    walkNode(node, pos);
   });
 };

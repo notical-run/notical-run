@@ -6,3 +6,13 @@ const app = new App({
 });
 
 export default app;
+
+/**
+// Node on update
+evaluateJS(id, {
+  code: node.textContent,
+  onResult: (value, error) => {
+    // Set self property
+  },
+})
+*/

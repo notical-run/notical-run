@@ -1,7 +1,9 @@
 * Curent
 ** Evaluation
-   - ( ) Use quickjs for runtime
+   - (x) Use quickjs for runtime
    - ( ) Evaluate code blocks
+   - ( ) Exports as buttons
+   - ( ) Update nodes on value change
 ** Others
    - ( ) Save the doc in localstorage for testing persistance
 
