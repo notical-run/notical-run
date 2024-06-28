@@ -5,7 +5,6 @@ export const evalExpression = async (
   code: string,
   onResult: (res: any) => void,
 ) => {
-  // let stores = []
   const quickVM = await getQuickVM();
 
   createEffect(() => {

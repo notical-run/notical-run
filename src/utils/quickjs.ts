@@ -33,17 +33,19 @@ export const getQuickVM = async () => {
     quickVM
       .unwrapResult(
         quickVM.evalCode(
-          `
-const _target = {};
-globalThis.state = new Proxy(_target, {
-  get(_, key) { return getState(key); },
-  set(_, key, value) {
-    setState(key, value);
-    _target[key] = value;
-    return value;
-  },
-})
-          `,
+          `(() => {
+  globalThis.state = new Proxy({}, {
+    get(target, key) {
+      if (key === 'toJSON') return target;
+      return getState(key);
+    },
+    set(target, key, value) {
+      setState(key, value);
+      target[key] = value;
+      return value;
+    },
+  })
+})()`,
         ),
       )
       .dispose();

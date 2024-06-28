@@ -8,18 +8,11 @@ const isEvalable = (node: Node) =>
 
 const nodeCodeCache = new Map<string, string>();
 
-const findNodeOrMarkById = (
-  editor: Editor,
-  nodeId: string,
-): Node | Mark | null => {
+const findMarkById = (editor: Editor, id: string): Mark | null => {
   let foundNode = null;
   editor.state.doc.content.descendants(node => {
-    if (node.attrs?.nodeId === nodeId) {
-      foundNode = node;
-      return false;
-    }
     if (node.isText) {
-      const mark = node.marks.find(m => m.attrs?.nodeId === nodeId);
+      const mark = node.marks.find(m => m.attrs?.nodeId === id);
       if (mark) {
         foundNode = mark;
         return false;
@@ -31,7 +24,7 @@ const findNodeOrMarkById = (
 };
 
 export const evaluateAllNodes = (editor: Editor) => {
-  // console.log('>>>> on update...', editor.state.doc.toJSON());
+  console.log('>>>> on update...', editor.state.doc.toJSON());
 
   const walkNode = async (node: Node, pos: number) => {
     if (node.type.name === 'codeBlock' && isEvalable(node)) {
@@ -55,32 +48,28 @@ export const evaluateAllNodes = (editor: Editor) => {
 
     if (node.isText) {
       const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
-      if (nodeMark) {
-        let result = null;
-        try {
-          result = await evalExpression(node.text || 'null', result => {
-            const mark = findNodeOrMarkById(
-              editor,
-              nodeMark.attrs.nodeId,
-            ) as Mark | null;
-            if (!mark) return;
+      if (!nodeMark) return;
+      let result = null;
+      try {
+        result = await evalExpression(node.text || 'null', result => {
+          const mark = findMarkById(editor, nodeMark.attrs.nodeId);
+          if (mark) {
             const tr = editor.state.tr;
             mark.removeFromSet(node.marks);
             (mark as any).attrs = { ...mark.attrs, result };
             mark.addToSet(node.marks);
             editor.view.dispatch(tr);
-          });
-        } catch (e) {
-          result = `${e}`;
-        }
-        // console.log(node.text, result);
-        // const tr = editor.state.tr;
-        // nodeMark.removeFromSet(node.marks);
-        // (nodeMark as any).attrs = { ...nodeMark.attrs, result };
-        // nodeMark.addToSet(node.marks);
-        // editor.view.dispatch(tr);
-        return;
+          }
+        });
+      } catch (e) {
+        result = `${e}`;
+        const tr = editor.state.tr;
+        nodeMark.removeFromSet(node.marks);
+        (nodeMark as any).attrs = { ...nodeMark.attrs, result };
+        nodeMark.addToSet(node.marks);
+        editor.view.dispatch(tr);
       }
+      return;
     }
   };
 

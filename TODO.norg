@@ -4,6 +4,7 @@
    - (x) Evaluate code blocks
    - (x) Exports as buttons
    - (x) Use signals for evaluation
+   - ( ) Fix issue with `state` object returning extra keys
 ** Others
    - ( ) Save the doc in localstorage for testing persistance
 
