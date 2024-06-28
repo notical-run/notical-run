@@ -3,25 +3,16 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
-const toEvaluatedString = (result: any) => {
-  if (result === undefined) return null;
-  try {
-    return JSON.stringify(result);
-  } catch (_) {
-    return result.toString();
-  }
-};
-
 export const CodeBlock = CodeBlockLowlight.extend({
   name: 'codeBlock',
   addAttributes() {
     return {
       ...this.parent!(),
-      result: {
+      exports: {
         default: null,
         rendered: true,
-        parseHTML: el => el.dataset.result ?? null,
-        renderHTML: attributes => ({ 'data-result': attributes.result }),
+        parseHTML: el => el.dataset.exports ?? null,
+        renderHTML: attributes => ({ 'data-exports': attributes.exports }),
         keepOnSplit: false,
       },
     };
@@ -49,19 +40,30 @@ export const CodeBlock = CodeBlockLowlight.extend({
             state.doc.descendants((node, pos) => {
               if (node.type.name !== this.name) return;
 
-              const resultStr = toEvaluatedString(node.attrs.result);
-              if (resultStr === null) return;
+              const exports = node.attrs.exports;
+              if (!exports) return;
 
               decorations.push(
                 Decoration.widget(pos + node.nodeSize, () => {
-                  return Object.assign(document.createElement('code'), {
-                    textContent: resultStr,
-                    className: [
-                      'bg-violet-200 text-slate-500',
-                      'before:content-none after:content-none p-1',
-                      'block w-full',
-                    ].join(' '),
+                  const buttons = Object.entries(exports).map(
+                    ([key, value]) => {
+                      return Object.assign(document.createElement('button'), {
+                        textContent: key,
+                        className: [
+                          'border border-slate-900 rounded-sm',
+                          'text-sm text-slate-900',
+                          'py-0.5 px-1',
+                        ].join(' '),
+                        onclick: () => (value as any)(),
+                      });
+                    },
+                  );
+
+                  const $div = Object.assign(document.createElement('div'), {
+                    className: '-mt-4',
                   });
+                  $div.append(...buttons);
+                  return $div;
                 }),
               );
             });

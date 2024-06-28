@@ -1,15 +1,14 @@
 * Curent
 ** Evaluation
    - (x) Use quickjs for runtime
-   - ( ) Evaluate code blocks
-   - ( ) Exports as buttons
-   - ( ) Update nodes on value change
+   - (x) Evaluate code blocks
+   - (x) Exports as buttons
+   - (x) Use signals for evaluation
 ** Others
    - ( ) Save the doc in localstorage for testing persistance
 
 * Later
 ** Evaluation
-   - ( ) Use signals for evaluation
    - ( ) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
 ** View manipulation
    - ( ) Insert below curent block

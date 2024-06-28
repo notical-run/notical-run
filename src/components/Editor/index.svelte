@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Editor } from "@tiptap/core";
-  import type { Node } from "@tiptap/pm/model";
   import { onDestroy, onMount } from "svelte";
   import "highlight.js/styles/tokyo-night-dark.css";
   import { getExtensions } from "./extensions";
@@ -12,18 +11,13 @@
 
 Some inline \`state.num\`
 
-\`state.num = 2\`
-
 \`[201 * state.num, state.num]\`
 
 \`state\`
 
 \`\`\`
-state.hello = "world";
-\`\`\`
-
-\`\`\`
-state.hello2 = "world2";
+export const increment = () => state.num = (state.num ?? 0) + 1;
+export const decrement = () => state.num = (state.num ?? 0) - 1;
 \`\`\`
 `;
 

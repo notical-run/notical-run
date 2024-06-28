@@ -48,6 +48,7 @@
     "prosemirror-markdown": "^1.13.0",
     "quickjs-emscripten": "^0.29.2",
     "quickjs-emscripten-core": "^0.29.2",
+    "solid-js": "^1.8.17",
     "tiptap-markdown": "^0.8.10"
   }
 }
