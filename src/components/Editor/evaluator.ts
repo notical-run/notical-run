@@ -2,11 +2,10 @@ import type { Mark, Node } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/core';
 import { evalExpression } from '../../utils/eval-expression';
 import { evalModule } from '../../utils/eval-module';
+import { createStore } from 'solid-js/store';
 
 const isEvalable = (node: Node) =>
   [null, 'javascript'].includes(node.attrs.language);
-
-const nodeCodeCache = new Map<string, string>();
 
 const findMarkById = (editor: Editor, id: string): Mark | null => {
   let foundNode = null;
@@ -22,6 +21,8 @@ const findMarkById = (editor: Editor, id: string): Mark | null => {
 
   return foundNode;
 };
+
+const nodeCodeCache = new Map<string, string>();
 
 export const evaluateAllNodes = (editor: Editor) => {
   console.log('>>>> on update...', editor.state.doc.toJSON());
@@ -49,8 +50,12 @@ export const evaluateAllNodes = (editor: Editor) => {
     if (node.isText) {
       const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
       if (!nodeMark) return;
+      const previousCode = nodeCodeCache.get(nodeMark.attrs.nodeId);
+      if (previousCode === node.textContent) return;
+
       let result = null;
       try {
+        nodeCodeCache.set(nodeMark.attrs.nodeId, node.textContent);
         result = await evalExpression(node.text || 'null', result => {
           const mark = findMarkById(editor, nodeMark.attrs.nodeId);
           if (mark) {

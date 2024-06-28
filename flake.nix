@@ -14,7 +14,6 @@
             typescript
             nodePackages.typescript-language-server
             tailwindcss-language-server
-            svelte-language-server
           ];
         };
       });

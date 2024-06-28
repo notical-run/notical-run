@@ -1,11 +1,11 @@
-import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { defineConfig } from "vite";
+import solidPlugin from 'vite-plugin-solid';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [solidPlugin()],
 
   server: {
     port: 3000,
-  }
+  },
 });

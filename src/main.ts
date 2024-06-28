@@ -1,18 +1,5 @@
+import { render } from 'solid-js/web';
 import './styles/app.css';
-import App from './App.svelte';
+import { App } from './App';
 
-const app = new App({
-  target: document.getElementById('app')!,
-});
-
-export default app;
-
-/**
-// Node on update
-evaluateJS(id, {
-  code: node.textContent,
-  onResult: (value, error) => {
-    // Set self property
-  },
-})
-*/
+render(App, document.getElementById('app')!);
