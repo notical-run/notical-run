@@ -13,7 +13,7 @@ Some inline \`state.num\`
 
 \`[201 * state.num, state.num]\`
 
-\`state\`
+\`({...state})\`
 
 \`\`\`
 export const increment = () => state.num = (state.num ?? 0) + 1;

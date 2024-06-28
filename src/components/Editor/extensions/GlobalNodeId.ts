@@ -37,7 +37,7 @@ export const GlobalNodeId = Node.create({
           const { tr } = newState;
           newState.doc.descendants((node, pos, _parent) => {
             if (nodeTypes.has(node.type.name) && !node.attrs.nodeId) {
-              tr.setNodeAttribute(pos, 'nodeId', `${Math.random()}`);
+              tr.setNodeAttribute(pos, 'nodeId', `${crypto.randomUUID()}`);
             } else if (node.isText) {
               const nodeMark = node.marks.find(m => markTypes.has(m.type.name));
               if (nodeMark) {
@@ -45,7 +45,7 @@ export const GlobalNodeId = Node.create({
                   nodeMark.removeFromSet(node.marks);
                   (nodeMark as any).attrs = {
                     ...nodeMark.attrs,
-                    nodeId: `${Math.random()}`,
+                    nodeId: `${crypto.randomUUID()}`,
                   };
                   nodeMark.addToSet(node.marks);
                 }
