@@ -10,13 +10,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
   addAttributes() {
     return {
       ...this.parent!(),
-      exports: {
-        default: null,
-        rendered: true,
-        parseHTML: el => el.dataset.exports ?? null,
-        renderHTML: attributes => ({ 'data-exports': attributes.exports }),
-        keepOnSplit: false,
-      },
+      exports: { default: null, rendered: false, keepOnSplit: false },
     };
   },
 

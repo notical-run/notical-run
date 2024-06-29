@@ -28,13 +28,7 @@ export const InlineCode = Code.extend({
   addAttributes() {
     return {
       ...this.parent,
-      result: {
-        default: null,
-        rendered: true,
-        parseHTML: el => el.dataset.result ?? null,
-        renderHTML: attributes => ({ 'data-result': attributes.result }),
-        keepOnSplit: false,
-      },
+      result: { default: null, rendered: false, keepOnSplit: false },
     };
   },
 
