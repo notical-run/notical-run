@@ -1,9 +1,13 @@
-import { getQuickVM } from './quickjs';
+import { getQuickVM, VMEnvOptions } from './quickjs';
 import { Result } from './result';
 
-export const evalModule = async (code: string, id: string) => {
+export const evalModule = async (
+  code: string,
+  id: string,
+  options: VMEnvOptions,
+) => {
   try {
-    const quickVM = await getQuickVM();
+    const quickVM = await getQuickVM(options);
 
     const result = quickVM.evalCode(code, `${id}.js`, { type: 'module' });
     const valueHandle = quickVM.unwrapResult(result);
@@ -26,7 +30,8 @@ export const evalModule = async (code: string, id: string) => {
     const exports = Object.fromEntries(
       keys.map(key => {
         const funcH = quickVM.getProp(valueHandle, key);
-        const func = () => quickVM.callFunction(funcH, quickVM.undefined);
+        const func = () =>
+          quickVM?.unwrapResult(quickVM.callFunction(funcH, quickVM.undefined));
         return [key, func];
       }),
     );

@@ -12,10 +12,13 @@
    - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
    - ( ) Limited node querying
    - ( ) Insert near queried node
+** Backend
+   - ( ) workspace > notes. Note refernced as `@workspace/note-name`
+   - ( ) y.js document storage + retrieval via http
+   - ( ) oauth
+   - ( ) email/pass auth
 ** Others
    - (x) Figure out how to do buttons
-   - ( ) Look for better markdown editing experience
-   - ( ) Save the doc in localstorage for testing persistance
 
 * Bugs
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
@@ -33,21 +36,18 @@
    - ( ) Keybindings
    - ( ) Embeds?
 ** Backend
-   - ( ) oauth
-   - ( ) y.js document storage + retrieval via http
-   - ( ) email/pass auth
-   - ( ) workspace > notes. Note refernced as `@workspace/note-name`
    - ( ) For imports, can only import note if note is in same workspace or is public
-   - ( ) invite to workspace
    - ( ) hocuspocus or y-websocket server for realtime?
+   - ( ) invite to workspace
    - ( ) multi-user collaboration/multi-cursor features
 ** Other
    - ( ) freeze `internal`
 
 * Improvements
-  - ( ) Debounce evaluation checks
+  - (x) Value/Error distinction in result decoration
+  - ( ) Improve markdown editing experience
   - ( ) Truncate the inline result decoration
-  - ( ) Value/Error distinction in result decoration
+  - ( ) Debounce evaluation checks
 
 * Maybe
   - ( ) Support images with image upload

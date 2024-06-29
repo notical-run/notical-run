@@ -38,6 +38,7 @@ export const evaluateAllNodes = (editor: Editor) => {
       const exports = await evalModule(
         node.textContent || 'null',
         node.attrs.nodeId,
+        { pos },
       );
 
       const tr = editor.state.tr;
@@ -55,7 +56,7 @@ export const evaluateAllNodes = (editor: Editor) => {
 
       nodeCodeCache.set(nodeMark.attrs.nodeId, node.textContent);
 
-      await evalExpression(node.text || 'null', result => {
+      const onResult = (result: Result<Error, any>) => {
         const mark = findMarkById(editor, nodeMark.attrs.nodeId);
         if (!mark) return;
 
@@ -64,7 +65,9 @@ export const evaluateAllNodes = (editor: Editor) => {
         (mark as any).attrs = { ...mark.attrs, result };
         mark.addToSet(node.marks);
         editor.view.dispatch(tr);
-      });
+      };
+
+      await evalExpression(node.text || 'null', onResult, { pos });
     }
   };
 

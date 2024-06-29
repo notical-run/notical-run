@@ -4,10 +4,14 @@ import {
   newQuickJSWASMModuleFromVariant,
   newVariant,
   RELEASE_SYNC,
-  DefaultIntrinsics,
+  Scope,
 } from 'quickjs-emscripten';
 import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
 import { createSignal, type Signal } from 'solid-js';
+
+export type VMEnvOptions = {
+  pos: number;
+};
 
 const variant = newVariant(RELEASE_SYNC, { wasmLocation });
 
@@ -23,7 +27,7 @@ const stateStore: Record<string, Signal<any>> = {};
 let quickRuntime: QuickJSRuntime | undefined;
 let quickVM: QuickJSContext | undefined;
 
-export const getQuickVM = async () => {
+export const getQuickVM = async (options?: VMEnvOptions) => {
   const quickJS = await getQuickJS();
   if (!quickJS) {
     throw new Error('No quickjs buddy');
@@ -72,34 +76,61 @@ export const getQuickVM = async () => {
       .dispose();
   }
 
-  const internals = quickVM.getProp(quickVM.global, internalsKey);
+  const getInternal = () =>
+    quickVM && quickVM.getProp(quickVM.global, internalsKey);
 
-  const setStateHandle = quickVM.newFunction('setState', (keyH, valH) => {
-    const key = quickVM?.dump(keyH);
-    const val = quickVM?.dump(valH);
-    if (!stateStore[key]) {
-      stateStore[key] = createSignal(val);
-    } else {
-      stateStore[key][1](val);
-    }
-    keyH.dispose();
-    valH.dispose();
-  });
-  quickVM.setProp(internals, 'setState', setStateHandle);
-  setStateHandle.dispose();
-
-  const getStateHandle = quickVM.newFunction('getState', keyH => {
+  Scope.withScope(scope => {
     if (!quickVM) return;
-    const key = quickVM?.dump(keyH);
-    if (!stateStore[key]) {
-      stateStore[key] = createSignal(undefined);
-    }
-    const val = stateStore[key][0]();
-    const result = quickVM?.evalCode(JSON.stringify(val) ?? 'null');
-    return quickVM?.unwrapResult(result);
+
+    const internals = scope.manage(getInternal()!);
+
+    const setStateHandle = scope.manage(
+      quickVM.newFunction('setState', (keyH, valH) => {
+        const key = quickVM?.dump(keyH);
+        const val = quickVM?.dump(valH);
+        if (!stateStore[key]) {
+          stateStore[key] = createSignal(val);
+        } else {
+          stateStore[key][1](val);
+        }
+        keyH.dispose();
+        valH.dispose();
+      }),
+    );
+    quickVM.setProp(internals, 'setState', setStateHandle);
+
+    const getStateHandle = scope.manage(
+      quickVM.newFunction('getState', keyH => {
+        if (!quickVM) return;
+        const key = quickVM?.dump(keyH);
+        if (!stateStore[key]) {
+          stateStore[key] = createSignal(undefined);
+        }
+        const val = stateStore[key][0]();
+        const result = quickVM?.evalCode(JSON.stringify(val) ?? 'null');
+        return quickVM?.unwrapResult(result);
+      }),
+    );
+    quickVM.setProp(internals, 'getState', getStateHandle);
+
+    // Node Position
+    const posHandle =
+      options?.pos !== undefined
+        ? scope.manage(quickVM.newNumber(options?.pos))
+        : quickVM.undefined;
+    quickVM.setProp(internals, 'nodePos', posHandle);
+
+    const getPosUnder = quickVM.newFunction('below', () => {
+      return Scope.withScope(scope => {
+        if (!quickVM) return;
+        const internal = scope.manage(getInternal()!);
+        const nodePosHandle = quickVM.getProp(internal, 'nodePos');
+        const nodePos = quickVM.dump(nodePosHandle);
+        return quickVM.newNumber((nodePos ?? 0) + 1);
+      });
+    });
+    quickVM.setProp(quickVM.global, 'below', getPosUnder);
   });
-  quickVM.setProp(internals, 'getState', getStateHandle);
-  getStateHandle.dispose();
 
   return quickVM;
 };

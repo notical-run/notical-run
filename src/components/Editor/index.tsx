@@ -15,6 +15,10 @@ Some inline \`state.num\`
 
 \`() => state.num = 42\`
 
+\`_internals.nodePos\`
+
+\`below()\`
+
 \`\`\`
 export default () => state.num = 0;
 export const increment = () => state.num = state.num + 1;

@@ -49,7 +49,7 @@ export const InlineCode = Code.extend({
     const getDecoration = (result: Result<Error, any>) => {
       if (Result.isErr(result))
         return Object.assign(document.createElement('code'), {
-          textContent: `${result.error}`,
+          textContent: `${result.error.message ?? result.error}`,
           className: [
             'bg-red-100 text-red-500',
             'before:content-[":"] before:pr-1 after:content-none pr-1',
