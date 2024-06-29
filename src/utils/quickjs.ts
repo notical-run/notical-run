@@ -1,9 +1,10 @@
-import type { QuickJSContext } from 'quickjs-emscripten-core';
+import type { QuickJSContext, QuickJSRuntime } from 'quickjs-emscripten-core';
 import {
   QuickJSWASMModule,
   newQuickJSWASMModuleFromVariant,
   newVariant,
   RELEASE_SYNC,
+  DefaultIntrinsics,
 } from 'quickjs-emscripten';
 import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
 import { createSignal, type Signal } from 'solid-js';
@@ -19,6 +20,7 @@ export async function getQuickJS() {
 
 const stateStore: Record<string, Signal<any>> = {};
 
+let quickRuntime: QuickJSRuntime | undefined;
 let quickVM: QuickJSContext | undefined;
 
 export const getQuickVM = async () => {
@@ -31,12 +33,24 @@ export const getQuickVM = async () => {
   const stateKey = 'state';
 
   if (!quickVM) {
-    quickVM = quickJS.newContext();
+    quickRuntime = quickJS.newRuntime();
+    quickRuntime.setModuleLoader((_modulePath: string) => {
+      throw new Error('TODO: Import not implemented yet');
+    });
+    quickVM = quickRuntime.newContext({
+      ownedLifetimes: [quickRuntime],
+    });
+    quickRuntime.context = quickVM;
 
     quickVM
       .unwrapResult(
         quickVM.evalCode(
           `;(() => {
+  Object.defineProperty(globalThis, '${internalsKey}', {
+    value: {},
+    writable: false,
+  });
+
   const proxyState = new Proxy({}, {
     get(target, key) {
       if (key === 'toJSON') return target;
@@ -47,16 +61,11 @@ export const getQuickVM = async () => {
       target[key] = value;
       return value;
     },
-  })
+  });
   Object.defineProperty(globalThis, '${stateKey}', {
     value: proxyState,
     writable: false,
-  })
-
-  Object.defineProperty(globalThis, '${internalsKey}', {
-    value: {},
-    writable: false,
-  })
+  });
 })();`,
         ),
       )
