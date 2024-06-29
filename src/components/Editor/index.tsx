@@ -8,6 +8,10 @@ const testContent = `
 # Hello world
 
 ## Code and shit
+### Code and shit
+#### Code and shit
+##### Code and shit
+###### Code and shit
 
 Some inline \`state.num\`
 
@@ -27,14 +31,23 @@ export const Editor = () => {
   let editor: TiptapEditor | undefined;
 
   onMount(() => {
+    const proseStyles = [
+      'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
+      'prose-h1:text-3xl',
+      'prose-h2:text-2xl',
+      'prose-h3:text-xl',
+      'prose-h4:text-lg',
+      'prose-h5:text-md prose-h5:text-slate-600',
+      'prose-h6:text-sm prose-h6:text-slate-600',
+    ].join(' ');
+
     editor = new TiptapEditor({
       element: element,
       extensions: getExtensions(),
       editorProps: {
         attributes: {
           spellcheck: 'false',
-          class:
-            'prose prose-base mx-auto focus:outline-none p-4 border border-gray-200',
+          class: `prose prose-base mx-auto focus:outline-none p-4 border border-gray-200 ${proseStyles}`,
         },
       },
       onCreate: ({ editor }) => {
