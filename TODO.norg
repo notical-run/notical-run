@@ -28,6 +28,7 @@
    - ( ) Disable permission request if user is the author
    - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
    - ( ) Keybindings
+   - ( ) Embeds?
 ** Backend
    - ( ) oauth
    - ( ) y.js document storage + retrieval via http

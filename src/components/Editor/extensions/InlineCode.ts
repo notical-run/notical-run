@@ -71,8 +71,7 @@ export const InlineCode = Code.extend({
 
             state.doc.descendants((node, pos) => {
               const mark = node.marks.find(m => m.type.name === this.name);
-              if (!mark) return;
-              if (mark.attrs.result === null) return;
+              if (!mark || mark.attrs.result === null) return;
 
               decorations.push(
                 Decoration.widget(pos + node.nodeSize, () =>

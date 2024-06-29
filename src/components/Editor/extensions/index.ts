@@ -7,6 +7,7 @@ import { Markdown } from 'tiptap-markdown';
 import { GlobalNodeId } from './GlobalNodeId';
 import { InlineCode } from './InlineCode';
 import { CodeBlock } from './CodeBlock';
+import { TrailingNode } from './TrailingNode';
 
 export const getExtensions = () => [
   StarterKit.configure({ codeBlock: false, code: false }),
@@ -24,6 +25,7 @@ export const getExtensions = () => [
     linkOnPaste: true,
     HTMLAttributes: { class: 'text-violet-900 underline' },
   }),
+  TrailingNode,
 
   GlobalNodeId,
   InlineCode,
