@@ -26,7 +26,6 @@ export const evalModule = async (code: string, id: string) => {
     const exports = Object.fromEntries(
       keys.map(key => {
         const funcH = quickVM.getProp(valueHandle, key);
-
         const func = () => quickVM.callFunction(funcH, quickVM.undefined);
         return [key, func];
       }),

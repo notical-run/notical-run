@@ -10,7 +10,7 @@ export const evalExpression = async (
 
   createRoot(_ => {
     createEffect(() => {
-      const result = quickVM.evalCode(code);
+      const result = quickVM.evalCode(code, 'global.js', { strict: false });
       try {
         const valueHandle = quickVM.unwrapResult(result);
         const value = quickVM.dump(valueHandle);
