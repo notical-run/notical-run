@@ -1,4 +1,4 @@
-import { mergeAttributes } from '@tiptap/core';
+import { findChildren, mergeAttributes } from '@tiptap/core';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
@@ -63,18 +63,16 @@ export const CodeBlock = CodeBlockLowlight.extend({
         key: new PluginKey('codeBlockViewPlugin'),
         props: {
           decorations: state => {
-            const decorations: Decoration[] = [];
+            const blocks = findChildren(
+              state.doc,
+              node => node.type.name === this.name && node.attrs.exports,
+            );
 
-            state.doc.descendants((node, pos) => {
-              if (node.type.name !== this.name) return;
-              if (!node.attrs.exports) return;
-
-              decorations.push(
-                Decoration.widget(pos + node.nodeSize, () =>
-                  getDecoration(node.attrs.exports),
-                ),
-              );
-            });
+            const decorations = blocks.map(({ node, pos }) =>
+              Decoration.widget(pos + node.nodeSize, () =>
+                getDecoration(node.attrs.exports),
+              ),
+            );
 
             return DecorationSet.create(state.doc, decorations);
           },

@@ -2,8 +2,9 @@ import Link from '@tiptap/extension-link';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
 import StarterKit from '@tiptap/starter-kit';
-import { common, createLowlight } from 'lowlight';
 import { Markdown } from 'tiptap-markdown';
+import { createLowlight } from 'lowlight';
+import javascript from 'highlight.js/lib/languages/javascript';
 import { GlobalNodeId } from './GlobalNodeId';
 import { InlineCode } from './InlineCode';
 import { CodeBlock } from './CodeBlock';
@@ -17,7 +18,7 @@ export const getExtensions = () => [
     linkify: true,
     breaks: true,
     transformPastedText: true,
-    transformCopiedText: true,
+    transformCopiedText: false,
   }),
   Link.configure({
     protocols: ['http', 'https', 'mailto'],
@@ -30,12 +31,10 @@ export const getExtensions = () => [
   GlobalNodeId,
   InlineCode,
   CodeBlock.configure({
+    lowlight: createLowlight({ javascript }),
+    HTMLAttributes: { class: 'hljs' },
     defaultLanguage: 'javascript',
-    lowlight: createLowlight(common),
     exitOnTripleEnter: false,
-    HTMLAttributes: {
-      class: 'hljs',
-    },
   }),
 
   TaskItem.configure({

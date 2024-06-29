@@ -1,4 +1,4 @@
-import { mergeAttributes } from '@tiptap/core';
+import { findChildren, mergeAttributes } from '@tiptap/core';
 import Code from '@tiptap/extension-code';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
@@ -32,14 +32,17 @@ export const InlineCode = Code.extend({
     };
   },
 
-  renderHTML({ HTMLAttributes }) {
-    return [
-      'code',
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: 'bg-slate-800 text-violet-300',
-      }),
-      0,
-    ];
+  renderHTML({ HTMLAttributes, ...props }) {
+    return this.parent!({
+      ...props,
+      HTMLAttributes: mergeAttributes(
+        this.options.HTMLAttributes,
+        HTMLAttributes,
+        {
+          class: 'bg-slate-800 text-violet-300',
+        },
+      ),
+    });
   },
 
   addProseMirrorPlugins() {
