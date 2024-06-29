@@ -1,4 +1,4 @@
-import { findChildren, mergeAttributes } from '@tiptap/core';
+import { mergeAttributes } from '@tiptap/core';
 import Code from '@tiptap/extension-code';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
@@ -55,6 +55,19 @@ export const InlineCode = Code.extend({
             'before:content-[":"] before:pr-1 after:content-none pr-1',
           ].join(' '),
         });
+
+      if (typeof result.value === 'function') {
+        return Object.assign(document.createElement('button'), {
+          textContent: '▶',
+          onclick: () => {
+            result.value();
+          },
+          className: [
+            'text-white bg-violet-600 size-5 rounded-full text-xs',
+            'leading-0 pb-0.5 pl-0.5 ml-1 -mt-2',
+          ].join(' '),
+        });
+      }
 
       return Object.assign(document.createElement('code'), {
         textContent: toEvaluatedString(result.value),

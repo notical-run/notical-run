@@ -8,16 +8,12 @@ const testContent = `
 # Hello world
 
 ## Code and shit
-### Code and shit
-#### Code and shit
-##### Code and shit
-###### Code and shit
 
 Some inline \`state.num\`
 
 \`[201 * state.num, state.num]\`
 
-\`({ ...state })\`
+\`() => state.num = 42\`
 
 \`\`\`
 export default () => state.num = 0;

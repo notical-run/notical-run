@@ -1,6 +1,7 @@
 import { getQuickVM } from './quickjs';
 import { createEffect, createRoot } from 'solid-js';
 import { Result } from './result';
+import { QuickJSHandle, Scope, VmCallResult } from 'quickjs-emscripten-core';
 
 export const evalExpression = async (
   code: string,
@@ -8,18 +9,30 @@ export const evalExpression = async (
 ) => {
   const quickVM = await getQuickVM();
 
+  const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> =>
+    Scope.withScope(scope => {
+      try {
+        if (result.error) {
+          throw new Error(quickVM.dump(scope.manage(result.error)));
+        }
+
+        if (quickVM.typeof(result.value) === 'function') {
+          return Result.ok(() => {
+            quickVM.callFunction(result.value, quickVM.global);
+          });
+        }
+
+        return Result.ok(quickVM.dump(scope.manage(result.value)));
+      } catch (error) {
+        console.error(error);
+        return Result.err(error as Error);
+      }
+    });
+
   createRoot(_ => {
     createEffect(() => {
-      const result = quickVM.evalCode(code, 'global.js', { strict: false });
-      try {
-        const valueHandle = quickVM.unwrapResult(result);
-        const value = quickVM.dump(valueHandle);
-        valueHandle.dispose();
-        onResult(Result.ok(value));
-      } catch (e) {
-        console.error(e);
-        onResult(Result.err(e as Error));
-      }
+      const evalResult = quickVM.evalCode(code, 'global.js', { strict: false });
+      onResult(toResult(evalResult));
     });
   });
 };

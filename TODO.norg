@@ -6,7 +6,7 @@
    - (x) Use signals for evaluation
    - (x) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
    - (x) Fix issue with solidjs root
-   - ( ) Inline code is button if returning function
+   - (x) Inline code is button if returning function
 ** View manipulation
    - ( ) Insert below curent block
    - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
@@ -16,6 +16,9 @@
    - (x) Figure out how to do buttons
    - ( ) Look for better markdown editing experience
    - ( ) Save the doc in localstorage for testing persistance
+
+* Bugs
+  - ( ) Fix issue with inline buttons needing 2 clicks sometimes
 
 * Later
 ** Evaluation
@@ -33,7 +36,8 @@
    - ( ) oauth
    - ( ) y.js document storage + retrieval via http
    - ( ) email/pass auth
-   - ( ) workspace > notes
+   - ( ) workspace > notes. Note refernced as `@workspace/note-name`
+   - ( ) For imports, can only import note if note is in same workspace or is public
    - ( ) invite to workspace
    - ( ) hocuspocus or y-websocket server for realtime?
    - ( ) multi-user collaboration/multi-cursor features
