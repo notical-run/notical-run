@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
+import { userRoute } from './modules/user/user.route';
+import { workspaceRoute } from './modules/workspace/workspace.route';
 
-const workspaceRoute = new Hono()
-  .get(c => c.text('list of workspace'))
-  .post(c => c.text('posted workspace'));
-
-export const apiRoute = new Hono().route('/workspace', workspaceRoute);
+export const apiRoute = new Hono()
+  .route('/workspace', workspaceRoute)
+  .route('/users', userRoute);

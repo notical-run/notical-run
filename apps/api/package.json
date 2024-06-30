@@ -3,6 +3,11 @@
   "scripts": {
     "check": "bun check:ts",
     "check:ts": "tsc",
+    "drizzle-kit": "drizzle-kit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:drop": "drizzle-kit drop",
+    "db:reset": "bun ./scripts/reset-db.ts",
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
