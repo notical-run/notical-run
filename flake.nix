@@ -14,6 +14,8 @@
             typescript
             nodePackages.typescript-language-server
             tailwindcss-language-server
+            just
+            postgresql
           ];
         };
       });
