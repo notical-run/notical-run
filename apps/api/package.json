@@ -1,5 +1,5 @@
 {
-  "name": "@omni-notes/api",
+  "name": "@notical/api",
   "scripts": {
     "check": "bun check:ts",
     "check:ts": "tsc",

@@ -1,2 +1,2 @@
-# OmniNote.run
+# notical.run
 

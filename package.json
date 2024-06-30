@@ -1,12 +1,12 @@
 {
-  "name": "omni-notes",
+  "name": "notical-run",
   "private": true,
   "workspaces": [
     "apps/*"
   ],
   "scripts": {
-    "app": "bun --filter '@omni-notes/app'",
-    "api": "bun --filter '@omni-notes/api'",
+    "app": "bun --filter '@notical/app'",
+    "api": "bun --filter '@notical/api'",
     "check": "bun --filter '*' check && bun check:lint",
     "check:lint": "eslint './apps/**/*'",
     "format": "prettier --write './apps/*/{src,tests}/**/*.{ts,html,css}'"
