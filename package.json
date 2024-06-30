@@ -5,7 +5,8 @@
     "apps/*"
   ],
   "scripts": {
-    "dev:app": "bun --filter '@omni-notes/app' dev",
+    "app": "bun --filter '@omni-notes/app'",
+    "api": "bun --filter '@omni-notes/api'",
     "check": "bun --filter '*' check && bun check:lint",
     "check:lint": "eslint './apps/**/*'",
     "format": "prettier --write './apps/*/{src,tests}/**/*.{ts,html,css}'"
