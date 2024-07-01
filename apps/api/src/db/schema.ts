@@ -44,6 +44,7 @@ export const Note = pgTable('notes', {
   ...timestampColumns(),
 });
 export const noteRelations = relations(Note, ({ one }) => ({
+  author: one(User, { fields: [Note.authorId], references: [User.id] }),
   workspace: one(Workspace, {
     fields: [Note.workspaceId],
     references: [Workspace.id],
