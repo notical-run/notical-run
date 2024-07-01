@@ -29,6 +29,16 @@ const resetDB = async () => {
 
   const queryClient = postgres(connectionStr, { max: 1 });
   const db = drizzle(queryClient);
+  // Force disconnect all connections to the database
+  await db.execute(
+    sql.raw(
+      `SELECT pg_terminate_backend(pg_stat_activity.pid)
+       FROM pg_stat_activity
+       WHERE pg_stat_activity.datname = '${dbName}'
+       AND pid <> pg_backend_pid();`,
+    ),
+  );
+  // Reset db
   await db.execute(sql.raw(`DROP DATABASE IF EXISTS "${dbName}";`));
   await db.execute(sql.raw(`CREATE DATABASE "${dbName}";`));
   await queryClient.end();

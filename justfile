@@ -17,5 +17,8 @@ db-seed: (exec "bun" "run" "./seeds/dev.ts")
 db-shell:
   psql 'postgres://postgres:postgres@localhost:5432/notical-run'
 
+api-restart:
+  docker compose restart api
+
 client:
   bun app dev
