@@ -11,6 +11,7 @@
        devShell = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
             bun
+            # deno
             typescript
             nodePackages.typescript-language-server
             tailwindcss-language-server

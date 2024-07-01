@@ -1,15 +1,9 @@
 * Curent
+  - ( ) Switch to DENO?
 ** Evaluation
-   - (x) Use quickjs for runtime
-   - (x) Evaluate code blocks
-   - (x) Exports as buttons
-   - (x) Use signals for evaluation
-   - (x) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
-   - (x) Fix issue with solidjs root
-   - (x) Inline code is button if returning function
+   - ( ) 
 ** Backend
-   - (x) API setup
-   - ( ) workspace->notes. Note referenced as `@workspace/note-name`
+   - ( ) Note referenced as `@workspace/note-name`
    - ( ) y.js document storage + retrieval via http
    - ( ) github oauth
 ** View manipulation
@@ -18,7 +12,12 @@
    - ( ) Limited node querying
    - ( ) Insert near queried node
 ** Others
-   - (x) Figure out how to do buttons
+   - ( ) Routing
+   - ( ) Workspace list page
+   - ( ) Notes list page
+   - ( ) Note view
+   - ( ) Testing api with test containers
+   - ( ) Collapsable code blocks
 
 * Bugs
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
@@ -51,22 +50,44 @@
 ** Other
    - ( ) freeze `internal`
 
-* Feature set
+* Supported features/ideas
   - ( ) Note based calculator
-  - ( ) Task management + scheduler?
-  - ( ) Email reminders for tasks?
-  - ( ) Draft and send custom emails (mail client)?
+  - ( ) Simplified canvas api for drawing
+  - ( ) Task management
+  - ( ) Datetime picker
   - ( ) Fetch and present external data
-  - ( ) 
+  - ( ) Draft and send custom emails (mail client)?
+  - ( ) Email reminders for tasks?
+  - ( ) Read section of page
+  - ( ) Make requests to openai (how to manage secrets?)
 
 * Improvements
-  - (x) Value/Error distinction in result decoration
   - ( ) Improve markdown editing experience
   - ( ) Truncate the inline result decoration
   - ( ) Debounce evaluation checks
 
 * Maybe
+  - ( ) Slash commands
+  - ( ) Block-ey UI with drag and drop
   - ( ) Support images with image upload
   - ( ) Debug view for showing current state
   - ( ) Print to PDF (including results)
-  - ( ) Importing js from CDN? (probably not)
+  - ( ) Consider giving up markdown?
+  - ( ) Importing js from CDN? (naah)
+
+* Done
+** Evaluation
+   - (x) Use quickjs for runtime
+   - (x) Evaluate code blocks
+   - (x) Exports as buttons
+   - (x) Use signals for evaluation
+   - (x) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
+   - (x) Fix issue with solidjs root
+   - (x) Inline code is button if returning function
+** Backend
+   - (x) API setup
+   - (x) workspace->notes api
+** Improvements
+  - (x) Value/Error distinction in result decoration
+** Others
+   - (x) Figure out how to do buttons
