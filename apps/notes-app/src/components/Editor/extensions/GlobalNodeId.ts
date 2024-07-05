@@ -14,7 +14,7 @@ export const GlobalNodeId = Node.create({
         attributes: {
           nodeId: {
             default: null,
-            rendered: false,
+            rendered: true,
             keepOnSplit: false,
           },
         },
