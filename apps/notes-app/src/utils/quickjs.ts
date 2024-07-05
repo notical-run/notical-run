@@ -34,6 +34,7 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
   }
 
   const internalsKey = '_internals';
+  const debugKey = 'debug';
   const stateKey = 'state';
 
   if (!quickVM) {
@@ -50,10 +51,8 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
       .unwrapResult(
         quickVM.evalCode(
           `;(() => {
-  Object.defineProperty(globalThis, '${internalsKey}', {
-    value: {},
-    writable: false,
-  });
+  Object.defineProperty(globalThis, '${internalsKey}', { value: {}, writable: false });
+  Object.defineProperty(globalThis, '${debugKey}', { value: {}, writable: false });
 
   const proxyState = new Proxy({}, {
     get(target, key) {
@@ -63,13 +62,10 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
     set(target, key, value) {
       ${internalsKey}.setState(key, value);
       target[key] = value;
-      return value;
+      return true;
     },
   });
-  Object.defineProperty(globalThis, '${stateKey}', {
-    value: proxyState,
-    writable: false,
-  });
+  Object.defineProperty(globalThis, '${stateKey}', { value: proxyState, writable: false });
 })();`,
         ),
       )
@@ -79,57 +75,82 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
   const getInternal = () =>
     quickVM && quickVM.getProp(quickVM.global, internalsKey);
 
+  const getDebug = () => quickVM && quickVM.getProp(quickVM.global, debugKey);
+
   Scope.withScope(scope => {
     if (!quickVM) return;
 
     const internals = scope.manage(getInternal()!);
+    const debug = scope.manage(getDebug()!);
 
-    const setStateHandle = scope.manage(
-      quickVM.newFunction('setState', (keyH, valH) => {
-        const key = quickVM?.dump(keyH);
-        const val = quickVM?.dump(valH);
-        if (!stateStore[key]) {
-          stateStore[key] = createSignal(val);
-        } else {
-          stateStore[key][1](val);
-        }
-        keyH.dispose();
-        valH.dispose();
-      }),
-    );
-    quickVM.setProp(internals, 'setState', setStateHandle);
+    const getSignal = (key: string) => {
+      if (!stateStore[key]) {
+        stateStore[key] = createSignal(undefined);
+      }
+      return stateStore[key];
+    };
 
-    const getStateHandle = scope.manage(
-      quickVM.newFunction('getState', keyH => {
-        if (!quickVM) return;
-        const key = quickVM?.dump(keyH);
-        if (!stateStore[key]) {
-          stateStore[key] = createSignal(undefined);
-        }
-        const val = stateStore[key][0]();
-        const result = quickVM?.evalCode(JSON.stringify(val) ?? 'null');
-        return quickVM?.unwrapResult(result);
-      }),
-    );
-    quickVM.setProp(internals, 'getState', getStateHandle);
+    quickVM
+      .newFunction('_internalSetState', (keyH, valH) => {
+        return Scope.withScope(scope => {
+          if (!quickVM) return;
+          const key = quickVM.dump(scope.manage(keyH));
+          const val = quickVM.dump(scope.manage(valH));
+          const [_, setState] = getSignal(key);
+          setState(val);
+        });
+      })
+      .consume(setStateHandle => {
+        quickVM!.setProp(internals, 'setState', setStateHandle);
+      });
+
+    quickVM
+      .newFunction('_internalGetState', keyH => {
+        return Scope.withScope(scope => {
+          if (!quickVM) return;
+          const key = quickVM.dump(scope.manage(keyH));
+          const [getState] = getSignal(key);
+          const val = getState();
+          const result = quickVM.evalCode(JSON.stringify(val) ?? 'null');
+          return quickVM?.unwrapResult(result);
+        });
+      })
+      .consume(getStateHandle => {
+        quickVM!.setProp(internals, 'getState', getStateHandle);
+      });
 
     // Node Position
     const posHandle =
-      options?.pos !== undefined
+      typeof options?.pos === 'number'
         ? scope.manage(quickVM.newNumber(options?.pos))
         : quickVM.undefined;
     quickVM.setProp(internals, 'nodePos', posHandle);
 
-    const getPosUnder = quickVM.newFunction('below', () => {
-      return Scope.withScope(scope => {
-        if (!quickVM) return;
-        const internal = scope.manage(getInternal()!);
-        const nodePosHandle = quickVM.getProp(internal, 'nodePos');
-        const nodePos = quickVM.dump(nodePosHandle);
-        return quickVM.newNumber((nodePos ?? 0) + 1);
+    quickVM
+      .newFunction('below', () => {
+        return Scope.withScope(scope => {
+          if (!quickVM) return;
+          const internal = scope.manage(getInternal()!);
+          const nodePosHandle = quickVM.getProp(internal, 'nodePos');
+          const nodePos = quickVM.dump(nodePosHandle);
+          return quickVM.newNumber((nodePos ?? 0) + 1);
+        });
+      })
+      .consume(getBelowHandle => {
+        quickVM!.setProp(quickVM!.global, 'below', getBelowHandle);
       });
-    });
-    quickVM.setProp(quickVM.global, 'below', getPosUnder);
+
+    quickVM
+      .newFunction('debugLog', (...args) => {
+        return Scope.withScope(scope => {
+          if (!quickVM) return;
+          const argsVal = args.map(arg => quickVM!.dump(scope.manage(arg)));
+          console.log('[vm]', ...argsVal);
+        });
+      })
+      .consume(getBelowHandle => {
+        quickVM!.setProp(debug, 'log', getBelowHandle);
+      });
   });
 
   return quickVM;

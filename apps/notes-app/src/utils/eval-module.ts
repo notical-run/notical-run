@@ -29,9 +29,12 @@ export const evalModule = async (
 
     const exports = Object.fromEntries(
       keys.map(key => {
-        const funcH = quickVM.getProp(valueHandle, key);
         const func = () =>
-          quickVM?.unwrapResult(quickVM.callFunction(funcH, quickVM.undefined));
+          quickVM.getProp(valueHandle, key).consume(funcH => {
+            quickVM!
+              .unwrapResult(quickVM!.callFunction(funcH, quickVM.global))
+              .consume(() => {});
+          });
         return [key, func];
       }),
     );

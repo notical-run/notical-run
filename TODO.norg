@@ -2,15 +2,15 @@
   - ( ) Switch to DENO?
 ** Evaluation
    - ( ) 
-** Backend
-   - ( ) Note referenced as `@workspace/note-name`
-   - ( ) y.js document storage + retrieval via http
-   - ( ) github oauth
 ** View manipulation
    - ( ) Insert below curent block
    - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
    - ( ) Limited node querying
    - ( ) Insert near queried node
+** Backend
+   - ( ) Note referenced as `@workspace/note-name`
+   - ( ) y.js document storage + retrieval via http
+   - ( ) github oauth
 ** Others
    - ( ) Routing
    - ( ) Workspace list page
@@ -21,6 +21,7 @@
 
 * Bugs
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
+  - ( ) Fix memory leak with inline code
 
 * Later
 ** Evaluation
