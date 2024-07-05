@@ -1,12 +1,13 @@
 * Curent
   - ( ) Switch to DENO?
 ** Evaluation
-   - ( ) 
-** View manipulation
-   - ( ) Insert below curent block
-   - ( ) Capturing nodes with `capture.below('listItems')` & `state.listItems`
-   - ( ) Limited node querying
-   - ( ) Insert near queried node
+   - (x) Get node pos/target
+   - (x) Insert markdown
+   - ( ) Hide native values from preview
+   - ( ) Re-evaluate all `here` on document change
+   - ( ) Show decoration
+   - ( ) Updates to state/pos should update insertion instead of re-inserting
+   - ( ) Updates to pos should update previous insertion (track pos)
 ** Backend
    - ( ) Note referenced as `@workspace/note-name`
    - ( ) y.js document storage + retrieval via http
@@ -20,6 +21,7 @@
    - ( ) Collapsable code blocks
 
 * Bugs
+  - (x) Fix issue with state initialization in code blocks
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
   - ( ) Fix memory leak with inline code
 

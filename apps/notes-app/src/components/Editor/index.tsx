@@ -15,15 +15,28 @@ Some inline \`state.num\`
 
 \`() => state.num = 42\`
 
-\`_internals.nodePos\`
-
-\`below()\`
+\`state.hook1 = here\`
 
 \`\`\`
-export default () => state.num = 0;
+state.num = 0;
+
+export default () => {
+  insert.below(state.hook1, 'Foobar. This text goes below.');
+};
 export const increment = () => state.num = state.num + 1;
 export const decrement = () => state.num = state.num - 1;
+
+export const addTask = () => {
+  const date = new Date().toDateString();
+  insert.below(state.taskList, \`- [ ] Task (**created on \${date}**)\`);
+};
 \`\`\`
+
+
+---
+
+#### My task list \`state.taskList = here\`
+
 `;
 
 export const Editor = () => {

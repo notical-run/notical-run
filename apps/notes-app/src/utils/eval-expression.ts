@@ -1,7 +1,7 @@
 import { getQuickVM, VMEnvOptions } from './quickjs';
 import { createEffect, createRoot } from 'solid-js';
 import { Result } from './result';
-import { QuickJSHandle, Scope, VmCallResult } from 'quickjs-emscripten-core';
+import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 
 export const evalExpression = async (
   code: string,
@@ -10,29 +10,41 @@ export const evalExpression = async (
 ) => {
   const quickVM = await getQuickVM(options);
 
-  const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> =>
-    Scope.withScope(scope => {
-      try {
-        if (result.error) {
-          throw quickVM.dump(scope.manage(result.error));
-        }
-
-        if (quickVM.typeof(result.value) === 'function') {
-          return Result.ok(() => {
-            quickVM.callFunction(result.value, quickVM.global);
-          });
-        }
-
-        return Result.ok(quickVM.dump(scope.manage(result.value)));
-      } catch (error) {
-        console.error(error);
-        return Result.err(error as Error);
+  const toResult = (
+    result: VmCallResult<QuickJSHandle>,
+  ): Result<Error, any> => {
+    try {
+      if (result.error) {
+        throw result.error.consume(quickVM.dump);
       }
-    });
+
+      if (quickVM.typeof(result.value) === 'function') {
+        return Result.ok(() => {
+          quickVM.callFunction(result.value, quickVM.global);
+        });
+      }
+
+      return Result.ok(result.value.consume(quickVM.dump));
+    } catch (error) {
+      console.error(error);
+      return Result.err(error as Error);
+    }
+  };
 
   createRoot(_ => {
     createEffect(() => {
-      const evalResult = quickVM.evalCode(code, 'global.js', { strict: false });
+      const hereRef = JSON.stringify({
+        pos: options.pos,
+        nodeSize: options.nodeSize,
+        id: options.id,
+      });
+      const evalResult = quickVM.evalCode(
+        `{ const here = ${hereRef}; ${code} }`,
+        'global.js',
+        {
+          strict: false,
+        },
+      );
       onResult(toResult(evalResult));
     });
   });

@@ -5,12 +5,17 @@ import {
   newVariant,
   RELEASE_SYNC,
   Scope,
+  DefaultIntrinsics,
 } from 'quickjs-emscripten';
 import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
 import { createSignal, type Signal } from 'solid-js';
+import { Editor } from '@tiptap/core';
 
 export type VMEnvOptions = {
+  id: string;
   pos: number;
+  nodeSize: number;
+  withEditor: (fn: (editor: Editor) => void) => void;
 };
 
 const variant = newVariant(RELEASE_SYNC, { wasmLocation });
@@ -27,7 +32,7 @@ const stateStore: Record<string, Signal<any>> = {};
 let quickRuntime: QuickJSRuntime | undefined;
 let quickVM: QuickJSContext | undefined;
 
-export const getQuickVM = async (options?: VMEnvOptions) => {
+export const getQuickVM = async (options: VMEnvOptions) => {
   const quickJS = await getQuickJS();
   if (!quickJS) {
     throw new Error('No quickjs buddy');
@@ -36,6 +41,8 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
   const internalsKey = '_internals';
   const debugKey = 'debug';
   const stateKey = 'state';
+  const showKey = 'show';
+  const insertKey = 'insert';
 
   if (!quickVM) {
     quickRuntime = quickJS.newRuntime();
@@ -53,10 +60,11 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
           `;(() => {
   Object.defineProperty(globalThis, '${internalsKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${debugKey}', { value: {}, writable: false });
+  Object.defineProperty(globalThis, '${showKey}', { value: {}, writable: false });
+  Object.defineProperty(globalThis, '${insertKey}', { value: {}, writable: false });
 
   const proxyState = new Proxy({}, {
     get(target, key) {
-      if (key === 'toJSON') return target;
       return ${internalsKey}.getState(key);
     },
     set(target, key, value) {
@@ -77,11 +85,17 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
 
   const getDebug = () => quickVM && quickVM.getProp(quickVM.global, debugKey);
 
+  // const getShow = () => quickVM && quickVM.getProp(quickVM.global, showKey);
+
+  const getInsert = () => quickVM && quickVM.getProp(quickVM.global, insertKey);
+
   Scope.withScope(scope => {
     if (!quickVM) return;
 
     const internals = scope.manage(getInternal()!);
     const debug = scope.manage(getDebug()!);
+    // const show = scope.manage(getShow()!);
+    const insert = scope.manage(getInsert()!);
 
     const getSignal = (key: string) => {
       if (!stateStore[key]) {
@@ -106,47 +120,39 @@ export const getQuickVM = async (options?: VMEnvOptions) => {
 
     quickVM
       .newFunction('_internalGetState', keyH => {
-        return Scope.withScope(scope => {
-          if (!quickVM) return;
-          const key = quickVM.dump(scope.manage(keyH));
-          const [getState] = getSignal(key);
-          const val = getState();
-          const result = quickVM.evalCode(JSON.stringify(val) ?? 'null');
-          return quickVM?.unwrapResult(result);
-        });
+        if (!quickVM) return;
+        const key = keyH.consume(quickVM.dump);
+        const [getState] = getSignal(key);
+        const val = getState();
+        const result = quickVM.evalCode(
+          `(${JSON.stringify(val ?? null) ?? 'null'})`,
+        );
+        return quickVM?.unwrapResult(result);
       })
       .consume(getStateHandle => {
         quickVM!.setProp(internals, 'getState', getStateHandle);
       });
 
-    // Node Position
-    const posHandle =
-      typeof options?.pos === 'number'
-        ? scope.manage(quickVM.newNumber(options?.pos))
-        : quickVM.undefined;
-    quickVM.setProp(internals, 'nodePos', posHandle);
-
     quickVM
-      .newFunction('below', () => {
-        return Scope.withScope(scope => {
-          if (!quickVM) return;
-          const internal = scope.manage(getInternal()!);
-          const nodePosHandle = quickVM.getProp(internal, 'nodePos');
-          const nodePos = quickVM.dump(nodePosHandle);
-          return quickVM.newNumber((nodePos ?? 0) + 1);
+      .newFunction('_insertBelow', (hookH, textH) => {
+        const hook = hookH?.consume(quickVM!.dump);
+        const text = textH?.consume(quickVM!.dump);
+
+        if (!hook || typeof hook.pos !== 'number')
+          throw new Error('Invalid target given to insert.below');
+
+        options.withEditor(editor => {
+          editor.commands.insertContentAt(hook.pos + hook.nodeSize + 1, text);
         });
       })
-      .consume(getBelowHandle => {
-        quickVM!.setProp(quickVM!.global, 'below', getBelowHandle);
+      .consume(insertMarkdownBelowHandle => {
+        quickVM!.setProp(insert, 'below', insertMarkdownBelowHandle);
       });
 
     quickVM
       .newFunction('debugLog', (...args) => {
-        return Scope.withScope(scope => {
-          if (!quickVM) return;
-          const argsVal = args.map(arg => quickVM!.dump(scope.manage(arg)));
-          console.log('[vm]', ...argsVal);
-        });
+        const argsVal = args.map(arg => arg.consume(quickVM!.dump));
+        console.log('[vm]', ...argsVal);
       })
       .consume(getBelowHandle => {
         quickVM!.setProp(debug, 'log', getBelowHandle);

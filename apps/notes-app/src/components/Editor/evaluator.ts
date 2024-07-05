@@ -27,6 +27,8 @@ const nodeCodeCache = new Map<string, string>();
 export const evaluateAllNodes = (editor: Editor) => {
   console.log('>>>> on update...', editor.state.doc.toJSON());
 
+  const withEditor = (fn: (f: Editor) => void) => fn(editor);
+
   const walkNode = async (node: Node, pos: number) => {
     // Code block
     if (node.type.name === 'codeBlock' && isEvalable(node)) {
@@ -35,11 +37,12 @@ export const evaluateAllNodes = (editor: Editor) => {
 
       nodeCodeCache.set(node.attrs.nodeId, node.textContent);
 
-      const exports = await evalModule(
-        node.textContent || 'null',
-        node.attrs.nodeId,
-        { pos },
-      );
+      const exports = await evalModule(node.textContent || 'null', {
+        pos,
+        id: node.attrs.nodeId,
+        nodeSize: node.nodeSize,
+        withEditor,
+      });
 
       const tr = editor.state.tr;
       editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
@@ -67,7 +70,12 @@ export const evaluateAllNodes = (editor: Editor) => {
         editor.view.dispatch(tr);
       };
 
-      await evalExpression(node.text || 'null', onResult, { pos });
+      await evalExpression(node.text || 'null', onResult, {
+        pos,
+        id: nodeMark.attrs.nodeId,
+        nodeSize: node.nodeSize,
+        withEditor,
+      });
     }
   };
 
