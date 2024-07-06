@@ -15,7 +15,7 @@ Some inline \`state.num\`
 
 \`() => state.num = 42\`
 
-\`state.hook1 = here\`
+\`state.hook1 = here()\`
 
 \`\`\`
 state.num = 0;
@@ -35,7 +35,8 @@ export const addTask = () => {
 
 ---
 
-#### My task list \`state.taskList = here\`
+#### My task list \`state.taskList = here()\`
+
 
 `;
 

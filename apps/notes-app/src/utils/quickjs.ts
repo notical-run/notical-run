@@ -14,7 +14,7 @@ export type VMEnvOptions = {
   id: string;
   pos: number;
   nodeSize: number;
-  withEditor: (fn: (editor: Editor) => void) => void;
+  withEditor: <R>(fn: (editor: Editor) => R) => R;
 };
 
 const variant = newVariant(RELEASE_SYNC, { wasmLocation });
@@ -27,6 +27,9 @@ export async function getQuickJS() {
 }
 
 const stateStore: Record<string, Signal<any>> = {};
+
+const contentUpdateSignal = createSignal(false);
+export const onContentUpdate = () => contentUpdateSignal[1](b => !b);
 
 let quickRuntime: QuickJSRuntime | undefined;
 let quickVM: QuickJSContext | undefined;
@@ -147,6 +150,18 @@ export const getQuickVM = async (options: VMEnvOptions) => {
       })
       .consume(insertMarkdownBelowHandle => {
         quickVM!.setProp(insert, 'below', insertMarkdownBelowHandle);
+      });
+
+    quickVM
+      .newFunction('_listenToUpdate', () => {
+        contentUpdateSignal[0]();
+      })
+      .consume(insertMarkdownBelowHandle => {
+        quickVM!.setProp(
+          internals,
+          'listenToUpdate',
+          insertMarkdownBelowHandle,
+        );
       });
 
     quickVM

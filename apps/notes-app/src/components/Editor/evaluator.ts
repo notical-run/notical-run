@@ -3,6 +3,7 @@ import type { Editor } from '@tiptap/core';
 import { evalExpression } from '../../utils/eval-expression';
 import { evalModule } from '../../utils/eval-module';
 import { Result } from '../../utils/result';
+import { onContentUpdate } from '../../utils/quickjs';
 
 const isEvalable = (node: Node) =>
   [null, 'javascript'].includes(node.attrs.language);
@@ -26,8 +27,9 @@ const nodeCodeCache = new Map<string, { code: string; cleanup: () => void }>();
 
 export const evaluateAllNodes = (editor: Editor) => {
   console.log('>>>> on update...', editor.state.doc.toJSON());
+  onContentUpdate();
 
-  const withEditor = (fn: (f: Editor) => void) => fn(editor);
+  const withEditor = <R>(fn: (f: Editor) => R) => fn(editor);
 
   const walkNode = async (node: Node, pos: number) => {
     // Code block

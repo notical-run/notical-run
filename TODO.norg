@@ -3,7 +3,7 @@
    - (x) Get node pos/target
    - (x) Insert markdown
    - (x) Hide native values from preview
-   - ( ) Re-evaluate all `here` on document change
+   - (x) Re-evaluate all `here` on document change
    - ( ) Show decoration
    - ( ) Updates to state/pos should update insertion instead of re-inserting
    - ( ) Updates to pos should update previous insertion (track pos)
