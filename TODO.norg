@@ -2,7 +2,7 @@
 ** Evaluation
    - (x) Get node pos/target
    - (x) Insert markdown
-   - ( ) Hide native values from preview
+   - (x) Hide native values from preview
    - ( ) Re-evaluate all `here` on document change
    - ( ) Show decoration
    - ( ) Updates to state/pos should update insertion instead of re-inserting

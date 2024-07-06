@@ -5,7 +5,6 @@ import {
   newVariant,
   RELEASE_SYNC,
   Scope,
-  DefaultIntrinsics,
 } from 'quickjs-emscripten';
 import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
 import { createSignal, type Signal } from 'solid-js';
@@ -63,8 +62,9 @@ export const getQuickVM = async (options: VMEnvOptions) => {
   Object.defineProperty(globalThis, '${showKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${insertKey}', { value: {}, writable: false });
 
-  const proxyState = new Proxy({}, {
+  const proxyState = new Proxy({ __native__: 'state' }, {
     get(target, key) {
+      if (key === '__native__') return target.__native__;
       return ${internalsKey}.getState(key);
     },
     set(target, key, value) {

@@ -14,8 +14,12 @@ declare module '@tiptap/core' {
 }
 
 const toEvaluatedString = (result: any) => {
-  if (result === undefined) return null;
+  if (result === undefined) return 'undefined';
   try {
+    if (typeof result?.__native__ === 'string') {
+      if (result?.__native__) return `[native ${result?.__native__}]`;
+      return null;
+    }
     return JSON.stringify(result);
   } catch (_) {
     return result.toString();
@@ -69,8 +73,12 @@ export const InlineCode = Code.extend({
         });
       }
 
+      const evalString = toEvaluatedString(result.value);
+
+      if (evalString === null) return null;
+
       return Object.assign(document.createElement('code'), {
-        textContent: toEvaluatedString(result.value),
+        textContent: evalString,
         className: [
           'bg-violet-200 text-slate-500',
           'before:content-[":"] before:pr-1 after:content-none pr-1',
@@ -90,8 +98,11 @@ export const InlineCode = Code.extend({
               if (!mark || mark.attrs.result === null) return;
 
               decorations.push(
-                Decoration.widget(pos + node.nodeSize, () =>
-                  getDecoration(mark.attrs.result),
+                Decoration.widget(
+                  pos + node.nodeSize,
+                  () =>
+                    getDecoration(mark.attrs.result) ??
+                    document.createElement('span'),
                 ),
               );
             });

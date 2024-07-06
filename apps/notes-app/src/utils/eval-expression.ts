@@ -46,6 +46,7 @@ export const evalExpression = async (
         pos: options.pos,
         nodeSize: options.nodeSize,
         id: options.id,
+        __native__: '',
       });
       const evalResult = quickVM.evalCode(
         `{ const here = ${hereRef}; ${code} }`,
