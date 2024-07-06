@@ -1,5 +1,4 @@
 * Curent
-  - ( ) Switch to DENO?
 ** Evaluation
    - (x) Get node pos/target
    - (x) Insert markdown
@@ -22,8 +21,8 @@
 
 * Bugs
   - (x) Fix issue with state initialization in code blocks
+  - (x) Fix memory leak with inline code
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
-  - ( ) Fix memory leak with inline code
 
 * Later
 ** Evaluation

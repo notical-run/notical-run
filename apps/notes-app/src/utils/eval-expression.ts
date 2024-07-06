@@ -5,8 +5,15 @@ import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 
 export const evalExpression = async (
   code: string,
-  onResult: (res: Result<Error, any>) => void,
-  options: VMEnvOptions,
+  {
+    options,
+    onResult,
+    handleCleanup,
+  }: {
+    onResult: (res: Result<Error, any>) => void;
+    handleCleanup: (cleanup: () => void) => void;
+    options: VMEnvOptions;
+  },
 ) => {
   const quickVM = await getQuickVM(options);
 
@@ -31,7 +38,9 @@ export const evalExpression = async (
     }
   };
 
-  createRoot(_ => {
+  createRoot(dispose => {
+    handleCleanup(dispose);
+
     createEffect(() => {
       const hereRef = JSON.stringify({
         pos: options.pos,
