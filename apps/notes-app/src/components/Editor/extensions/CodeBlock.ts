@@ -3,6 +3,9 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import { Result } from '../../../utils/result';
+import html from 'solid-js/html';
+import { Node } from '@tiptap/pm/model';
+import clsx from 'clsx';
 
 export const CodeBlock = CodeBlockLowlight.extend({
   name: 'codeBlock',
@@ -11,6 +14,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
     return {
       ...this.parent!(),
       exports: { default: null, rendered: false, keepOnSplit: false },
+      collapsed: { default: false, rendered: true, keepOnSplit: true },
     };
   },
 
@@ -24,35 +28,101 @@ export const CodeBlock = CodeBlockLowlight.extend({
     });
   },
 
+  addNodeView() {
+    return ({ node, HTMLAttributes, getPos, editor }) => {
+      if (typeof getPos !== 'function') return {};
+      const { collapsed } = node.attrs;
+
+      const toggleCollapsed = () => {
+        const tr = editor.state.tr;
+        editor.view.dispatch(
+          tr.setNodeMarkup(getPos(), undefined, {
+            ...node?.attrs,
+            collapsed: !collapsed,
+          }),
+        );
+      };
+
+      const code = html`<code></code>`;
+      // prettier-ignore
+      const wrapper = html`<div data-collapsed="${node.attrs.collapsed}">
+        <button
+          class="${clsx(
+            'block w-full bg-gray-200 px-2 py-1',
+            'text-slate-500 text-left text-xs',
+            {
+              '-mb-6 rounded-t': !collapsed,
+              'rounded': collapsed,
+            },
+          )}"
+          onClick=${toggleCollapsed}
+        >
+          ${collapsed ? '▶' : '▼'}
+        </button>
+
+        <pre
+          class="${clsx(
+            'rounded-none rounded-b',
+            this.options.HTMLAttributes.class,
+            HTMLAttributes.class,
+            { hidden: collapsed },
+          )}"
+        >
+          ${code}
+        </pre>
+      </div>` as HTMLElement;
+
+      return {
+        dom: wrapper,
+        contentDOM: code,
+        update: updatedNode => {
+          // TODO: Update state here instead of re-creating dom
+          if (updatedNode.type !== this.type) return false;
+          return false;
+        },
+      };
+    };
+  },
+
   addProseMirrorPlugins() {
-    const getDecoration = (exports: Result<Error, any>) => {
+    const getDecoration = (node: Node) => {
+      const { exports, collapsed } = node.attrs;
+
       if (Result.isErr(exports))
-        return Object.assign(document.createElement('code'), {
-          textContent: `${exports.error}`,
-          className: [
+        return html`<code
+          class="${clsx(
             'bg-slate-900 text-red-500',
-            'block px-2 py-1 rounded-md -mt-5 after:content-none before:content-none',
-          ].join(' '),
-        });
+            'block px-2 py-1 after:content-none before:content-none mb-6',
+            {
+              'rounded-b mt-0': collapsed,
+              'rounded-md -mt-5': !collapsed,
+            },
+          )}"
+        >
+          ${`${exports.error}`}
+        </code>` as HTMLElement;
 
       const buttons = Object.entries(exports.value).map(([key, value]) => {
-        return Object.assign(document.createElement('button'), {
-          textContent: key,
-          className: [
-            'border border-slate-900 rounded-sm',
-            'text-sm text-slate-900',
+        return html`<button
+          class="${clsx(
+            'bg-violet-700 rounded-md',
+            'text-sm text-white',
             'py-0.5 px-1.5',
-          ].join(' '),
-          onclick: () => (value as any)(),
-        });
+          )}"
+          onclick=${() => (value as any)()}
+        >
+          ${key}
+        </button>` as HTMLElement;
       });
 
-      const domNode = Object.assign(document.createElement('div'), {
-        className: '-mt-4 flex justify-end gap-2',
-      });
-      domNode.append(...buttons);
-
-      return domNode;
+      return html`<div
+        class="${clsx(
+          'flex justify-end flex-wrap gap-2 mb-6',
+          collapsed ? 'mt-4' : '-mt-4',
+        )}"
+      >
+        ${buttons}
+      </div>` as HTMLElement;
     };
 
     return [
@@ -69,9 +139,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
             );
 
             const decorations = blocks.map(({ node, pos }) =>
-              Decoration.widget(pos + node.nodeSize, () =>
-                getDecoration(node.attrs.exports),
-              ),
+              Decoration.widget(pos + node.nodeSize, () => getDecoration(node)),
             );
 
             return DecorationSet.create(state.doc, decorations);

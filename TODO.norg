@@ -4,6 +4,7 @@
    - (x) Insert markdown
    - (x) Hide native values from preview
    - (x) Re-evaluate all `here` on document change
+   - ( ) `here()` for code blocks
    - ( ) Show decoration
    - ( ) Updates to state/pos should update insertion instead of re-inserting
    - ( ) Updates to pos should update previous insertion (track pos)
@@ -12,12 +13,13 @@
    - ( ) y.js document storage + retrieval via http
    - ( ) github oauth
 ** Others
+   - (x) Collapsable code blocks
+   - ( ) Prevent re-creating view on update for code block
    - ( ) Routing
    - ( ) Workspace list page
    - ( ) Notes list page
    - ( ) Note view
    - ( ) Testing api with test containers
-   - ( ) Collapsable code blocks
 
 * Bugs
   - (x) Fix issue with state initialization in code blocks

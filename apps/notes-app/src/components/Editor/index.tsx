@@ -33,8 +33,6 @@ export const addTask = () => {
 \`\`\`
 
 
----
-
 #### My task list \`state.taskList = here()\`
 
 
