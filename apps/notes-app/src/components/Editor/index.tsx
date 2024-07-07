@@ -3,6 +3,7 @@ import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
 import { onCleanup, onMount } from 'solid-js';
+import clsx from 'clsx';
 
 const testContent = `
 # Hello world
@@ -38,12 +39,26 @@ export const addTask = () => {
 
 `;
 
+const useDebounced = (func: any, wait: number) => {
+  let timeout: any;
+  return function (...args: any[]) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 export const Editor = () => {
   let element: HTMLElement | undefined;
   let editor: TiptapEditor | undefined;
 
+  const saveUpdate = useDebounced(() => {
+    if (editor)
+      localStorage.setItem('editor-state', JSON.stringify(editor.getJSON()));
+  }, 1000);
+
   onMount(() => {
-    const proseStyles = [
+    const editorClass = clsx(
+      'prose prose-base mx-auto focus:outline-none p-4 border border-gray-200',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
       'prose-h1:text-3xl',
       'prose-h2:text-2xl',
@@ -51,7 +66,7 @@ export const Editor = () => {
       'prose-h4:text-lg',
       'prose-h5:text-md prose-h5:text-slate-600',
       'prose-h6:text-sm prose-h6:text-slate-600',
-    ].join(' ');
+    );
 
     editor = new TiptapEditor({
       element: element,
@@ -59,7 +74,7 @@ export const Editor = () => {
       editorProps: {
         attributes: {
           spellcheck: 'false',
-          class: `prose prose-base mx-auto focus:outline-none p-4 border border-gray-200 ${proseStyles}`,
+          class: editorClass,
         },
       },
       onCreate: ({ editor }) => {
@@ -70,13 +85,22 @@ export const Editor = () => {
           );
         }
       },
-      onUpdate: ({ editor }) => evaluateAllNodes(editor),
+      onUpdate: ({ editor }) => {
+        evaluateAllNodes(editor);
+        saveUpdate();
+      },
       onDestroy() {
         // TODO: Cleanup created signals
       },
       content: testContent,
       // onTransaction: () => { editor = editor; },
     });
+
+    let storedJson = localStorage.getItem('editor-state');
+    storedJson = storedJson && JSON.parse(storedJson);
+    if (storedJson) {
+      editor.commands.setContent(storedJson);
+    }
   });
 
   onCleanup(() => {

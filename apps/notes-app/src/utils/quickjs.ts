@@ -51,6 +51,8 @@ export const getQuickVM = async (options: VMEnvOptions) => {
     quickRuntime.setModuleLoader((_modulePath: string) => {
       throw new Error('TODO: Import not implemented yet');
     });
+    quickRuntime.setMaxStackSize(10000);
+    quickRuntime.setMemoryLimit(1_000_000);
     quickVM = quickRuntime.newContext({
       ownedLifetimes: [quickRuntime],
     });

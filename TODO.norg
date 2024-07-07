@@ -4,11 +4,13 @@
    - (x) Insert markdown
    - (x) Hide native values from preview
    - (x) Re-evaluate all `here` on document change
+   - (x) Simple local storage persist for testing
    - ( ) `here()` for code blocks
    - ( ) Show decoration
    - ( ) Updates to state/pos should update insertion instead of re-inserting
    - ( ) Updates to pos should update previous insertion (track pos)
 ** Backend
+   - ( ) Switch to node+tsx temporarily?
    - ( ) Note referenced as `@workspace/note-name`
    - ( ) y.js document storage + retrieval via http
    - ( ) github oauth
@@ -25,11 +27,13 @@
   - (x) Fix issue with state initialization in code blocks
   - (x) Fix memory leak with inline code
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
+  - ( ) Debug random freezes / cpu spikes
 
 * Later
 ** Evaluation
    - ( ) Promise/async code eval
    - ( ) If export (or inline func) has args, ask user for input?
+   - ( ) Save state in the document?
 ** Modules
    - ( ) Allow `import`-ing other notes (provide state/behavior + exports?)
    - ( ) Button next to import stmnt to open imported note
@@ -53,6 +57,7 @@
    - ( ) Tagging users
 ** Other
    - ( ) freeze `internal`
+   - ( ) cleanup all signals/effects when exiting the editor
 
 * Supported features/ideas
   - ( ) Note based calculator
