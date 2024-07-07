@@ -16,7 +16,19 @@ export const noteRoute = new Hono()
     const workspaceId = c.req.param('workspaceId');
     const workspace = await db.query.Workspace.findFirst({
       where: eq(Workspace.id, workspaceId!),
-      with: { notes: {} },
+      with: {
+        notes: {
+          columns: {
+            id: true,
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          with: {
+            author: {},
+          },
+        },
+      },
     });
 
     return c.json(workspace?.notes ?? []);
