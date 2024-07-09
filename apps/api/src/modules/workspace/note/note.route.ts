@@ -8,14 +8,23 @@ export const noteRoute = new Hono()
     const noteId = c.req.param('noteId');
     const note = await db.query.Note.findFirst({
       where: eq(Note.id, noteId),
+      columns: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      with: {
+        author: {},
+      },
     });
 
     return c.json(note);
   })
   .get('/', async c => {
-    const workspaceId = c.req.param('workspaceId');
+    const slug = c.req.param('workspaceSlug')!;
     const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.id, workspaceId!),
+      where: eq(Workspace.slug, slug!),
       with: {
         notes: {
           columns: {

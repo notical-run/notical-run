@@ -28,6 +28,7 @@
   - (x) Fix memory leak with inline code
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
   - ( ) Debug random freezes / cpu spikes
+  - ( ) Fix memory leak
 
 * Later
 ** Evaluation

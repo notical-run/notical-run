@@ -5,11 +5,11 @@ import { Workspace } from '../../db/schema';
 import { noteRoute } from './note/note.route';
 
 export const workspaceRoute = new Hono()
-  .route('/:workspaceId/notes', noteRoute)
-  .get('/:workspaceId', async c => {
-    const workspaceId = c.req.param('workspaceId');
+  .route(':workspaceSlug/notes', noteRoute)
+  .get(':workspaceSlug', async c => {
+    const slug = c.req.param('workspaceSlug');
     const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.id, workspaceId),
+      where: eq(Workspace.slug, slug),
     });
 
     return c.json(workspace);

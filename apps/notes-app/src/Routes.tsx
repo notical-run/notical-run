@@ -9,7 +9,7 @@ export const routes: RouteDefinition[] = [
     component: Workspaces,
   },
   {
-    path: '/workspaces/:workspaceId/notes',
+    path: '/workspaces/:workspaceSlug/notes',
     component: WorkspaceNotes,
   },
   {

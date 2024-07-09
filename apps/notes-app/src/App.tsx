@@ -1,13 +1,11 @@
-import { Editor } from './components/Editor';
+import { QueryClientProvider } from '@tanstack/solid-query';
 import { Routes } from './Routes';
+import { queryClient } from './api/query-client';
 
 export const App = () => {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <Routes />
-      {/* <div class="p-2"> */}
-      {/*   <Editor /> */}
-      {/* </div> */}
-    </div>
+    </QueryClientProvider>
   );
 };
