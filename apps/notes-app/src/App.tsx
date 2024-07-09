@@ -1,11 +1,13 @@
 import { Editor } from './components/Editor';
+import { Routes } from './Routes';
 
 export const App = () => {
   return (
-    <main>
-      <div class="p-2">
-        <Editor />
-      </div>
-    </main>
+    <div>
+      <Routes />
+      {/* <div class="p-2"> */}
+      {/*   <Editor /> */}
+      {/* </div> */}
+    </div>
   );
 };

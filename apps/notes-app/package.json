@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@notical/api": "workspace:*",
+    "@solidjs/router": "^0.13.6",
     "@tailwindcss/typography": "^0.5.13",
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-code": "^2.4.0",
