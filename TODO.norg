@@ -10,10 +10,11 @@
    - ( ) Updates to state/pos should update insertion instead of re-inserting
    - ( ) Updates to pos should update previous insertion (track pos)
 ** Backend
-   - ( ) Switch to node+tsx temporarily?
+   - (x) user/pass Authentication
+   - ( ) Note short id (unique workspace+note)
+   - ( ) Create note
    - ( ) Note referenced as `@workspace/note-name`
    - ( ) y.js document storage + retrieval via http
-   - ( ) github oauth
 ** Others
    - (x) Collapsable code blocks
    - ( ) Prevent re-creating view on update for code block
@@ -45,8 +46,8 @@
    - ( ) Keybindings
    - ( ) Embeds?
 ** Backend
+   - ( ) github oauth
    - ( ) For imports, can only import note if note is in same workspace or is public
-   - ( ) email/pass auth
    - ( ) confirm email (+ sendgrid)
 ** Infra
    - ( ) Infra setup for api (ovhcloud? | digitalocean? | aws?)

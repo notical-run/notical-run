@@ -12,14 +12,15 @@ type Params = {
 
 const WorkspaceNote = () => {
   const { workspaceSlug, noteId } = useParams<Params>();
-  const noteResult = useNote(workspaceSlug, noteId);
+  const slug = workspaceSlug.replace(/^@/, '');
+  const noteResult = useNote(slug, noteId);
 
   return (
     <Page
       breadcrumbs={[
         {
-          text: <>{workspaceSlug}'s notes</>,
-          href: links.workspaceNotes(workspaceSlug),
+          text: <>@{slug}</>,
+          href: links.workspaceNotes(slug),
         },
         { text: <>{noteResult.data?.name ?? 'Loading...'}</> },
       ]}

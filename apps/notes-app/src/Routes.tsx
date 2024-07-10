@@ -10,18 +10,6 @@ import { Logout } from './pages/logout';
 
 export const routes: RouteDefinition[] = [
   {
-    path: '/workspaces',
-    component: PrivateRoute(Workspaces),
-  },
-  {
-    path: '/workspaces/:workspaceSlug/notes',
-    component: PrivateRoute(WorkspaceNotes),
-  },
-  {
-    path: '/workspaces/:workspaceSlug/notes/:noteId',
-    component: WorkspaceNote,
-  },
-  {
     path: '/login',
     component: Login,
   },
@@ -32,6 +20,20 @@ export const routes: RouteDefinition[] = [
   {
     path: '/logout',
     component: Logout,
+  },
+  {
+    path: '/workspaces',
+    component: PrivateRoute(Workspaces),
+  },
+  {
+    path: '/:workspaceSlug',
+    component: PrivateRoute(WorkspaceNotes),
+    matchFilters: { workspaceSlug: /^@/ },
+  },
+  {
+    path: '/:workspaceSlug/:noteId',
+    component: WorkspaceNote,
+    matchFilters: { workspaceSlug: /^@/ },
   },
   {
     path: '*',
