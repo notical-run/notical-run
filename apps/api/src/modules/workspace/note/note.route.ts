@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { db } from '../../../db';
 import { Note, Workspace } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
+import { privateRoute } from '../../../auth';
 
 export const noteRoute = new Hono()
   .get('/:noteId', async c => {
@@ -21,6 +22,8 @@ export const noteRoute = new Hono()
 
     return c.json(note);
   })
+  // Private routes
+  .use('*', privateRoute)
   .get('/', async c => {
     const slug = c.req.param('workspaceSlug')!;
     const workspace = await db.query.Workspace.findFirst({

@@ -1,16 +1,31 @@
-import { date, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { date, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { timestampColumns } from '../utils/db';
 import { relations } from 'drizzle-orm';
 
 // Users
 export const User = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name'),
-  email: text('email'),
+  name: text('name').notNull(),
+  email: text('email').unique().notNull(),
+  password: text('password').notNull(),
   ...timestampColumns(),
 });
 export const userRelations = relations(User, ({ many }) => ({
   workspaces: many(Workspace),
+}));
+
+export const Session = pgTable('session', {
+  id: text('id').primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => User.id),
+  expiresAt: timestamp('expires_at', {
+    withTimezone: true,
+    mode: 'date',
+  }).notNull(),
+});
+export const sessionRelations = relations(Session, ({ one }) => ({
+  user: one(User),
 }));
 
 // Workspaces
