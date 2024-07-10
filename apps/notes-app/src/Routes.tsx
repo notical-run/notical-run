@@ -5,16 +5,10 @@ import WorkspaceNote from './pages/workspace-note';
 import { Login } from './pages/login';
 import { Signup } from './pages/signup';
 import { PrivateRoute } from './components/Auth/Session';
+import { links } from './components/Navigation';
+import { Logout } from './pages/logout';
 
 export const routes: RouteDefinition[] = [
-  {
-    path: '/login',
-    component: Login,
-  },
-  {
-    path: '/signup',
-    component: Signup,
-  },
   {
     path: '/workspaces',
     component: PrivateRoute(Workspaces),
@@ -28,8 +22,20 @@ export const routes: RouteDefinition[] = [
     component: WorkspaceNote,
   },
   {
+    path: '/login',
+    component: Login,
+  },
+  {
+    path: '/signup',
+    component: Signup,
+  },
+  {
+    path: '/logout',
+    component: Logout,
+  },
+  {
     path: '*',
-    component: () => <Navigate href="/workspaces" />,
+    component: () => <Navigate href={links.workspaces()} />,
   },
 ];
 

@@ -14,6 +14,7 @@ const fetchInstance: typeof fetch = (req, reqInit) => {
     headers: {
       ...reqInit?.headers,
       Authorization: sessionId && `Bearer ${sessionId}`,
+      'Content-Type': 'application/json',
     },
   });
 };

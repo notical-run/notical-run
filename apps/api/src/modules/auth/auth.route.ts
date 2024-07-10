@@ -24,9 +24,8 @@ export const authRoute = new Hono<{ Variables: SessionVars }>()
       where: eq(User.email, userJson.email),
       columns: { id: true, password: true },
     });
-    if (!user) {
-      return c.json({ error: 'Invalid email/password' }, 401);
-    }
+    if (!user) return c.json({ error: 'Invalid email/password' }, 401);
+
     const isValidPass = verifyPassword(user.password, userJson.password);
     if (!isValidPass) return c.json({ error: 'Invalid email/password' }, 401);
 

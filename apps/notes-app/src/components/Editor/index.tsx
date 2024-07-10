@@ -58,7 +58,7 @@ export const Editor = () => {
 
   onMount(() => {
     const editorClass = clsx(
-      'prose prose-base mx-auto focus:outline-none p-4 border border-gray-200',
+      'prose prose-base focus:outline-none p-4 max-w-full',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
       'prose-h1:text-3xl',
       'prose-h2:text-2xl',

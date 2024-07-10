@@ -3,6 +3,7 @@ import { useNavigate } from '@solidjs/router';
 import { useLogin } from '../api/queries/auth';
 import { TextInput } from '../components/_base/TextInput';
 import { Button } from '../components/_base/Button';
+import { links } from '../components/Navigation';
 
 export const Login = () => {
   const [_, updateSessionId] = createSessionId();
@@ -21,7 +22,7 @@ export const Login = () => {
         onSuccess: response => {
           if (!response.sessionId) return;
           updateSessionId(response.sessionId);
-          navigate('/workspaces');
+          navigate(links.workspaces());
         },
       },
     );

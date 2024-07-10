@@ -22,7 +22,16 @@ export const workspaceRoute = new Hono<{ Variables: SessionVars }>()
     const user = await db.query.User.findFirst({
       where: eq(User.id, currentUser.id),
       with: {
-        workspaces: {},
+        workspaces: {
+          with: {
+            notes: { columns: { id: true, name: true } },
+          },
+          columns: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
 
