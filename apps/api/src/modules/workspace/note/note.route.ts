@@ -6,23 +6,30 @@ import { privateRoute } from '../../../auth';
 
 export const noteRoute = new Hono()
   .get('/:noteId', async c => {
+    const slug = c.req.param('workspaceSlug')!;
     const noteId = c.req.param('noteId');
-    const note = await db.query.Note.findFirst({
-      where: eq(Note.id, noteId),
-      columns: {
-        id: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    const workspace = await db.query.Workspace.findFirst({
+      where: eq(Workspace.slug, slug),
       with: {
-        author: {},
+        notes: {
+          limit: 1,
+          where: eq(Note.name, noteId),
+          columns: {
+            id: true,
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          with: {
+            author: {},
+          },
+        },
       },
     });
 
-    if (!note) return c.json({ error: 'Note not found' }, 404);
+    if (!workspace?.notes[0]) return c.json({ error: 'Note not found' }, 404);
 
-    return c.json(note);
+    return c.json(workspace?.notes[0]);
   })
   // Private routes
   .use('*', privateRoute)

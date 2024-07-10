@@ -12,6 +12,12 @@ export const db = drizzle(queryClient);
 
 const password = await hashPassword('123123123');
 
+await db.insert(User).values({
+  name: 'Hannibal Lecter',
+  email: 'hannibal@email.com',
+  password,
+});
+
 const clarice = await db
   .insert(User)
   .values({
@@ -21,10 +27,10 @@ const clarice = await db
   })
   .returning();
 
-await db.insert(User).values({
-  name: 'Hannibal Lecter',
-  email: 'hannibal@email.com',
-  password,
+await db.insert(Workspace).values({
+  name: 'Worthless workspace',
+  slug: 'worthless',
+  authorId: clarice[0].id,
 });
 
 const workspace = await db
@@ -35,15 +41,13 @@ const workspace = await db
     authorId: clarice[0].id,
   })
   .returning();
-
 await db.insert(Note).values({
-  name: 'Note 1',
+  name: 'calculator',
   workspaceId: workspace[0].id,
   authorId: clarice[0].id,
 });
-
 await db.insert(Note).values({
-  name: 'Note 2',
+  name: 'daily-tasks',
   workspaceId: workspace[0].id,
   authorId: clarice[0].id,
 });

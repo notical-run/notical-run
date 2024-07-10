@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS "workspaces" (
 	"author_id" uuid NOT NULL,
 	"deleted_at" date,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "workspaces_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 DO $$ BEGIN
@@ -58,3 +59,5 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "notes_workspace_id_name_index" ON "notes" USING btree ("workspace_id","name");

@@ -11,10 +11,12 @@
    - ( ) Updates to pos should update previous insertion (track pos)
 ** Backend
    - (x) user/pass Authentication
-   - ( ) Note short id (unique workspace+note)
+   - (x) Note short id (unique workspace+note)
+   - (x) Note referenced as `@workspace-slug/note-name`
+   - ( ) Signup
    - ( ) Create note
-   - ( ) Note referenced as `@workspace/note-name`
-   - ( ) y.js document storage + retrieval via http
+   - ( ) Create workspace
+   - ( ) Note content integration: y.js document storage + retrieval via http
 ** Others
    - (x) Collapsable code blocks
    - ( ) Prevent re-creating view on update for code block

@@ -8,7 +8,7 @@ const Workspaces = () => {
 
   return (
     <Page>
-      <div>
+      <div class="mx-auto max-w-4xl">
         {workspacesResult.data?.map(workspace => (
           <A
             href={links.workspaceNotes(workspace.slug)}

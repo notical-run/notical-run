@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { db } from '../../db';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { User, Workspace } from '../../db/schema';
 import { noteRoute } from './note/note.route';
 import { privateRoute, SessionVars } from '../../auth';
@@ -26,6 +26,7 @@ export const workspaceRoute = new Hono<{ Variables: SessionVars }>()
           with: {
             notes: { columns: { id: true, name: true } },
           },
+          orderBy: [desc(Workspace.createdAt)],
           columns: {
             id: true,
             name: true,

@@ -1,4 +1,11 @@
-import { date, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  date,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { timestampColumns } from '../utils/db';
 import { relations } from 'drizzle-orm';
 
@@ -12,6 +19,7 @@ export const User = pgTable('users', {
 });
 export const userRelations = relations(User, ({ many }) => ({
   workspaces: many(Workspace),
+  sessions: many(Session),
 }));
 
 export const Session = pgTable('session', {
@@ -32,7 +40,7 @@ export const sessionRelations = relations(Session, ({ one }) => ({
 export const Workspace = pgTable('workspaces', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
-  slug: text('slug').notNull(),
+  slug: text('slug').unique().notNull(),
   authorId: uuid('author_id')
     .notNull()
     .references(() => User.id, { onDelete: 'cascade' }),
@@ -45,19 +53,25 @@ export const workspaceRelations = relations(Workspace, ({ one, many }) => ({
 }));
 
 // Notes
-export const Note = pgTable('notes', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name').notNull(),
-  content: text('content'),
-  workspaceId: uuid('workspace_id')
-    .notNull()
-    .references(() => Workspace.id, { onDelete: 'cascade' }),
-  authorId: uuid('author_id')
-    .notNull()
-    .references(() => User.id, { onDelete: 'cascade' }),
-  deletedAt: date('deleted_at'),
-  ...timestampColumns(),
-});
+export const Note = pgTable(
+  'notes',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: text('name').notNull(),
+    content: text('content'),
+    workspaceId: uuid('workspace_id')
+      .notNull()
+      .references(() => Workspace.id, { onDelete: 'cascade' }),
+    authorId: uuid('author_id')
+      .notNull()
+      .references(() => User.id, { onDelete: 'cascade' }),
+    deletedAt: date('deleted_at'),
+    ...timestampColumns(),
+  },
+  t => ({
+    uniqueWorkspaceNote: uniqueIndex().on(t.workspaceId, t.name),
+  }),
+);
 export const noteRelations = relations(Note, ({ one }) => ({
   author: one(User, { fields: [Note.authorId], references: [User.id] }),
   workspace: one(Workspace, {
