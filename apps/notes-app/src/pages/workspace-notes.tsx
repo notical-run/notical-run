@@ -1,16 +1,13 @@
 import { A, useParams } from '@solidjs/router';
-import { createQuery } from '@tanstack/solid-query';
-import { apiClient } from '../utils/api-client';
+import { useWorkspaceNotes } from '../api/queries/workspace';
+
+type Params = {
+  workspaceSlug: string;
+};
 
 const WorkspaceNotes = () => {
-  const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
-  const notesResult = createQuery(() => ({
-    queryKey: ['workspaces', workspaceSlug, 'notes'],
-    queryFn: async () =>
-      apiClient.api.workspaces[':workspaceSlug'].notes
-        .$get({ param: { workspaceSlug } })
-        .then(x => x.json()),
-  }));
+  const { workspaceSlug } = useParams<Params>();
+  const notesResult = useWorkspaceNotes(workspaceSlug);
 
   return (
     <div>

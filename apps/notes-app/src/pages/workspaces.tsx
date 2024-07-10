@@ -1,12 +1,8 @@
-import { createQuery } from '@tanstack/solid-query';
-import { apiClient } from '../utils/api-client';
 import { A } from '@solidjs/router';
+import { useWorkspaces } from '../api/queries/workspace';
 
 const Workspaces = () => {
-  const workspacesResult = createQuery(() => ({
-    queryKey: ['workspaces'],
-    queryFn: async () => apiClient.api.workspaces.$get().then(x => x.json()),
-  }));
+  const workspacesResult = useWorkspaces();
 
   return (
     <div>

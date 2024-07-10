@@ -20,6 +20,8 @@ export const noteRoute = new Hono()
       },
     });
 
+    if (!note) return c.json({ error: 'Note not found' }, 404);
+
     return c.json(note);
   })
   // Private routes

@@ -8,7 +8,7 @@ export const userRoute = new Hono<{ Variables: SessionVars }>()
   .use(privateRoute)
   .get('me', async c => {
     const currentUser = c.get('user')!;
-    const user = db.query.User.findFirst({
+    const user = await db.query.User.findFirst({
       where: eq(User.id, currentUser.id),
       columns: {
         id: true,
@@ -16,5 +16,8 @@ export const userRoute = new Hono<{ Variables: SessionVars }>()
         email: true,
       },
     });
-    c.json(user, 200);
+
+    if (!user) return c.json({ error: 'User not found' }, 404);
+
+    return c.json(user, 200);
   });
