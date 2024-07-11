@@ -1,8 +1,9 @@
 import { A, useParams } from '@solidjs/router';
-import { useWorkspaceNotes } from '../api/queries/workspace';
+import { useCreateNote, useWorkspaceNotes } from '../api/queries/workspace';
 import { Page } from '../components/Page';
 import { links } from '../components/Navigation';
 import { For, Show } from 'solid-js';
+import { Button } from '../components/_base/Button';
 
 type Params = {
   workspaceSlug: string;
@@ -12,9 +13,19 @@ const WorkspaceNotes = () => {
   const { workspaceSlug } = useParams<Params>();
   const slug = workspaceSlug.replace(/^@/, '');
   const notesResult = useWorkspaceNotes(slug);
+  const createNoteMut = useCreateNote(slug);
+
+  const createNote = () => {
+    createNoteMut.mutate({ name: 'new-note' });
+  };
 
   return (
     <Page breadcrumbs={[{ text: <>@{slug}</> }]}>
+      <div class="flex justify-end pb-2">
+        <Button onClick={createNote} class="text-sm">
+          + New note
+        </Button>
+      </div>
       <Show when={!notesResult.isLoading} fallback={<div>Loading...</div>}>
         <div class="mx-auto max-w-4xl">
           <For each={notesResult.data} fallback={<div>No notes</div>}>

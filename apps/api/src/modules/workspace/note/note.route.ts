@@ -2,9 +2,11 @@ import { Hono } from 'hono';
 import { db } from '../../../db';
 import { Note, Workspace } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
-import { privateRoute } from '../../../auth';
+import { privateRoute, SessionVars } from '../../../auth';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
-export const noteRoute = new Hono()
+export const noteRoute = new Hono<{ Variables: SessionVars }>()
   .get('/:noteId', async c => {
     const slug = c.req.param('workspaceSlug')!;
     const noteId = c.req.param('noteId');
@@ -54,4 +56,22 @@ export const noteRoute = new Hono()
 
     return c.json(workspace?.notes ?? []);
   })
-  .post(c => c.text('posted workspace'));
+  .post('/', zValidator('json', z.object({ name: z.string() })), async c => {
+    const noteJson = c.req.valid('json');
+    const user = c.get('user')!;
+    const workspace = await db.query.Workspace.findFirst({
+      where: eq(Workspace.slug, c.req.param('workspaceSlug')!),
+      columns: { id: true },
+    });
+    if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
+
+    await db
+      .insert(Note)
+      .values({
+        name: noteJson.name,
+        workspaceId: workspace.id,
+        authorId: user.id,
+      })
+      .returning({ id: Note.id, name: Note.name });
+    return c.json({}, 201);
+  });

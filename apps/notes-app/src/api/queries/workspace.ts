@@ -1,4 +1,8 @@
-import { createQuery } from '@tanstack/solid-query';
+import {
+  createMutation,
+  createQuery,
+  useQueryClient,
+} from '@tanstack/solid-query';
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
 
@@ -26,5 +30,21 @@ export const useNote = (workspaceSlug: string, noteId: string) => {
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
         .$get({ param: { workspaceSlug, noteId } })
         .then(responseJson),
+  }));
+};
+
+export const useCreateNote = (workspaceSlug: string) => {
+  const queryClient = useQueryClient();
+
+  return createMutation(() => ({
+    mutationFn: async (params: { name: string }) =>
+      apiClient.api.workspaces[':workspaceSlug'].notes
+        .$post({ param: { workspaceSlug }, json: params })
+        .then(responseJson),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.workspaceNotes(workspaceSlug),
+      });
+    },
   }));
 };

@@ -13,9 +13,9 @@
    - (x) user/pass Authentication
    - (x) Note short id (unique workspace+note)
    - (x) Note referenced as `@workspace-slug/note-name`
+   - (x) Signup
    - ( ) Create note
    - ( ) Create workspace
-   - ( ) Signup
    - ( ) Note content integration: y.js document storage + retrieval via http
 ** Others
    - (x) Collapsable code blocks
