@@ -7,6 +7,12 @@ export const useLogin = () =>
       apiClient.api.auth.login.$post({ json: payload }).then(responseJson),
   }));
 
+export const useSignup = () =>
+  createMutation(() => ({
+    mutationFn: (payload: { name: string; email: string; password: string }) =>
+      apiClient.api.auth.signup.$post({ json: payload }).then(responseJson),
+  }));
+
 export const useLogout = () =>
   createMutation(() => ({
     mutationFn: () => apiClient.api.auth.logout.$post().then(responseJson),

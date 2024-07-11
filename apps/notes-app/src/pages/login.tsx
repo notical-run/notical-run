@@ -1,5 +1,5 @@
 import { createSessionId } from '../components/Auth/Session';
-import { useNavigate } from '@solidjs/router';
+import { A, useNavigate } from '@solidjs/router';
 import { useLogin } from '../api/queries/auth';
 import { TextInput } from '../components/_base/TextInput';
 import { Button } from '../components/_base/Button';
@@ -38,6 +38,8 @@ export const Login = () => {
         <Button type="submit" class="block w-full mt-2">
           Login
         </Button>
+
+        <A href={links.signup()}>Don't have an account? Signup</A>
       </form>
     </div>
   );
