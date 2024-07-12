@@ -8,7 +8,11 @@ export const evalModule = async (code: string, options: VMEnvOptions) => {
     const moduleResult = quickVM.evalCode(code, `${options.id}.js`, {
       type: 'module',
     });
-    const exportsHandle = quickVM.unwrapResult(moduleResult);
+    if (moduleResult.error) {
+      const err = moduleResult.error.consume(quickVM.dump);
+      throw new Error(err?.message ?? err ?? 'Eval error');
+    }
+    const exportsHandle = moduleResult.value;
 
     const keysResult = quickVM
       .getProp(quickVM.global, 'Object')

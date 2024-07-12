@@ -5,6 +5,7 @@
    - (x) Hide native values from preview
    - (x) Re-evaluate all `here` on document change
    - (x) Simple local storage persist for testing
+   - ( ) Imports
    - ( ) `here()` for code blocks
    - ( ) Show decoration
    - ( ) Updates to state/pos should update insertion instead of re-inserting
