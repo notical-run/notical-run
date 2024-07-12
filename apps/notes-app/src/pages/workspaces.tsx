@@ -1,7 +1,7 @@
 import { A } from '@solidjs/router';
-import { useWorkspaces } from '../api/queries/workspace';
-import { Page } from '../components/Page';
-import { links } from '../components/Navigation';
+import { useWorkspaces } from '@/api/queries/workspace';
+import { Page } from '@/components/Page';
+import { links } from '@/components/Navigation';
 
 const Workspaces = () => {
   const workspacesResult = useWorkspaces();
