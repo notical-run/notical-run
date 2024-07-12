@@ -9,6 +9,7 @@ export const workspaceRoute = new Hono<{ Variables: SessionVars }>()
   .route(':workspaceSlug/notes', noteRoute)
   // Private routes
   .use('*', privateRoute)
+
   .get(':workspaceSlug', async c => {
     const slug = c.req.param('workspaceSlug');
     const workspace = await db.query.Workspace.findFirst({
@@ -17,6 +18,7 @@ export const workspaceRoute = new Hono<{ Variables: SessionVars }>()
 
     return c.json(workspace);
   })
+
   .get('/', async c => {
     const currentUser = c.get('user')!;
     const user = await db.query.User.findFirst({

@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { apiRoute } from './api';
 import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
 
 const app = new Hono();
 
@@ -9,6 +10,8 @@ app.use(
     origin: '*', // TODO: fix this
   }),
 );
+
+app.use(logger());
 
 const route = app
   .get('/health', c => {
