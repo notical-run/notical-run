@@ -1,18 +1,14 @@
 import { createSignal, For, Show } from 'solid-js';
-import { A, useParams } from '@solidjs/router';
+import { A } from '@solidjs/router';
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
 import { links } from '@/components/Navigation';
 import { Button } from '@/components/_base/Button';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
-
-type Params = {
-  workspaceSlug: string;
-};
+import { useWorkspace } from '@/layouts/workspace';
 
 const WorkspaceNotes = () => {
-  const { workspaceSlug } = useParams<Params>();
-  const slug = workspaceSlug.replace(/^@/, '');
+  const { slug } = useWorkspace();
   const notesResult = useWorkspaceNotes(slug);
 
   const [dialogOpen, setDialogOpen] = createSignal(false);

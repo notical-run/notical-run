@@ -1,5 +1,5 @@
 import { Navigate } from '@solidjs/router';
-import { createSignal, JSX } from 'solid-js';
+import { createSignal, JSX, ParentProps } from 'solid-js';
 import { getSessionId, setSessionId } from '../../utils/api-client';
 import { links } from '../Navigation';
 
@@ -14,8 +14,8 @@ export const createSessionId = () => {
   return [sessionId, updateSessionId] as const;
 };
 
-export const PrivateRoute = (C: () => JSX.Element) => () => {
+export const PrivateRoute = (props: ParentProps) => {
   const [sessionId] = createSessionId();
   if (!sessionId()) return <Navigate href={links.login()} />;
-  return <C />;
+  return props.children;
 };

@@ -1,12 +1,13 @@
 import { useParams } from '@solidjs/router';
-import { Editor } from '../components/Editor';
-import { useNote, useUpdateNote } from '../api/queries/workspace';
-import { Page } from '../components/Page';
-import { links } from '../components/Navigation';
+import { Editor } from '../../components/Editor';
+import { useNote, useUpdateNote } from '../../api/queries/workspace';
+import { Page } from '../../components/Page';
+import { links } from '../../components/Navigation';
 import { createEffect, Show } from 'solid-js';
 import * as Y from 'yjs';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { apiClient, responseJson } from '../utils/api-client';
+import { apiClient, responseJson } from '../../utils/api-client';
+import { useWorkspace } from '@/layouts/workspace';
 
 const useDebounced = (func: any, wait: number) => {
   let timeout: any;
@@ -16,14 +17,9 @@ const useDebounced = (func: any, wait: number) => {
   };
 };
 
-type Params = {
-  workspaceSlug: string;
-  noteId: string;
-};
-
 const WorkspaceNote = () => {
-  const { workspaceSlug, noteId } = useParams<Params>();
-  const slug = workspaceSlug.replace(/^@/, '');
+  const { slug } = useWorkspace();
+  const { noteId } = useParams<{ noteId: string }>();
   const noteResult = useNote(slug, noteId);
   const noteUpdater = useUpdateNote(slug, noteId);
 
