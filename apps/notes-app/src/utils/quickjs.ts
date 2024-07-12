@@ -1,28 +1,34 @@
-import type { QuickJSContext, QuickJSRuntime } from 'quickjs-emscripten-core';
+import type {
+  QuickJSAsyncContext,
+  QuickJSAsyncRuntime,
+  QuickJSAsyncWASMModule,
+} from 'quickjs-emscripten-core';
 import {
-  QuickJSWASMModule,
-  newQuickJSWASMModuleFromVariant,
   newVariant,
-  RELEASE_SYNC,
   Scope,
+  RELEASE_ASYNC,
+  newQuickJSAsyncWASMModuleFromVariant,
 } from 'quickjs-emscripten';
-import wasmLocation from '@jitl/quickjs-wasmfile-release-sync/wasm?url';
+import wasmLocation from '@jitl/quickjs-wasmfile-release-asyncify/wasm?url';
 import { createSignal, type Signal } from 'solid-js';
 import { Editor } from '@tiptap/core';
+
+export type ModuleLoader = (modulePath: string) => Promise<string>;
 
 export type VMEnvOptions = {
   id: string;
   pos: number;
   nodeSize: number;
   withEditor: <R>(fn: (editor: Editor) => R) => R;
+  moduleLoader: ModuleLoader;
 };
 
-const variant = newVariant(RELEASE_SYNC, { wasmLocation });
+const variant = newVariant(RELEASE_ASYNC, { wasmLocation });
 
-let quickJS: Promise<QuickJSWASMModule> | undefined;
+let quickJS: Promise<QuickJSAsyncWASMModule> | undefined;
 export async function getQuickJS() {
   if (quickJS) return quickJS;
-  quickJS = newQuickJSWASMModuleFromVariant(variant);
+  quickJS = newQuickJSAsyncWASMModuleFromVariant(variant);
   return quickJS;
 }
 
@@ -31,8 +37,8 @@ const stateStore: Record<string, Signal<any>> = {};
 const contentUpdateSignal = createSignal(false);
 export const onContentUpdate = () => contentUpdateSignal[1](b => !b);
 
-let quickRuntime: QuickJSRuntime | undefined;
-let quickVM: QuickJSContext | undefined;
+let quickRuntime: QuickJSAsyncRuntime | undefined;
+let quickVM: QuickJSAsyncContext | undefined;
 
 export const getQuickVM = async (options: VMEnvOptions) => {
   const quickJS = await getQuickJS();
@@ -48,8 +54,14 @@ export const getQuickVM = async (options: VMEnvOptions) => {
 
   if (!quickVM) {
     quickRuntime = quickJS.newRuntime();
-    quickRuntime.setModuleLoader((_modulePath: string) => {
-      throw new Error('TODO: Import not implemented yet');
+    quickRuntime.setModuleLoader(async (modulePath, ctx) => {
+      try {
+        const code = await options.moduleLoader(modulePath);
+        return { value: code };
+      } catch (e) {
+        const err = (e as any)?.message ? ctx.newError((e as any).message) : e;
+        return { error: err as Error };
+      }
     });
     quickRuntime.setMaxStackSize(10000);
     quickRuntime.setMemoryLimit(1_000_000);
@@ -60,7 +72,7 @@ export const getQuickVM = async (options: VMEnvOptions) => {
 
     quickVM
       .unwrapResult(
-        quickVM.evalCode(
+        await quickVM.evalCodeAsync(
           `;(() => {
   Object.defineProperty(globalThis, '${internalsKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${debugKey}', { value: {}, writable: false });

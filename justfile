@@ -20,5 +20,5 @@ db-shell:
 api-restart:
   docker compose restart api
 
-client:
-  bun app dev
+client *args:
+  bun app dev {{args}}

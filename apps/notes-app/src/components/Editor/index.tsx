@@ -5,6 +5,8 @@ import { evaluateAllNodes } from './evaluator';
 import { onCleanup, onMount } from 'solid-js';
 import clsx from 'clsx';
 import * as Y from 'yjs';
+import { Result } from '../../utils/result';
+import { evaluateImport } from './headless-note';
 
 const testContent = `
 # Hello world
@@ -40,11 +42,24 @@ export const addTask = () => {
 
 `;
 
-export type EditorProps = { document: Y.Doc };
+export type EditorProps = {
+  document: Y.Doc;
+  moduleLoader: (modulePath: string) => Promise<Y.Doc>;
+};
 
-export const Editor = ({ document }: EditorProps) => {
+export const Editor = ({ document, moduleLoader }: EditorProps) => {
   let element: HTMLElement | undefined;
   let editor: TiptapEditor | undefined;
+
+  const evaluate = (editor: TiptapEditor) => {
+    evaluateAllNodes(editor, {
+      moduleLoader: async modulePath => {
+        const moduleDoc = await moduleLoader(modulePath);
+        const module = evaluateImport({ doc: moduleDoc, moduleLoader });
+        return module.moduleCode;
+      },
+    });
+  };
 
   onMount(() => {
     const editorClass = clsx(
@@ -67,12 +82,8 @@ export const Editor = ({ document }: EditorProps) => {
           class: editorClass,
         },
       },
-      onCreate: ({ editor }) => {
-        evaluateAllNodes(editor);
-      },
-      onUpdate: ({ editor }) => {
-        evaluateAllNodes(editor);
-      },
+      onCreate: ({ editor }) => evaluate(editor),
+      onUpdate: ({ editor }) => evaluate(editor),
       onDestroy() {
         // TODO: Cleanup created signals
       },

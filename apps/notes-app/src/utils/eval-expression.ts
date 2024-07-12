@@ -57,7 +57,7 @@ export const evalExpression = async (
   createRoot(dispose => {
     handleCleanup(dispose);
 
-    createEffect(() => {
+    createEffect(async () => {
       const nodePosAndSize = options.withEditor(editor =>
         findMarkById(editor, options.id),
       );
@@ -68,7 +68,7 @@ export const evalExpression = async (
         id: options.id,
         __native__: '',
       });
-      const evalResult = quickVM.evalCode(
+      const evalResult = await quickVM.evalCodeAsync(
         `{
 const here = () => {
   _internals.listenToUpdate();
@@ -78,9 +78,7 @@ const here = () => {
 ${code}
 }`,
         'global.js',
-        {
-          strict: false,
-        },
+        { strict: false },
       );
       onResult(toResult(evalResult));
     });

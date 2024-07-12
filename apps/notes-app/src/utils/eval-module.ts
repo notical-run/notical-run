@@ -5,7 +5,7 @@ export const evalModule = async (code: string, options: VMEnvOptions) => {
   try {
     const quickVM = await getQuickVM(options);
 
-    const moduleResult = quickVM.evalCode(code, `${options.id}.js`, {
+    const moduleResult = await quickVM.evalCodeAsync(code, `${options.id}.js`, {
       type: 'module',
     });
     if (moduleResult.error) {

@@ -6,6 +6,7 @@ import { links } from '../components/Navigation';
 import { createEffect, Show } from 'solid-js';
 import * as Y from 'yjs';
 import { fromUint8Array, toUint8Array } from 'js-base64';
+import { apiClient, responseJson } from '../utils/api-client';
 
 const useDebounced = (func: any, wait: number) => {
   let timeout: any;
@@ -49,6 +50,34 @@ const WorkspaceNote = () => {
     });
   });
 
+  const importCache = new Map<string, Y.Doc>();
+
+  const moduleLoader = async (modulePath: string) => {
+    if (!modulePath) throw new Error('Module path cannot be empty');
+    if (importCache.has(modulePath)) return importCache.get(modulePath)!;
+
+    const importMatch = modulePath.match(/^@(\w+)\/(\w+)$/);
+    if (!importMatch || importMatch.length < 3)
+      throw new Error('Invalid import path');
+
+    const [_, workspace, noteId] = importMatch;
+    const response = await apiClient.api.workspaces[':workspaceSlug'].notes[
+      ':noteId'
+    ]
+      .$get({
+        param: { workspaceSlug: workspace, noteId },
+      })
+      .then(responseJson);
+    if (!response) throw new Error('Invalid response for note');
+
+    const yDoc = new Y.Doc();
+    Y.applyUpdateV2(yDoc, toUint8Array(response.content ?? ''));
+
+    importCache.set(modulePath, yDoc);
+
+    return yDoc;
+  };
+
   return (
     <Page
       breadcrumbs={[
@@ -66,7 +95,7 @@ const WorkspaceNote = () => {
           </div>
           <div class="border border-gray-100">
             <Show when={!!noteResult.data?.id} keyed>
-              <Editor document={document} />
+              <Editor document={document} moduleLoader={moduleLoader} />
             </Show>
           </div>
         </div>

@@ -3,7 +3,7 @@ import type { Editor } from '@tiptap/core';
 import { evalExpression } from '../../utils/eval-expression';
 import { evalModule } from '../../utils/eval-module';
 import { Result } from '../../utils/result';
-import { onContentUpdate } from '../../utils/quickjs';
+import { ModuleLoader, onContentUpdate } from '../../utils/quickjs';
 
 const isEvalable = (node: Node) =>
   [null, 'javascript'].includes(node.attrs.language);
@@ -23,78 +23,116 @@ const findMarkById = (editor: Editor, id: string): Mark | null => {
   return foundNode;
 };
 
+export const defaultEvalBlock = async (
+  node: Node,
+  pos: number,
+  editor: Editor,
+  moduleLoader: ModuleLoader,
+) => {
+  const exports = await evalModule(node.textContent || 'null', {
+    pos,
+    id: node.attrs.nodeId,
+    nodeSize: node.nodeSize,
+    withEditor: fn => fn(editor),
+    moduleLoader,
+  });
+
+  const tr = editor.state.tr;
+  editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+};
+
 const nodeCodeCache = new Map<string, { code: string; cleanup: () => void }>();
 
-export const evaluateAllNodes = (editor: Editor) => {
+type Options = {
+  evalBlock?: (
+    node: Node,
+    pos: number,
+    editor: Editor,
+    moduleLoader: ModuleLoader,
+  ) => Promise<void> | void;
+  moduleLoader: ModuleLoader;
+};
+
+export const evaluateAllNodes = async (
+  editor: Editor,
+  { evalBlock = defaultEvalBlock, moduleLoader }: Options,
+) => {
+  const evalutingNodes = new Set<Node>();
+  let resolver = (_: unknown) => {};
+  const waitForEvaluation = new Promise(resolve => (resolver = resolve));
+
+  const onNodeEvalComplete = (node: Node) => {
+    evalutingNodes.delete(node);
+    if (evalutingNodes.size === 0) resolver(null);
+  };
+
   console.log('>>>> on update...', editor.state.doc.toJSON());
   onContentUpdate();
 
-  const withEditor = <R>(fn: (f: Editor) => R) => fn(editor);
-
   const walkNode = async (node: Node, pos: number) => {
-    // Code block
-    if (node.type.name === 'codeBlock' && isEvalable(node)) {
-      const previousCode = nodeCodeCache.get(node.attrs.nodeId);
-      if (previousCode?.code === node.textContent) return;
+    try {
+      // Code block
+      if (node.type.name === 'codeBlock' && isEvalable(node)) {
+        const previousCode = nodeCodeCache.get(node.attrs.nodeId);
+        if (previousCode?.code === node.textContent) return;
 
-      previousCode?.cleanup();
-      nodeCodeCache.set(node.attrs.nodeId, {
-        code: node.textContent,
-        cleanup: () => {}, // TODO: Handle cleanup if using signals
-      });
+        previousCode?.cleanup();
+        nodeCodeCache.set(node.attrs.nodeId, {
+          code: node.textContent,
+          cleanup: () => {}, // TODO: Handle cleanup if using signals
+        });
 
-      const exports = await evalModule(node.textContent || 'null', {
-        pos,
-        id: node.attrs.nodeId,
-        nodeSize: node.nodeSize,
-        withEditor,
-      });
+        await evalBlock(node, pos, editor, moduleLoader);
 
-      const tr = editor.state.tr;
-      editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+        return;
+      }
 
-      return;
-    }
+      // Inline code
+      if (node.isText) {
+        const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
+        if (!nodeMark) return;
+        const previousCode = nodeCodeCache.get(nodeMark.attrs.nodeId);
+        if (previousCode?.code === node.textContent) return;
 
-    // Inline code
-    if (node.isText) {
-      const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
-      if (!nodeMark) return;
-      const previousCode = nodeCodeCache.get(nodeMark.attrs.nodeId);
-      if (previousCode?.code === node.textContent) return;
+        const onResult = (result: Result<Error, any>) => {
+          const mark = findMarkById(editor, nodeMark.attrs.nodeId);
+          if (!mark) return;
 
-      const onResult = (result: Result<Error, any>) => {
-        const mark = findMarkById(editor, nodeMark.attrs.nodeId);
-        if (!mark) return;
+          const tr = editor.state.tr;
+          mark.removeFromSet(node.marks);
+          (mark as any).attrs = { ...mark.attrs, result };
+          mark.addToSet(node.marks);
+          editor.view.dispatch(tr);
+        };
 
-        const tr = editor.state.tr;
-        mark.removeFromSet(node.marks);
-        (mark as any).attrs = { ...mark.attrs, result };
-        mark.addToSet(node.marks);
-        editor.view.dispatch(tr);
-      };
+        previousCode?.cleanup();
 
-      previousCode?.cleanup();
-
-      await evalExpression(node.text || 'null', {
-        onResult,
-        handleCleanup: cleanup => {
-          nodeCodeCache.set(nodeMark.attrs.nodeId, {
-            code: node.textContent,
-            cleanup,
-          });
-        },
-        options: {
-          pos,
-          id: nodeMark.attrs.nodeId,
-          nodeSize: node.nodeSize,
-          withEditor,
-        },
-      });
+        await evalExpression(node.text || 'null', {
+          onResult,
+          handleCleanup: cleanup => {
+            nodeCodeCache.set(nodeMark.attrs.nodeId, {
+              code: node.textContent,
+              cleanup,
+            });
+          },
+          options: {
+            pos,
+            id: nodeMark.attrs.nodeId,
+            nodeSize: node.nodeSize,
+            withEditor: fn => fn(editor),
+            moduleLoader,
+          },
+        });
+      }
+    } finally {
+      onNodeEvalComplete(node);
     }
   };
 
   editor.state.doc.content.descendants((node, pos) => {
+    evalutingNodes.add(node);
     walkNode(node, pos);
   });
+
+  return waitForEvaluation;
 };
