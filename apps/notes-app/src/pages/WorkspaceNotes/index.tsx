@@ -1,9 +1,10 @@
+import { createSignal, For, Show } from 'solid-js';
 import { A, useParams } from '@solidjs/router';
-import { useCreateNote, useWorkspaceNotes } from '../api/queries/workspace';
-import { Page } from '../components/Page';
-import { links } from '../components/Navigation';
-import { For, Show } from 'solid-js';
-import { Button } from '../components/_base/Button';
+import { useWorkspaceNotes } from '@/api/queries/workspace';
+import { Page } from '@/components/Page';
+import { links } from '@/components/Navigation';
+import { Button } from '@/components/_base/Button';
+import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
 
 type Params = {
   workspaceSlug: string;
@@ -13,16 +14,13 @@ const WorkspaceNotes = () => {
   const { workspaceSlug } = useParams<Params>();
   const slug = workspaceSlug.replace(/^@/, '');
   const notesResult = useWorkspaceNotes(slug);
-  const createNoteMut = useCreateNote(slug);
 
-  const createNote = () => {
-    createNoteMut.mutate({ name: 'new-note' });
-  };
+  const [dialogOpen, setDialogOpen] = createSignal(false);
 
   return (
     <Page breadcrumbs={[{ text: <>@{slug}</> }]}>
       <div class="flex justify-end pb-2">
-        <Button onClick={createNote} class="text-sm">
+        <Button onClick={() => setDialogOpen(true)} class="text-sm">
           + New note
         </Button>
       </div>
@@ -46,6 +44,8 @@ const WorkspaceNotes = () => {
           </For>
         </div>
       </Show>
+
+      <NewNoteDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
     </Page>
   );
 };

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { db } from '../../../db';
 import { Note, Workspace } from '../../../db/schema';
-import { and, eq, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { privateRoute, SessionVars } from '../../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
@@ -44,6 +44,7 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
       where: eq(Workspace.slug, slug!),
       with: {
         notes: {
+          orderBy: desc(Note.updatedAt),
           columns: {
             id: true,
             name: true,
