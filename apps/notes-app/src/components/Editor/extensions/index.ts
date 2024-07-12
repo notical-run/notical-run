@@ -9,9 +9,11 @@ import { GlobalNodeId } from './GlobalNodeId';
 import { InlineCode } from './InlineCode';
 import { CodeBlock } from './CodeBlock';
 import { TrailingNode } from './TrailingNode';
+import * as Y from 'yjs';
+import Collaboration from '@tiptap/extension-collaboration';
 
-export const getExtensions = () => [
-  StarterKit.configure({ codeBlock: false, code: false }),
+export const getExtensions = ({ document }: { document: Y.Doc }) => [
+  StarterKit.configure({ codeBlock: false, code: false, history: false }),
   Markdown.configure({
     html: false,
     tightLists: true,
@@ -48,4 +50,6 @@ export const getExtensions = () => [
       class: 'list-none pl-1',
     },
   }),
+
+  Collaboration.configure({ document: document }),
 ];

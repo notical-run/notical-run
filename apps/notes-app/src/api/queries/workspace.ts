@@ -48,3 +48,12 @@ export const useCreateNote = (workspaceSlug: string) => {
     },
   }));
 };
+
+export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
+  return createMutation(() => ({
+    mutationFn: async (params: { name?: string; content?: string }) =>
+      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
+        .$patch({ param: { workspaceSlug, noteId }, json: params })
+        .then(responseJson),
+  }));
+};

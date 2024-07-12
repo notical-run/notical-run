@@ -26,6 +26,7 @@ const WorkspaceNotes = () => {
           + New note
         </Button>
       </div>
+
       <Show when={!notesResult.isLoading} fallback={<div>Loading...</div>}>
         <div class="mx-auto max-w-4xl">
           <For each={notesResult.data} fallback={<div>No notes</div>}>

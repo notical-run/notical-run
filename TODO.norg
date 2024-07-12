@@ -14,9 +14,9 @@
    - (x) Note short id (unique workspace+note)
    - (x) Note referenced as `@workspace-slug/note-name`
    - (x) Signup
-   - ( ) Create note
+   - (x) Create note
+   - (x) Note content integration: y.js document storage + retrieval via http
    - ( ) Create workspace
-   - ( ) Note content integration: y.js document storage + retrieval via http
 ** Others
    - (x) Collapsable code blocks
    - ( ) Prevent re-creating view on update for code block
@@ -48,9 +48,9 @@
    - ( ) Keybindings
    - ( ) Embeds?
 ** Backend
-   - ( ) github oauth
    - ( ) For imports, can only import note if note is in same workspace or is public
    - ( ) confirm email (+ sendgrid)
+   - ( ) github oauth
 ** Infra
    - ( ) Infra setup for api (ovhcloud? | digitalocean? | aws?)
    - ( ) Postgres DB setup (neon? | ovhcloud?)

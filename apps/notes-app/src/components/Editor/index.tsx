@@ -4,6 +4,7 @@ import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
 import { onCleanup, onMount } from 'solid-js';
 import clsx from 'clsx';
+import * as Y from 'yjs';
 
 const testContent = `
 # Hello world
@@ -39,22 +40,11 @@ export const addTask = () => {
 
 `;
 
-const useDebounced = (func: any, wait: number) => {
-  let timeout: any;
-  return function (...args: any[]) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
+export type EditorProps = { document: Y.Doc };
 
-export const Editor = () => {
+export const Editor = ({ document }: EditorProps) => {
   let element: HTMLElement | undefined;
   let editor: TiptapEditor | undefined;
-
-  const saveUpdate = useDebounced(() => {
-    if (editor)
-      localStorage.setItem('editor-state', JSON.stringify(editor.getJSON()));
-  }, 1000);
 
   onMount(() => {
     const editorClass = clsx(
@@ -70,7 +60,7 @@ export const Editor = () => {
 
     editor = new TiptapEditor({
       element: element,
-      extensions: getExtensions(),
+      extensions: getExtensions({ document }),
       editorProps: {
         attributes: {
           spellcheck: 'false',
@@ -78,29 +68,17 @@ export const Editor = () => {
         },
       },
       onCreate: ({ editor }) => {
-        if (!editor.$doc.attributes.initializedNodeIDs) {
-          // TODO: Move to GlobalNodeID as command
-          editor.view.dispatch(
-            editor.state.tr.setDocAttribute('initializedNodeIDs', true),
-          );
-        }
+        evaluateAllNodes(editor);
       },
       onUpdate: ({ editor }) => {
         evaluateAllNodes(editor);
-        saveUpdate();
       },
       onDestroy() {
         // TODO: Cleanup created signals
       },
-      content: testContent,
+      // content: testContent,
       // onTransaction: () => { editor = editor; },
     });
-
-    let storedJson = localStorage.getItem('editor-state');
-    storedJson = storedJson && JSON.parse(storedJson);
-    if (storedJson) {
-      editor.commands.setContent(storedJson);
-    }
   });
 
   onCleanup(() => {

@@ -25,6 +25,7 @@
     "@tiptap/extension-code": "^2.4.0",
     "@tiptap/extension-code-block": "^2.4.0",
     "@tiptap/extension-code-block-lowlight": "^2.4.0",
+    "@tiptap/extension-collaboration": "^2.4.0",
     "@tiptap/extension-horizontal-rule": "^2.4.0",
     "@tiptap/extension-link": "^2.4.0",
     "@tiptap/extension-task-item": "^2.4.0",
@@ -33,12 +34,14 @@
     "@tiptap/starter-kit": "^2.4.0",
     "clsx": "^2.1.1",
     "highlight.js": "^11.9.0",
+    "js-base64": "^3.7.7",
     "lowlight": "^3.1.0",
     "prosemirror-markdown": "^1.13.0",
     "quickjs-emscripten": "^0.29.2",
     "quickjs-emscripten-core": "^0.29.2",
     "solid-js": "^1.8.17",
     "tiptap-markdown": "^0.8.10",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.10.2",
+    "yjs": "^13.6.18"
   }
 }
