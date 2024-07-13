@@ -39,13 +39,9 @@ export const InlineCode = Code.extend({
   renderHTML({ HTMLAttributes, ...props }) {
     return this.parent!({
       ...props,
-      HTMLAttributes: mergeAttributes(
-        this.options.HTMLAttributes,
-        HTMLAttributes,
-        {
-          class: 'bg-slate-800 text-violet-300',
-        },
-      ),
+      HTMLAttributes: mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        class: 'bg-slate-800 text-violet-300',
+      }),
     });
   },
 
@@ -100,9 +96,7 @@ export const InlineCode = Code.extend({
               decorations.push(
                 Decoration.widget(
                   pos + node.nodeSize,
-                  () =>
-                    getDecoration(mark.attrs.result) ??
-                    document.createElement('span'),
+                  () => getDecoration(mark.attrs.result) ?? document.createElement('span'),
                 ),
               );
             });

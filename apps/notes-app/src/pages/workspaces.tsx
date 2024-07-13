@@ -15,12 +15,9 @@ const Workspaces = () => {
             class="block px-4 py-3 shadow-sm rounded-md border border-gray-100 mb-2 text-slate-700"
           >
             <div class="pb-1">
-              {workspace.name} (
-              <span class="text-slate-900 font-bold">@{workspace.slug}</span>)
+              {workspace.name} (<span class="text-slate-900 font-bold">@{workspace.slug}</span>)
             </div>
-            <div class="text-slate-600 text-sm">
-              {workspace.notes.length} notes
-            </div>
+            <div class="text-slate-600 text-sm">{workspace.notes.length} notes</div>
           </A>
         ))}
       </div>

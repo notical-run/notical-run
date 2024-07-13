@@ -5,8 +5,7 @@ import { evalModule } from '../../utils/eval-module';
 import { Result } from '../../utils/result';
 import { ModuleLoader, onContentUpdate } from '../../utils/quickjs';
 
-const isEvalable = (node: Node) =>
-  [null, 'javascript'].includes(node.attrs.language);
+const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
 
 const findMarkById = (editor: Editor, id: string): Mark | null => {
   let foundNode = null;

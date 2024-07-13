@@ -13,9 +13,5 @@ export const WorkspaceLayout = (props: ParentProps) => {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
   const slug = workspaceSlug.replace(/^@/, '');
 
-  return (
-    <WorkspaceContext.Provider value={{ slug }}>
-      {props.children}
-    </WorkspaceContext.Provider>
-  );
+  return <WorkspaceContext.Provider value={{ slug }}>{props.children}</WorkspaceContext.Provider>;
 };

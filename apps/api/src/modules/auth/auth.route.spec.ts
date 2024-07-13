@@ -10,20 +10,12 @@ request('POST /auth/login', () => {
       it('returns a 200 response with the new session id', async () => {
         const createdUser = await db
           .insert(User)
-          .values(
-            await userFactory({
-              email: 'user@email.com',
-              password: '123123123',
-            }),
-          )
+          .values(await userFactory({ email: 'user@email.com', password: '123123123' }))
           .returning({ id: User.id });
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: 'user@email.com',
-            password: '123123123',
-          }),
+          body: JSON.stringify({ email: 'user@email.com', password: '123123123' }),
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -39,19 +31,13 @@ request('POST /auth/login', () => {
   response.status('401', () => {
     context('when the email is wrong', () => {
       it('returns a 401 response with an error', async () => {
-        await db.insert(User).values(
-          await userFactory({
-            email: 'user@email.com',
-            password: '123123123',
-          }),
-        );
+        await db
+          .insert(User)
+          .values(await userFactory({ email: 'user@email.com', password: '123123123' }));
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: 'wronguser@email.com',
-            password: '123123123',
-          }),
+          body: JSON.stringify({ email: 'wronguser@email.com', password: '123123123' }),
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -64,19 +50,13 @@ request('POST /auth/login', () => {
 
     context('when the password is wrong', () => {
       it('returns a 401 response with an error', async () => {
-        await db.insert(User).values(
-          await userFactory({
-            email: 'user@email.com',
-            password: '123123123',
-          }),
-        );
+        await db
+          .insert(User)
+          .values(await userFactory({ email: 'user@email.com', password: '123123123' }));
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: 'user@email.com',
-            password: 'wrong password',
-          }),
+          body: JSON.stringify({ email: 'user@email.com', password: 'wrong password' }),
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -93,10 +73,7 @@ request('POST /auth/login', () => {
       it('returns a 401 response with an error', async () => {
         const response = await route.request('/api/auth/login', {
           method: 'POST',
-          body: JSON.stringify({
-            email: 'invalid email',
-            password: '123123123',
-          }),
+          body: JSON.stringify({ email: 'invalid email', password: '123123123' }),
           headers: { 'Content-Type': 'application/json' },
         });
 

@@ -4,8 +4,7 @@ import { API_BASE_URL } from '../settings';
 
 export const getSessionId = () => localStorage.getItem('session-id') ?? '';
 
-export const setSessionId = (s: string) =>
-  localStorage.setItem('session-id', s);
+export const setSessionId = (s: string) => localStorage.setItem('session-id', s);
 
 const fetchInstance: typeof fetch = (req, reqInit) => {
   const sessionId = getSessionId();
@@ -28,9 +27,7 @@ export class ApiError extends Error {
     public readonly response: Response,
     errorMessage?: string,
   ) {
-    super(
-      `APIError: ${errorMessage ?? `HTTP ${response.status}: ${response.statusText}`}`,
-    );
+    super(`APIError: ${errorMessage ?? `HTTP ${response.status}: ${response.statusText}`}`);
   }
 }
 

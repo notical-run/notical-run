@@ -39,11 +39,7 @@ export const DialogContent = (props: ParentProps<{ class?: string }>) => {
 };
 
 export const DialogContentHeading = (props: ParentProps) => {
-  return (
-    <CorvuDialog.Label class="text-lg font-bold">
-      {props.children}
-    </CorvuDialog.Label>
-  );
+  return <CorvuDialog.Label class="text-lg font-bold">{props.children}</CorvuDialog.Label>;
 };
 
 export const DialogContentFooter = (props: ParentProps) => {

@@ -5,7 +5,6 @@ import { evaluateAllNodes } from './evaluator';
 import { onCleanup, onMount } from 'solid-js';
 import clsx from 'clsx';
 import * as Y from 'yjs';
-import { Result } from '../../utils/result';
 import { evaluateImport } from './headless-note';
 
 const testContent = `

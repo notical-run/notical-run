@@ -15,9 +15,7 @@ export const evaluateImport = ({ doc, moduleLoader }: EvalImportOptions) => {
   // TODO: Save {nodeid: export} format instead
   const allModules: string[] = [];
   let resolver = (_: string) => {};
-  const waitForModuleCode = new Promise<string>(
-    resolve => (resolver = resolve),
-  );
+  const waitForModuleCode = new Promise<string>(resolve => (resolver = resolve));
 
   const reeval = async () => {
     await evaluateAllNodes(editor, {

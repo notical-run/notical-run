@@ -33,9 +33,7 @@ export const evalExpression = async (
 ) => {
   const quickVM = await getQuickVM(options);
 
-  const toResult = (
-    result: VmCallResult<QuickJSHandle>,
-  ): Result<Error, any> => {
+  const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> => {
     try {
       if (result.error) {
         throw result.error.consume(quickVM.dump);
@@ -58,9 +56,7 @@ export const evalExpression = async (
     handleCleanup(dispose);
 
     createEffect(async () => {
-      const nodePosAndSize = options.withEditor(editor =>
-        findMarkById(editor, options.id),
-      );
+      const nodePosAndSize = options.withEditor(editor => findMarkById(editor, options.id));
 
       const hereRef = JSON.stringify({
         pos: nodePosAndSize?.[0] ?? options.pos,

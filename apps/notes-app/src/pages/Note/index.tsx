@@ -53,13 +53,10 @@ const WorkspaceNote = () => {
     if (importCache.has(modulePath)) return importCache.get(modulePath)!;
 
     const importMatch = modulePath.match(/^@(\w+)\/(\w+)$/);
-    if (!importMatch || importMatch.length < 3)
-      throw new Error('Invalid import path');
+    if (!importMatch || importMatch.length < 3) throw new Error('Invalid import path');
 
     const [_, workspace, noteId] = importMatch;
-    const response = await apiClient.api.workspaces[':workspaceSlug'].notes[
-      ':noteId'
-    ]
+    const response = await apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
       .$get({
         param: { workspaceSlug: workspace, noteId },
       })

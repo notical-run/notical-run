@@ -18,9 +18,7 @@ const withParts = (connectionString: string): [string, string] => {
 };
 
 export const recreateDB = async () => {
-  const [dbName, connectionStr] = withParts(
-    import.meta.env.POSTGRES_CONNECTION_STRING!,
-  );
+  const [dbName, connectionStr] = withParts(import.meta.env.POSTGRES_CONNECTION_STRING!);
 
   const queryClient = postgres(connectionStr, { max: 1 });
   const db = drizzle(queryClient);

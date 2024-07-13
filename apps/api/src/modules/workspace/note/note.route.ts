@@ -8,24 +8,17 @@ import { z } from 'zod';
 
 import { validator } from 'hono/validator';
 
-const authorizeWorkspace = validator(
-  'param',
-  async (param: { workspaceSlug: string }, c) => {
-    if (!param.workspaceSlug) return c.json({ error: 'Empty workspace' }, 401);
-    const user = c.get('user')!;
-    const workspace = await db.query.Workspace.findFirst({
-      where: and(
-        eq(Workspace.slug, param.workspaceSlug),
-        eq(Workspace.authorId, user.id),
-      ),
-    });
+const authorizeWorkspace = validator('param', async (param: { workspaceSlug: string }, c) => {
+  if (!param.workspaceSlug) return c.json({ error: 'Empty workspace' }, 401);
+  const user = c.get('user')!;
+  const workspace = await db.query.Workspace.findFirst({
+    where: and(eq(Workspace.slug, param.workspaceSlug), eq(Workspace.authorId, user.id)),
+  });
 
-    if (!workspace)
-      return c.json({ error: `You don't have access to this workspace` }, 401);
+  if (!workspace) return c.json({ error: `You don't have access to this workspace` }, 401);
 
-    return { param };
-  },
-);
+  return { param };
+});
 
 export const noteRoute = new Hono<{ Variables: SessionVars }>()
   .get('/:noteId', async c => {
@@ -82,30 +75,25 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
     return c.json(workspace?.notes ?? []);
   })
 
-  .post(
-    '/',
-    authorizeWorkspace,
-    zValidator('json', z.object({ name: z.string() })),
-    async c => {
-      const noteJson = c.req.valid('json');
-      const user = c.get('user')!;
-      const workspace = await db.query.Workspace.findFirst({
-        where: eq(Workspace.slug, c.req.param('workspaceSlug')!),
-        columns: { id: true },
-      });
-      if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
+  .post('/', authorizeWorkspace, zValidator('json', z.object({ name: z.string() })), async c => {
+    const noteJson = c.req.valid('json');
+    const user = c.get('user')!;
+    const workspace = await db.query.Workspace.findFirst({
+      where: eq(Workspace.slug, c.req.param('workspaceSlug')!),
+      columns: { id: true },
+    });
+    if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
 
-      await db
-        .insert(Note)
-        .values({
-          name: noteJson.name,
-          workspaceId: workspace.id,
-          authorId: user.id,
-        })
-        .returning({ id: Note.id, name: Note.name });
-      return c.json({}, 201);
-    },
-  )
+    await db
+      .insert(Note)
+      .values({
+        name: noteJson.name,
+        workspaceId: workspace.id,
+        authorId: user.id,
+      })
+      .returning({ id: Note.id, name: Note.name });
+    return c.json({}, 201);
+  })
 
   .patch(
     '/:noteId',

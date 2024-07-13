@@ -1,5 +1,5 @@
 import { Navigate } from '@solidjs/router';
-import { createSignal, JSX, ParentProps } from 'solid-js';
+import { createSignal, ParentProps } from 'solid-js';
 import { getSessionId, setSessionId } from '../../utils/api-client';
 import { links } from '../Navigation';
 

@@ -97,8 +97,7 @@ export const getQuickVM = async (options: VMEnvOptions) => {
       .dispose();
   }
 
-  const getInternal = () =>
-    quickVM && quickVM.getProp(quickVM.global, internalsKey);
+  const getInternal = () => quickVM && quickVM.getProp(quickVM.global, internalsKey);
 
   const getDebug = () => quickVM && quickVM.getProp(quickVM.global, debugKey);
 
@@ -141,9 +140,7 @@ export const getQuickVM = async (options: VMEnvOptions) => {
         const key = keyH.consume(quickVM.dump);
         const [getState] = getSignal(key);
         const val = getState();
-        const result = quickVM.evalCode(
-          `(${JSON.stringify(val ?? null) ?? 'null'})`,
-        );
+        const result = quickVM.evalCode(`(${JSON.stringify(val ?? null) ?? 'null'})`);
         return quickVM?.unwrapResult(result);
       })
       .consume(getStateHandle => {
@@ -171,11 +168,7 @@ export const getQuickVM = async (options: VMEnvOptions) => {
         contentUpdateSignal[0]();
       })
       .consume(insertMarkdownBelowHandle => {
-        quickVM!.setProp(
-          internals,
-          'listenToUpdate',
-          insertMarkdownBelowHandle,
-        );
+        quickVM!.setProp(internals, 'listenToUpdate', insertMarkdownBelowHandle);
       });
 
     quickVM

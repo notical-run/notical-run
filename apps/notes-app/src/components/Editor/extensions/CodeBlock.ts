@@ -21,10 +21,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
   renderHTML({ HTMLAttributes, ...options }) {
     return this.parent!({
       ...options,
-      HTMLAttributes: mergeAttributes(
-        this.options.HTMLAttributes,
-        HTMLAttributes,
-      ),
+      HTMLAttributes: mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
     });
   },
 
@@ -104,11 +101,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
 
       const buttons = Object.entries(exports.value).map(([key, value]) => {
         return html`<button
-          class="${clsx(
-            'bg-violet-700 rounded-md',
-            'text-sm text-white',
-            'py-0.5 px-1.5',
-          )}"
+          class="${clsx('bg-violet-700 rounded-md', 'text-sm text-white', 'py-0.5 px-1.5')}"
           onclick=${() => (value as any)()}
         >
           ${key}
@@ -116,19 +109,14 @@ export const CodeBlock = CodeBlockLowlight.extend({
       });
 
       return html`<div
-        class="${clsx(
-          'flex justify-end flex-wrap gap-2 mb-6',
-          collapsed ? 'mt-4' : '-mt-4',
-        )}"
+        class="${clsx('flex justify-end flex-wrap gap-2 mb-6', collapsed ? 'mt-4' : '-mt-4')}"
       >
         ${buttons}
       </div>` as HTMLElement;
     };
 
     return [
-      ...(this.parent!() ?? []).filter(
-        p => !(p as any).key.startsWith('codeBlockViewPlugin$'),
-      ),
+      ...(this.parent!() ?? []).filter(p => !(p as any).key.startsWith('codeBlockViewPlugin$')),
       new Plugin({
         key: new PluginKey('codeBlockViewPlugin'),
         props: {

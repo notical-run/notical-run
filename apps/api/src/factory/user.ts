@@ -1,9 +1,7 @@
 import { hashPassword } from '../auth';
 import { UserType } from '../db/schema';
 
-export const userFactory = async (
-  user?: Partial<UserType>,
-): Promise<UserType> => ({
+export const userFactory = async (user?: Partial<UserType>): Promise<UserType> => ({
   name: 'Ozzy Osbourne',
   email: 'ozzy@email.com',
   ...user,

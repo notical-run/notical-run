@@ -20,10 +20,7 @@ export const Page = ({ children, breadcrumbs }: ParentProps<PageProps>) => {
                   <div class="px-2 text-slate-300">/</div>
                 </Show>
 
-                <Show
-                  when={!!b.href}
-                  fallback={<span class="text-slate-600">{b.text}</span>}
-                >
+                <Show when={!!b.href} fallback={<span class="text-slate-600">{b.text}</span>}>
                   <A href={b.href!} class="text-slate-950">
                     {b.text}
                   </A>

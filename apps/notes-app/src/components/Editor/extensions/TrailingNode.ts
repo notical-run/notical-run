@@ -8,17 +8,9 @@ import { Extension } from '@tiptap/core';
 import { Node, NodeType } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 
-function nodeEqualsType({
-  types,
-  node,
-}: {
-  types: NodeType | NodeType[];
-  node: Node | null;
-}) {
+function nodeEqualsType({ types, node }: { types: NodeType | NodeType[]; node: Node | null }) {
   if (!node) return false;
-  return (
-    (Array.isArray(types) && types.includes(node.type)) || node?.type === types
-  );
+  return (Array.isArray(types) && types.includes(node.type)) || node?.type === types;
 }
 
 export interface TrailingNodeOptions {

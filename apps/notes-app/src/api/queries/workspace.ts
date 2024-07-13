@@ -1,8 +1,4 @@
-import {
-  createMutation,
-  createQuery,
-  useQueryClient,
-} from '@tanstack/solid-query';
+import { createMutation, createQuery, useQueryClient } from '@tanstack/solid-query';
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
 
