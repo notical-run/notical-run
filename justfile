@@ -1,11 +1,13 @@
 set positional-arguments
 
 up *args:
-  docker compose --profile development up --exit-code-from api-test "$@"
+  API_BASE_URL=http://localhost:3141 docker compose --profile development up --exit-code-from api "$@"
 
 test *args:
   docker compose --profile test up --exit-code-from api-test "$@"
-  docker compose down
+
+e2e *args:
+  docker compose --profile e2e up --exit-code-from e2e "$@"
 
 test-w *args:
   API_CMD_ARGS="--watch" just test "$@"

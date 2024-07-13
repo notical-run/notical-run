@@ -2,7 +2,8 @@
   "name": "notical-run",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "e2e"
   ],
   "scripts": {
     "app": "bun --filter '@notical/app'",

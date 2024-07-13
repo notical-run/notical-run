@@ -1,0 +1,14 @@
+{
+  "name": "@notical/e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.1",
+    "@types/node": "^20.14.10"
+  }
+}

@@ -2,14 +2,14 @@
 ** Evaluation
    - ( ) `here()` for code blocks
    - ( ) Show decoration
+   - ( ) Get content from page
 ** Backend
-   - ( ) Testing api
-   - ( ) Handle errors
    - ( ) e2e tests
-   - ( ) Create workspace
    - ( ) Refactor api and authorization
+   - ( ) Create workspace
 ** UI
    - ( ) Improve forms + validations
+   - ( ) Show api errors
    - ( ) Improve styles for editor
    - ( ) Default to read-only mode and then allow editing
 ** Others
@@ -23,21 +23,26 @@
 * Later
 ** Evaluation
    - ( ) Allow running stuff on click for show decoration
+   - ( ) Select text programmatically
    - ( ) Replace content
 ** Backend
    - ( ) Delete note
    - ( ) Private notes
-   - ( ) Delete workspace
+   - ( ) Fork note
    - ( ) github oauth
    - ( ) confirm email (+ sendgrid)
    - ( ) Create a sample workspace by default on signup
    - ( ) Template notes
+   - ( ) Delete workspace
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so
    - ( ) Alternative way to insert/show content
 ** Editor
-   - ( ) Allow creating links
+   - ( ) Prevent code block collapse from being in undo history
+   - ( ) Prevent export updates from being in undo history
+   - ( ) Editing sticky toolbar
+   - ( ) Allow creating links wysiwyg way
    - ( ) Latex equation support (mathjax or katex)
    - ( ) Youtube embed
    - ( ) More complex task states

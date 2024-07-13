@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [tsconfigPaths(), solidPlugin()],
 
   server: {
+    host: '0.0.0.0',
     port: 3000,
   },
 });
