@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { db } from '../../../db';
 import { Note, Workspace } from '../../../db/schema';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { privateRoute, SessionVars } from '../../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
@@ -12,10 +12,12 @@ const authorizeWorkspace = validator('param', async (param: { workspaceSlug: str
   if (!param.workspaceSlug) return c.json({ error: 'Empty workspace' }, 401);
   const user = c.get('user')!;
   const workspace = await db.query.Workspace.findFirst({
-    where: and(eq(Workspace.slug, param.workspaceSlug), eq(Workspace.authorId, user.id)),
+    where: eq(Workspace.slug, param.workspaceSlug),
+    columns: { authorId: true },
   });
 
-  if (!workspace) return c.json({ error: `You don't have access to this workspace` }, 401);
+  if (user && workspace && workspace.authorId !== user.id)
+    return c.json({ error: `You don't have access to this workspace` }, 401);
 
   return { param };
 });
@@ -71,8 +73,9 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
         },
       },
     });
+    if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
 
-    return c.json(workspace?.notes ?? []);
+    return c.json(workspace.notes);
   })
 
   .post('/', authorizeWorkspace, zValidator('json', z.object({ name: z.string() })), async c => {
@@ -103,8 +106,6 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
       const workspaceSlug = c.req.param('workspaceSlug')!;
       const noteId = c.req.param('noteId');
       const noteJson = c.req.valid('json');
-      // const user = c.get('user')!;
-      // TODO: Authorize
 
       const workspace = await db.query.Workspace.findFirst({
         where: eq(Workspace.slug, workspaceSlug),

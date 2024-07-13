@@ -46,6 +46,7 @@ export const workspaceRelations = relations(Workspace, ({ one, many }) => ({
   author: one(User, { fields: [Workspace.authorId], references: [User.id] }),
   notes: many(Note),
 }));
+export type WorkspaceType = typeof Workspace.$inferInsert;
 
 // Notes
 export const Note = pgTable(
@@ -74,3 +75,4 @@ export const noteRelations = relations(Note, ({ one }) => ({
     references: [Workspace.id],
   }),
 }));
+export type NoteType = typeof Note.$inferInsert;

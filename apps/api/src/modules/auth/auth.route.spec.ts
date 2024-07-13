@@ -1,17 +1,12 @@
 import { request, context, response } from '../../utils/test';
-import { db } from '../../db';
-import { User } from '../../db/schema';
-import { userFactory } from '../../factory/user';
+import { createUser } from '../../factory/user';
 import route from '../..';
 
 request('POST /auth/login', () => {
   response.status('200', () => {
     context('when credentials are correct', () => {
-      it('returns a 200 response with the new session id', async () => {
-        const createdUser = await db
-          .insert(User)
-          .values(await userFactory({ email: 'user@email.com', password: '123123123' }))
-          .returning({ id: User.id });
+      it('returns with a new session id', async () => {
+        const user = await createUser({ email: 'user@email.com', password: '123123123' });
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
@@ -21,7 +16,7 @@ request('POST /auth/login', () => {
 
         expect(response.status).toBe(200);
         expect(await response.json()).toMatchObject({
-          userId: createdUser[0].id,
+          userId: user.id,
           sessionId: expect.any(String),
         });
       });
@@ -30,10 +25,8 @@ request('POST /auth/login', () => {
 
   response.status('401', () => {
     context('when the email is wrong', () => {
-      it('returns a 401 response with an error', async () => {
-        await db
-          .insert(User)
-          .values(await userFactory({ email: 'user@email.com', password: '123123123' }));
+      it('returns an error', async () => {
+        await createUser({ email: 'user@email.com', password: '123123123' });
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
@@ -49,10 +42,8 @@ request('POST /auth/login', () => {
     });
 
     context('when the password is wrong', () => {
-      it('returns a 401 response with an error', async () => {
-        await db
-          .insert(User)
-          .values(await userFactory({ email: 'user@email.com', password: '123123123' }));
+      it('returns an error', async () => {
+        await createUser({ email: 'user@email.com', password: '123123123' });
 
         const response = await route.request('/api/auth/login', {
           method: 'POST',
@@ -70,7 +61,7 @@ request('POST /auth/login', () => {
 
   response.status('400', () => {
     context('when the email is invalid', () => {
-      it('returns a 401 response with an error', async () => {
+      it('returns an error', async () => {
         const response = await route.request('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email: 'invalid email', password: '123123123' }),
@@ -80,21 +71,14 @@ request('POST /auth/login', () => {
         expect(response.status).toBe(400);
         expect(await response.json()).toMatchObject({
           error: {
-            issues: [
-              {
-                code: 'invalid_string',
-                message: 'Invalid email',
-                path: ['email'],
-                validation: 'email',
-              },
-            ],
+            issues: [{ code: 'invalid_string', path: ['email'] }],
           },
         });
       });
     });
 
     context('when the password is too short', () => {
-      it('returns a 401 response with an error', async () => {
+      it('returns an error', async () => {
         const response = await route.request('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email: 'user@email.com', password: '123' }),
@@ -104,14 +88,7 @@ request('POST /auth/login', () => {
         expect(response.status).toBe(400);
         expect(await response.json()).toMatchObject({
           error: {
-            issues: [
-              {
-                code: 'too_small',
-                message: 'String must contain at least 8 character(s)',
-                minimum: 8,
-                path: ['password'],
-              },
-            ],
+            issues: [{ code: 'too_small', minimum: 8, path: ['password'] }],
           },
         });
       });

@@ -30,10 +30,10 @@ export type SessionVars = {
 export const privateRoute = createMiddleware(async (ctx, next) => {
   const authorizationHeader = ctx.req.header('Authorization');
   const sessionId = lucia.readBearerToken(authorizationHeader ?? '');
-  if (!sessionId) return ctx.json({}, 401);
+  if (!sessionId) return ctx.json({ error: 'Unauthenticated request' }, 401);
 
   const { session, user } = await lucia.validateSession(sessionId);
-  if (!user || !session) return ctx.json({}, 401);
+  if (!user || !session) return ctx.json({ error: 'Unauthenticated request' }, 401);
 
   ctx.set('user', user);
   ctx.set('session', session);

@@ -1,8 +1,8 @@
 up *args:
-  docker compose up --profile development {{args}}
+  docker compose --profile development up --exit-code-from api-test {{args}}
 
 test *args:
-  docker compose --profile test up --abort-on-container-exit {{args}}
+  docker compose --profile test up --exit-code-from api-test {{args}}
   docker compose down
 
 down:
