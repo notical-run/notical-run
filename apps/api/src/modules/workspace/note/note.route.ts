@@ -87,15 +87,19 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
     });
     if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
 
-    await db
+    const note = await db
       .insert(Note)
       .values({
         name: noteJson.name,
         workspaceId: workspace.id,
         authorId: user.id,
       })
-      .returning({ id: Note.id, name: Note.name });
-    return c.json({}, 201);
+      .returning({ id: Note.id, name: Note.name })
+      .onConflictDoNothing();
+
+    if (note.length === 0) return c.json({ error: 'Note already exists' }, 422);
+
+    return c.json(note[0], 201);
   })
 
   .patch(
