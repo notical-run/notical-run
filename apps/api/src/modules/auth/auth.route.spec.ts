@@ -1,6 +1,6 @@
-import { request, context, response } from '../../utils/test';
-import { createUser } from '../../factory/user';
-import route from '../..';
+import { request, context, response } from '@/utils/test';
+import { createUser } from '@/factory/user';
+import route from '@/index';
 
 request('POST /auth/login', () => {
   response.status('200', () => {
@@ -25,7 +25,7 @@ request('POST /auth/login', () => {
 
   response.status('401', () => {
     context('when the email is wrong', () => {
-      it('returns an error', async () => {
+      it('fails with an error', async () => {
         await createUser({ email: 'user@email.com', password: '123123123' });
 
         const response = await route.request('/api/auth/login', {
@@ -42,7 +42,7 @@ request('POST /auth/login', () => {
     });
 
     context('when the password is wrong', () => {
-      it('returns an error', async () => {
+      it('fails with an error', async () => {
         await createUser({ email: 'user@email.com', password: '123123123' });
 
         const response = await route.request('/api/auth/login', {
@@ -61,7 +61,7 @@ request('POST /auth/login', () => {
 
   response.status('400', () => {
     context('when the email is invalid', () => {
-      it('returns an error', async () => {
+      it('fails with an error', async () => {
         const response = await route.request('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email: 'invalid email', password: '123123123' }),
@@ -78,7 +78,7 @@ request('POST /auth/login', () => {
     });
 
     context('when the password is too short', () => {
-      it('returns an error', async () => {
+      it('fails with an error', async () => {
         const response = await route.request('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email: 'user@email.com', password: '123' }),

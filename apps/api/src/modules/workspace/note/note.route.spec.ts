@@ -1,8 +1,8 @@
-import { request, context, response } from '../../../utils/test';
-import { createSession, createUser } from '../../../factory/user';
-import route from '../../..';
-import { createWorkspace } from '../../../factory/workspace';
-import { createNote } from '../../../factory/note';
+import { request, context, response } from '@/utils/test';
+import { createSession, createUser } from '@/factory/user';
+import route from '@/index';
+import { createWorkspace } from '@/factory/workspace';
+import { createNote } from '@/factory/note';
 
 request('GET /workspaces/:workspaceSlug/notes', () => {
   response.status('200', () => {
@@ -62,7 +62,7 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
 
   response.status('404', () => {
     context('when user has access to workspace', () => {
-      it('returns notes belonging to the workspace', async () => {
+      it('fails with an error message', async () => {
         const user = await createUser();
 
         const session = await createSession(user.id);
