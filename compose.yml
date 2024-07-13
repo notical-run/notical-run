@@ -16,25 +16,8 @@ services:
     volumes:
       - .:/app
 
-  api-test:
-    profiles: [test]
-    build:
-      context: .
-      dockerfile: ./Dockerfile.dev
-    command: bun api test
-    ports:
-      - 3141:3141
-    environment:
-      PORT: 3141
-    env_file:
-      ./apps/api/.env.development
-    depends_on:
-      - postgres
-    volumes:
-      - .:/app
-
   postgres:
-    profiles: [test, development]
+    profiles: [development]
     image: postgres:16.3-alpine
     environment:
       POSTGRES_USER: postgres
@@ -43,6 +26,31 @@ services:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  api-test:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: bun api test ${API_CMD_ARGS:-''}
+    env_file:
+      ./apps/api/.env.test
+    depends_on:
+      - postgres-test
+    volumes:
+      - .:/app
+
+  postgres-test:
+    profiles: [test]
+    image: postgres:16.3-alpine
+    attach: false
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGPORT: 5888
+    ports:
+      - 5888:5888
+
 
 volumes:
   postgres-data:

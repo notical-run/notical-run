@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { apiRoute } from './api';
+import { apiRoute } from '@/api';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
@@ -11,7 +11,9 @@ app.use(
   }),
 );
 
-app.use(logger());
+if (import.meta.env.NODE_ENV !== 'test') {
+  app.use(logger());
+}
 
 const route = app
   .get('/health', c => {

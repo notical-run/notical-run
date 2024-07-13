@@ -1,15 +1,20 @@
+set positional-arguments
+
 up *args:
-  docker compose --profile development up --exit-code-from api-test {{args}}
+  docker compose --profile development up --exit-code-from api-test "$@"
 
 test *args:
-  docker compose --profile test up --exit-code-from api-test {{args}}
+  docker compose --profile test up --exit-code-from api-test "$@"
   docker compose down
+
+test-w *args:
+  API_CMD_ARGS="--watch" just test "$@"
 
 down:
   docker compose down
 
 exec *args:
-  docker compose exec -w /app/apps/api api {{args}}
+  docker compose exec -w /app/apps/api api "$@"
 
 shell *args: (exec "bash" args)
 db-generate *args: (exec "bun" "db:generate" "--name" args)
@@ -25,4 +30,4 @@ api-restart:
   docker compose restart api
 
 client *args:
-  bun app dev {{args}}
+  bun app dev "$@"
