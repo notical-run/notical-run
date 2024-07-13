@@ -22,6 +22,8 @@ export const userRelations = relations(User, ({ many }) => ({
   sessions: many(Session),
 }));
 
+export type UserType = typeof User.$inferInsert;
+
 export const Session = pgTable('session', {
   id: text('id').primaryKey(),
   userId: uuid('user_id')

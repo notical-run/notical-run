@@ -1,73 +1,77 @@
 * Curent
 ** Evaluation
-   - (x) Get node pos/target
-   - (x) Insert markdown
-   - (x) Hide native values from preview
-   - (x) Re-evaluate all `here` on document change
-   - (x) Simple local storage persist for testing
-   - ( ) Imports
    - ( ) `here()` for code blocks
    - ( ) Show decoration
-   - ( ) Updates to state/pos should update insertion instead of re-inserting
-   - ( ) Updates to pos should update previous insertion (track pos)
 ** Backend
-   - (x) user/pass Authentication
-   - (x) Note short id (unique workspace+note)
-   - (x) Note referenced as `@workspace-slug/note-name`
-   - (x) Signup
-   - (x) Create note
-   - (x) Note content integration: y.js document storage + retrieval via http
+   - ( ) Testing api
+   - ( ) Handle errors
+   - ( ) e2e tests
    - ( ) Create workspace
+   - ( ) Refactor api and authorization
+** UI
+   - ( ) Improve forms + validations
+   - ( ) Improve styles for editor
+   - ( ) Default to read-only mode and then allow editing
 ** Others
-   - (x) Collapsable code blocks
-   - ( ) Prevent re-creating view on update for code block
-   - ( ) Routing
-   - ( ) Workspace list page
-   - ( ) Notes list page
-   - ( ) Note view
-   - ( ) Testing api with test containers
+   - ( ) Prevent re-creating node view on update for code block
 
 * Bugs
-  - (x) Fix issue with state initialization in code blocks
-  - (x) Fix memory leak with inline code
+  - ( ) Fix issue with import not working sometimes
+  - ( ) Fix memory leak. (Cleanup quickjs ctx+runtime on exit)
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
-  - ( ) Debug random freezes / cpu spikes
-  - ( ) Fix memory leak
 
 * Later
 ** Evaluation
-   - ( ) Promise/async code eval
-   - ( ) If export (or inline func) has args, ask user for input?
-   - ( ) Save state in the document?
-** Modules
-   - ( ) Allow `import`-ing other notes (provide state/behavior + exports?)
-   - ( ) Button next to import stmnt to open imported note
+   - ( ) Allow running stuff on click for show decoration
+   - ( ) Replace content
+** Backend
+   - ( ) Delete note
+   - ( ) Private notes
+   - ( ) Delete workspace
+   - ( ) github oauth
+   - ( ) confirm email (+ sendgrid)
+   - ( ) Create a sample workspace by default on signup
+   - ( ) Template notes
+** Markdown or not
+   - ( ) Decide if this should stay compatible with markdown
+   - ( ) Button to copy as markdown if so
+   - ( ) Alternative way to insert/show content
+** Editor
+   - ( ) Allow creating links
+   - ( ) Latex equation support (mathjax or katex)
+   - ( ) Youtube embed
+   - ( ) More complex task states
+   - ( ) plantuml diagram support
+   - ( ) Allow disabling evaluation for a code block?
+   - ( ) Placeholder texts
+   - ( ) Drag and drop nodes
+   - ( ) Heading anchors (link to heading)
+   - ( ) Giphy integration
+   - ( ) Emoji integration
+   - ( ) Excalidraw/tldraw/draw.io integration
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Don't show permission request if user is the author
    - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
    - ( ) Keybindings
-   - ( ) Embeds?
-** Backend
-   - ( ) For imports, can only import note if note is in same workspace or is public
-   - ( ) confirm email (+ sendgrid)
-   - ( ) github oauth
-** Infra
-   - ( ) Infra setup for api (ovhcloud? | digitalocean? | aws?)
-   - ( ) Postgres DB setup (neon? | ovhcloud?)
 ** Collaboration
    - ( ) invite to workspace/workspace collaborators
    - ( ) hocuspocus or y-websocket server for realtime?
    - ( ) multi-user collaboration/multi-cursor features
    - ( ) Tagging users
 ** Other
-   - ( ) freeze `internal`
+   - ( ) landing page
+   - ( ) freeze `internal` and other objects
    - ( ) cleanup all signals/effects when exiting the editor
+** Infra
+   - ( ) Setup CI
+   - ( ) Infra setup for api (digitalocean? | aws?)
+   - ( ) Postgres DB setup (neon? | digitalocean? | aws?)
 
 * Supported features/ideas
-  - ( ) Note based calculator
-  - ( ) Simplified canvas api for drawing
+  - (-) Note based calculator
   - ( ) Task management
+  - ( ) Simplified canvas api for drawing
   - ( ) Datetime picker
   - ( ) Fetch and present external data
   - ( ) Draft and send custom emails (mail client)?
@@ -79,29 +83,17 @@
   - ( ) Improve markdown editing experience
   - ( ) Truncate the inline result decoration
   - ( ) Debounce evaluation checks
+  - ( ) If export (or inline func) has args, ask user for input?
 
 * Maybe
   - ( ) Slash commands
+  - ( ) Button next to import stmnt to open imported note
   - ( ) Block-ey UI with drag and drop
   - ( ) Support images with image upload
   - ( ) Debug view for showing current state
   - ( ) Print to PDF (including results)
   - ( ) Consider giving up markdown?
+  - ( ) gist embed? (see if it can be used for evaluation?)
+  - ( ) Tab UI?
+  - ( ) Vim mode editing?
   - ( ) Importing js from CDN? (naah)
-
-* Done
-** Evaluation
-   - (x) Use quickjs for runtime
-   - (x) Evaluate code blocks
-   - (x) Exports as buttons
-   - (x) Use signals for evaluation
-   - (x) Evaluate on signal and edit to code node (or just the doc if I'm lazy)
-   - (x) Fix issue with solidjs root
-   - (x) Inline code is button if returning function
-** Backend
-   - (x) API setup
-   - (x) workspace->notes api
-** Improvements
-  - (x) Value/Error distinction in result decoration
-** Others
-   - (x) Figure out how to do buttons

@@ -1,5 +1,9 @@
 up *args:
-  docker compose up {{args}}
+  docker compose up --profile development {{args}}
+
+test *args:
+  docker compose --profile test up --abort-on-container-exit {{args}}
+  docker compose down
 
 down:
   docker compose down

@@ -1,8 +1,27 @@
 services:
   api:
+    profiles: [development]
     build:
       context: .
       dockerfile: ./Dockerfile.dev
+    command: bun api dev
+    ports:
+      - 3141:3141
+    environment:
+      PORT: 3141
+    env_file:
+      ./apps/api/.env.development
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+  api-test:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: bun api test
     ports:
       - 3141:3141
     environment:
@@ -15,6 +34,7 @@ services:
       - .:/app
 
   postgres:
+    profiles: [test, development]
     image: postgres:16.3-alpine
     environment:
       POSTGRES_USER: postgres

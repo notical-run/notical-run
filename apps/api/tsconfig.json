@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig/tsconfig.base.json",
   "compilerOptions": {
+    "types": ["bun-types", "jest"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
   }

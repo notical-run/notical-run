@@ -110,13 +110,7 @@ export const noteRoute = new Hono<{ Variables: SessionVars }>()
   .patch(
     '/:noteId',
     authorizeWorkspace,
-    zValidator(
-      'json',
-      z.object({
-        name: z.string().optional(),
-        content: z.string().optional(),
-      }),
-    ),
+    zValidator('json', z.object({ content: z.string().optional() })),
     async c => {
       const workspaceSlug = c.req.param('workspaceSlug')!;
       const noteId = c.req.param('noteId');
