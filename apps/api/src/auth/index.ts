@@ -1,9 +1,9 @@
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
-import { db } from '../db';
-import { Session, User } from '../db/schema';
 import { Lucia, Session as LuciaSession, User as LuciaUser, TimeSpan } from 'lucia';
 import { hash, verify } from '@node-rs/argon2';
 import { createMiddleware } from 'hono/factory';
+import { db } from '../db';
+import { Session, User } from '../db/schema';
 
 export const authAdapter = new DrizzlePostgreSQLAdapter(db, Session, User);
 
@@ -27,16 +27,27 @@ export type SessionVars = {
   session: LuciaSession | null;
 };
 
+export const authenticationMiddleware = createMiddleware(async (ctx, next) => {
+  const authorizationHeader = ctx.req.header('Authorization');
+  const sessionId = lucia.readBearerToken(authorizationHeader ?? '');
+
+  if (sessionId) {
+    const { session, user } = await lucia.validateSession(sessionId);
+    user && ctx.set('user', user);
+    session && ctx.set('session', session);
+  }
+
+  return next();
+});
+
 export const privateRoute = createMiddleware(async (ctx, next) => {
   const authorizationHeader = ctx.req.header('Authorization');
   const sessionId = lucia.readBearerToken(authorizationHeader ?? '');
+
   if (!sessionId) return ctx.json({ error: 'Unauthenticated request' }, 401);
 
-  const { session, user } = await lucia.validateSession(sessionId);
-  if (!user || !session) return ctx.json({ error: 'Unauthenticated request' }, 401);
-
-  ctx.set('user', user);
-  ctx.set('session', session);
+  if (!ctx.get('session') || !ctx.get('user'))
+    return ctx.json({ error: 'Unauthenticated request' }, 401);
 
   return next();
 });

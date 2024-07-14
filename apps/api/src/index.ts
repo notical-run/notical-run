@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { apiRoute } from './api';
+import { authenticationMiddleware } from './auth';
 
 const app = new Hono();
 
@@ -19,6 +20,7 @@ const route = app
   .get('/health', c => {
     return c.text('All gucci in here!');
   })
+  .use(authenticationMiddleware)
   .route('/api', apiRoute);
 
 export type RouteType = typeof route;

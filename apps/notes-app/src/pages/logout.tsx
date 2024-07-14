@@ -1,23 +1,25 @@
-import { Navigate } from '@solidjs/router';
+import { useNavigate } from '@solidjs/router';
 import { createEffect } from 'solid-js';
 import { useLogout } from '../api/queries/auth';
 import { createSessionId } from '../components/Auth/Session';
-import { links } from '../components/Navigation';
 
 export const Logout = () => {
   const [_, setSessionId] = createSessionId();
   const logoutRequest = useLogout();
+  const navigate = useNavigate();
 
   createEffect(() => {
     logoutRequest.mutate(undefined, {
       onSuccess() {
         setSessionId('');
+        navigate('/login');
       },
       onError() {
         setSessionId('');
+        navigate('/login');
       },
     });
   });
 
-  return <Navigate href={links.login()} />;
+  return <div>Logging out...</div>;
 };

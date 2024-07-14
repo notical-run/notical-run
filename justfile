@@ -13,7 +13,7 @@ test-w *args:
   API_CMD_ARGS="--watch" just test "$@"
 
 down:
-  docker compose down
+  docker compose --profile '*' down
 
 exec *args:
   docker compose exec -w /app/apps/api api "$@"
