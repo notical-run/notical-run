@@ -23,11 +23,14 @@ export const apiClient = makeApiClient(API_BASE_URL, {
 });
 
 export class ApiError extends Error {
+  public status: number;
+  public handled: boolean = false;
   constructor(
     public readonly response: Response,
     errorMessage?: string,
   ) {
-    super(`APIError: ${errorMessage ?? `HTTP ${response.status}: ${response.statusText}`}`);
+    super(errorMessage ?? response.statusText ?? 'Something went wrong');
+    this.status = response.status ?? 500;
   }
 }
 
@@ -45,12 +48,13 @@ export const responseJson = async <
   response: CR,
 ): Promise<ResponseOutput<CR>> => {
   if (!response.ok) {
-    throw new ApiError(response);
+    const result: any = await response.json().catch(_ => null);
+    return Promise.reject(new ApiError(response, result?.error));
   }
 
   const result: any = await response.json();
   if (result.success === false || result.error) {
-    throw new ApiError(response, result.error || undefined);
+    return Promise.reject(new ApiError(response, result.error));
   }
 
   return result;

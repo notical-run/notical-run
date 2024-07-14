@@ -4,6 +4,7 @@ import { Dialog, DialogRootProps } from '@/components/_base/Dialog';
 import { TextInput } from '@/components/_base/TextInput';
 import { links } from '@/components/Navigation';
 import { useNavigate, useParams } from '@solidjs/router';
+import toast from 'solid-toast';
 
 export const NewNoteDialog = (props: DialogRootProps) => {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
@@ -11,7 +12,8 @@ export const NewNoteDialog = (props: DialogRootProps) => {
 
   const navigate = useNavigate();
 
-  const createNoteMut = useCreateNote(slug);
+  const createNoteMutation = useCreateNote(slug);
+
   const createNote = (e: SubmitEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -19,11 +21,12 @@ export const NewNoteDialog = (props: DialogRootProps) => {
 
     if (!name || !/^[a-z][a-z0-9_-]+$/i.test(name)) return;
 
-    createNoteMut.mutate(
+    createNoteMutation.mutate(
       { name },
       {
         onSuccess: () => {
           props.onOpenChange(false);
+          toast.success(`Note ${name} created`);
           navigate(links.workspaceNote(slug, name));
         },
       },
@@ -42,8 +45,8 @@ export const NewNoteDialog = (props: DialogRootProps) => {
               <Dialog.Close as={Button} class="text-sm">
                 Cancel
               </Dialog.Close>
-              <Button class="text-sm" type="submit">
-                Create
+              <Button class="text-sm" type="submit" disabled={createNoteMutation.isPending}>
+                {createNoteMutation.isPending ? 'Createing...' : 'Create'}
               </Button>
             </Dialog.Content.Footer>
           </form>
