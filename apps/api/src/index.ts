@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { apiRoute } from '@/api';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { apiRoute } from './api';
 
 const app = new Hono();
 

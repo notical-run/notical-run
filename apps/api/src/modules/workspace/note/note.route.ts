@@ -19,7 +19,7 @@ const authorizeWorkspace = validator('param', async (param: { workspaceSlug: str
   if (user && workspace && workspace.authorId !== user.id)
     return c.json({ error: `You don't have access to this workspace` }, 401);
 
-  return { param };
+  return param;
 });
 
 export const noteRoute = new Hono<{ Variables: SessionVars }>()

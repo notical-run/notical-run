@@ -1,8 +1,8 @@
-import { request, context, response } from '@/utils/test';
-import { createSession, createUser } from '@/factory/user';
-import route from '@/index';
-import { createWorkspace } from '@/factory/workspace';
-import { createNote } from '@/factory/note';
+import { request, context, response } from '../../../../utils/test';
+import { createSession, createUser } from '../../../../factory/user';
+import route from '../../../../index';
+import { createWorkspace } from '../../../../factory/workspace';
+import { createNote } from '../../../../factory/note';
 
 request('GET /workspaces/:workspaceSlug/notes', () => {
   response.status('200', () => {

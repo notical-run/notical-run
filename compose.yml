@@ -52,7 +52,7 @@ services:
       - 5888:5888
 
   client:
-    profiles: [e2e, development]
+    profiles: [e2e]
     image: oven/bun:1.1
     working_dir: /app
     command: sh -c 'bun i && bun app dev'

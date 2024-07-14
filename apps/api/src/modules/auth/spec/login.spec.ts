@@ -1,6 +1,6 @@
-import { request, context, response } from '@/utils/test';
-import { createUser } from '@/factory/user';
-import route from '@/index';
+import { request, context, response } from '../../../utils/test';
+import { createUser } from '../../../factory/user';
+import route from '../../../index';
 
 request('POST /auth/login', () => {
   response.status('200', () => {

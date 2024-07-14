@@ -1,11 +1,9 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig/tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["bun-types", "jest"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "types": ["bun-types", "jest"]
+  },
+  "exclude": ["node_modules"],
+  "include": ["."]
 }

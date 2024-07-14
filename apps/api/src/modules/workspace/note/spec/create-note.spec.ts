@@ -1,11 +1,11 @@
-import { request, context, response } from '@/utils/test';
-import { createSession, createUser } from '@/factory/user';
-import route from '@/index';
-import { createWorkspace } from '@/factory/workspace';
-import { createNote } from '@/factory/note';
-import { db } from '@/db';
+import { request, context, response } from '../../../../utils/test';
+import { createSession, createUser } from '../../../../factory/user';
+import route from '../../../../index';
+import { createWorkspace } from '../../../../factory/workspace';
+import { createNote } from '../../../../factory/note';
+import { db } from '../../../../db';
 import { eq } from 'drizzle-orm';
-import { Workspace } from '@/db/schema';
+import { Workspace } from '../../../../db/schema';
 
 request('POST /workspaces/:workspaceSlug/notes', () => {
   response.status('201', () => {
