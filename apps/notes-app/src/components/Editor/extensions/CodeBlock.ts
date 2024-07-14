@@ -32,12 +32,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
 
       const toggleCollapsed = () => {
         const tr = editor.state.tr;
-        editor.view.dispatch(
-          tr.setNodeMarkup(getPos(), undefined, {
-            ...node?.attrs,
-            collapsed: !collapsed,
-          }),
-        );
+        editor.view.dispatch(tr.setNodeAttribute(getPos(), 'collapsed', !collapsed));
       };
 
       const code = html`<code></code>`;
@@ -100,6 +95,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
         </code>` as HTMLElement;
 
       const buttons = Object.entries(exports.value).map(([key, value]) => {
+        if (!value) return null;
         return html`<button
           class="${clsx('bg-violet-700 rounded-md', 'text-sm text-white', 'py-0.5 px-1.5')}"
           onclick=${() => (value as any)()}
@@ -111,7 +107,7 @@ export const CodeBlock = CodeBlockLowlight.extend({
       return html`<div
         class="${clsx('flex justify-end flex-wrap gap-2 mb-6', collapsed ? 'mt-4' : '-mt-4')}"
       >
-        ${buttons}
+        ${buttons.filter(Boolean)}
       </div>` as HTMLElement;
     };
 

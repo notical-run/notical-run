@@ -1,8 +1,8 @@
-import { getQuickVM, VMEnvOptions } from './quickjs';
 import { createEffect, createRoot } from 'solid-js';
-import { Result } from './result';
 import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { Editor } from '@tiptap/core';
+import { EvalEngine, EvalNodeOptions } from '@/engine/types';
+import { Result } from './result';
 
 const findMarkById = (editor: Editor, id: string): [number, number] | null => {
   let foundNodePos = null;
@@ -23,15 +23,17 @@ export const evalExpression = async (
   code: string,
   {
     options,
+    engine,
     onResult,
     handleCleanup,
   }: {
     onResult: (res: Result<Error, any>) => void;
+    engine: EvalEngine;
     handleCleanup: (cleanup: () => void) => void;
-    options: VMEnvOptions;
+    options: EvalNodeOptions;
   },
 ) => {
-  const quickVM = await getQuickVM(options);
+  const quickVM = engine.quickVM;
 
   const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> => {
     try {
@@ -56,7 +58,7 @@ export const evalExpression = async (
     handleCleanup(dispose);
 
     createEffect(async () => {
-      const nodePosAndSize = options.withEditor(editor => findMarkById(editor, options.id));
+      const nodePosAndSize = engine.withEditor(editor => findMarkById(editor, options.id));
 
       const hereRef = JSON.stringify({
         pos: nodePosAndSize?.[0] ?? options.pos,

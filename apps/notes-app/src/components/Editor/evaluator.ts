@@ -1,9 +1,9 @@
 import type { Mark, Node } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/core';
-import { evalExpression } from '../../utils/eval-expression';
-import { evalModule } from '../../utils/eval-module';
-import { Result } from '../../utils/result';
-import { ModuleLoader, onContentUpdate } from '../../utils/quickjs';
+import { evalExpression } from '@/utils/eval-expression';
+import { evalModule } from '@/utils/eval-module';
+import { Result } from '@/utils/result';
+import { EvalEngine } from '@/engine/types';
 
 const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
 
@@ -22,39 +22,27 @@ const findMarkById = (editor: Editor, id: string): Mark | null => {
   return foundNode;
 };
 
-export const defaultEvalBlock = async (
-  node: Node,
-  pos: number,
-  editor: Editor,
-  moduleLoader: ModuleLoader,
-) => {
-  const exports = await evalModule(node.textContent || 'null', {
-    pos,
+export const defaultEvalBlock = async (node: Node, pos: number, engine: EvalEngine) => {
+  const exports = await evalModule(node.textContent || 'null', engine, {
     id: node.attrs.nodeId,
+    pos,
     nodeSize: node.nodeSize,
-    withEditor: fn => fn(editor),
-    moduleLoader,
   });
 
-  const tr = editor.state.tr;
-  editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+  engine.withEditor(editor => {
+    const tr = editor.state.tr;
+    editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+  });
 };
 
-const nodeCodeCache = new Map<string, { code: string; cleanup: () => void }>();
-
 type Options = {
-  evalBlock?: (
-    node: Node,
-    pos: number,
-    editor: Editor,
-    moduleLoader: ModuleLoader,
-  ) => Promise<void> | void;
-  moduleLoader: ModuleLoader;
+  evalBlock?: (node: Node, pos: number, engine: EvalEngine) => Promise<void> | void;
 };
 
 export const evaluateAllNodes = async (
   editor: Editor,
-  { evalBlock = defaultEvalBlock, moduleLoader }: Options,
+  engine: EvalEngine,
+  { evalBlock = defaultEvalBlock }: Options,
 ) => {
   const evalutingNodes = new Set<Node>();
   let resolver = (_: unknown) => {};
@@ -66,22 +54,22 @@ export const evaluateAllNodes = async (
   };
 
   console.log('>>>> on update...', editor.state.doc.toJSON());
-  onContentUpdate();
+  engine.onContentUpdate();
 
   const walkNode = async (node: Node, pos: number) => {
     try {
       // Code block
       if (node.type.name === 'codeBlock' && isEvalable(node)) {
-        const previousCode = nodeCodeCache.get(node.attrs.nodeId);
+        const previousCode = engine.nodeCache.get(node.attrs.nodeId);
         if (previousCode?.code === node.textContent) return;
 
         previousCode?.cleanup();
-        nodeCodeCache.set(node.attrs.nodeId, {
+        engine.nodeCache.set(node.attrs.nodeId, {
           code: node.textContent,
           cleanup: () => {}, // TODO: Handle cleanup if using signals
         });
 
-        await evalBlock(node, pos, editor, moduleLoader);
+        await evalBlock(node, pos, engine);
 
         return;
       }
@@ -90,7 +78,7 @@ export const evaluateAllNodes = async (
       if (node.isText) {
         const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
         if (!nodeMark) return;
-        const previousCode = nodeCodeCache.get(nodeMark.attrs.nodeId);
+        const previousCode = engine.nodeCache.get(nodeMark.attrs.nodeId);
         if (previousCode?.code === node.textContent) return;
 
         const onResult = (result: Result<Error, any>) => {
@@ -109,17 +97,16 @@ export const evaluateAllNodes = async (
         await evalExpression(node.text || 'null', {
           onResult,
           handleCleanup: cleanup => {
-            nodeCodeCache.set(nodeMark.attrs.nodeId, {
+            engine.nodeCache.set(nodeMark.attrs.nodeId, {
               code: node.textContent,
               cleanup,
             });
           },
+          engine,
           options: {
             pos,
             id: nodeMark.attrs.nodeId,
             nodeSize: node.nodeSize,
-            withEditor: fn => fn(editor),
-            moduleLoader,
           },
         });
       }

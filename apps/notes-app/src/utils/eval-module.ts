@@ -1,9 +1,9 @@
-import { getQuickVM, VMEnvOptions } from './quickjs';
+import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
 
-export const evalModule = async (code: string, options: VMEnvOptions) => {
+export const evalModule = async (code: string, engine: EvalEngine, options: EvalNodeOptions) => {
   try {
-    const quickVM = await getQuickVM(options);
+    const quickVM = engine.quickVM;
 
     const moduleResult = await quickVM.evalCodeAsync(code, `${options.id}.js`, {
       type: 'module',

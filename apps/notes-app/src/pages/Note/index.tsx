@@ -52,7 +52,7 @@ const WorkspaceNote = () => {
     if (!modulePath) throw new Error('Module path cannot be empty');
     if (importCache.has(modulePath)) return importCache.get(modulePath)!;
 
-    const importMatch = modulePath.match(/^@(\w+)\/(\w+)$/);
+    const importMatch = modulePath.match(/^@([a-z0-9-_]+)\/([a-z0-9-_]+)$/i);
     if (!importMatch || importMatch.length < 3) throw new Error('Invalid import path');
 
     const [_, workspace, noteId] = importMatch;

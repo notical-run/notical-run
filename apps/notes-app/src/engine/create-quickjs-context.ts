@@ -1,79 +1,36 @@
-import type {
-  QuickJSAsyncContext,
-  QuickJSAsyncRuntime,
-  QuickJSAsyncWASMModule,
-} from 'quickjs-emscripten-core';
-import {
-  newVariant,
-  Scope,
-  RELEASE_ASYNC,
-  newQuickJSAsyncWASMModuleFromVariant,
-} from 'quickjs-emscripten';
-import wasmLocation from '@jitl/quickjs-wasmfile-release-asyncify/wasm?url';
-import { createSignal, type Signal } from 'solid-js';
-import { Editor } from '@tiptap/core';
+import { getQuickJSRuntime } from '@/engine/quickjs';
+import { QuickJSContextOptions } from '@/engine/types';
+import { Scope } from 'quickjs-emscripten-core';
+import { createSignal } from 'solid-js';
 
-export type ModuleLoader = (modulePath: string) => Promise<string>;
-
-export type VMEnvOptions = {
-  id: string;
-  pos: number;
-  nodeSize: number;
-  withEditor: <R>(fn: (editor: Editor) => R) => R;
-  moduleLoader: ModuleLoader;
-};
-
-const variant = newVariant(RELEASE_ASYNC, { wasmLocation });
-
-let quickJS: Promise<QuickJSAsyncWASMModule> | undefined;
-export async function getQuickJS() {
-  if (quickJS) return quickJS;
-  quickJS = newQuickJSAsyncWASMModuleFromVariant(variant);
-  return quickJS;
-}
-
-const stateStore: Record<string, Signal<any>> = {};
-
-const contentUpdateSignal = createSignal(false);
-export const onContentUpdate = () => contentUpdateSignal[1](b => !b);
-
-let quickRuntime: QuickJSAsyncRuntime | undefined;
-let quickVM: QuickJSAsyncContext | undefined;
-
-export const getQuickVM = async (options: VMEnvOptions) => {
-  const quickJS = await getQuickJS();
-  if (!quickJS) {
-    throw new Error('No quickjs buddy');
-  }
-
+export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   const internalsKey = '_internals';
   const debugKey = 'debug';
   const stateKey = 'state';
   const showKey = 'show';
   const insertKey = 'insert';
 
-  if (!quickVM) {
-    quickRuntime = quickJS.newRuntime();
-    quickRuntime.setModuleLoader(async (modulePath, ctx) => {
-      try {
-        const code = await options.moduleLoader(modulePath);
-        return { value: code };
-      } catch (e) {
-        const err = (e as any)?.message ? ctx.newError((e as any).message) : e;
-        return { error: err as Error };
-      }
-    });
-    quickRuntime.setMaxStackSize(10000);
-    quickRuntime.setMemoryLimit(1_000_000);
-    quickVM = quickRuntime.newContext({
-      ownedLifetimes: [quickRuntime],
-    });
-    quickRuntime.context = quickVM;
+  const quickRuntime = await getQuickJSRuntime();
+  quickRuntime.setModuleLoader(async (modulePath, ctx) => {
+    try {
+      const code = await options.moduleLoader(modulePath);
+      return { value: code };
+    } catch (e) {
+      const err = (e as any)?.message ? ctx.newError((e as any).message) : e;
+      return { error: err as Error };
+    }
+  });
+  quickRuntime.setMaxStackSize(10_000);
+  quickRuntime.setMemoryLimit(1_000_000);
+  const quickVM = quickRuntime.newContext({
+    ownedLifetimes: [quickRuntime],
+  });
+  quickRuntime.context = quickVM;
 
-    quickVM
-      .unwrapResult(
-        await quickVM.evalCodeAsync(
-          `;(() => {
+  quickVM
+    .unwrapResult(
+      await quickVM.evalCodeAsync(
+        `;(() => {
   Object.defineProperty(globalThis, '${internalsKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${debugKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${showKey}', { value: {}, writable: false });
@@ -92,10 +49,9 @@ export const getQuickVM = async (options: VMEnvOptions) => {
   });
   Object.defineProperty(globalThis, '${stateKey}', { value: proxyState, writable: false });
 })();`,
-        ),
-      )
-      .dispose();
-  }
+      ),
+    )
+    .dispose();
 
   const getInternal = () => quickVM && quickVM.getProp(quickVM.global, internalsKey);
 
@@ -114,10 +70,10 @@ export const getQuickVM = async (options: VMEnvOptions) => {
     const insert = scope.manage(getInsert()!);
 
     const getSignal = (key: string) => {
-      if (!stateStore[key]) {
-        stateStore[key] = createSignal(undefined);
+      if (!options.stateStore.has(key)) {
+        options.stateStore.set(key, createSignal(undefined));
       }
-      return stateStore[key];
+      return options.stateStore.get(key)!;
     };
 
     quickVM
@@ -165,14 +121,14 @@ export const getQuickVM = async (options: VMEnvOptions) => {
 
     quickVM
       .newFunction('_listenToUpdate', () => {
-        contentUpdateSignal[0]();
+        options.contentUpdateSignal[0]();
       })
       .consume(insertMarkdownBelowHandle => {
         quickVM!.setProp(internals, 'listenToUpdate', insertMarkdownBelowHandle);
       });
 
     quickVM
-      .newFunction('debugLog', (...args) => {
+      .newFunction('_debugLog', (...args) => {
         const argsVal = args.map(arg => arg.consume(quickVM!.dump));
         console.log('[vm]', ...argsVal);
       })

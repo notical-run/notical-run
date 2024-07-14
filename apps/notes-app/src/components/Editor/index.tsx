@@ -6,40 +6,8 @@ import { onCleanup, onMount } from 'solid-js';
 import clsx from 'clsx';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
-
-const testContent = `
-# Hello world
-
-## Code and shit
-
-Some inline \`state.num\`
-
-\`[201 * state.num, state.num]\`
-
-\`() => state.num = 42\`
-
-\`state.hook1 = here()\`
-
-\`\`\`
-state.num = 0;
-
-export default () => {
-  insert.below(state.hook1, 'Foobar. This text goes below.');
-};
-export const increment = () => state.num = state.num + 1;
-export const decrement = () => state.num = state.num - 1;
-
-export const addTask = () => {
-  const date = new Date().toDateString();
-  insert.below(state.taskList, \`- [ ] Task (**created on \${date}**)\`);
-};
-\`\`\`
-
-
-#### My task list \`state.taskList = here()\`
-
-
-`;
+import { createEvalEngine } from '@/engine';
+import { EvalEngine } from '@/engine/types';
 
 export type EditorProps = {
   document: Y.Doc;
@@ -47,20 +15,13 @@ export type EditorProps = {
 };
 
 export const Editor = ({ document, moduleLoader }: EditorProps) => {
-  let element: HTMLElement | undefined;
-  let editor: TiptapEditor | undefined;
+  let element: HTMLElement;
+  let editor: TiptapEditor;
 
-  const evaluate = (editor: TiptapEditor) => {
-    evaluateAllNodes(editor, {
-      moduleLoader: async modulePath => {
-        const moduleDoc = await moduleLoader(modulePath);
-        const module = evaluateImport({ doc: moduleDoc, moduleLoader });
-        return module.moduleCode;
-      },
-    });
-  };
+  let engine: EvalEngine;
+  const cleanupInstances: (() => void)[] = [];
 
-  onMount(() => {
+  onMount(async () => {
     const editorClass = clsx(
       'prose prose-base focus:outline-none p-4 max-w-full',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
@@ -71,6 +32,21 @@ export const Editor = ({ document, moduleLoader }: EditorProps) => {
       'prose-h5:text-md prose-h5:text-slate-600',
       'prose-h6:text-sm prose-h6:text-slate-600',
     );
+
+    const evaluate = async (editor: TiptapEditor) => {
+      await evaluateAllNodes(editor, engine, {});
+      console.log('>>>>>>>>> eval done');
+    };
+
+    engine = await createEvalEngine({
+      withEditor: fn => fn(editor),
+      moduleLoader: async modulePath => {
+        const moduleDoc = await moduleLoader(modulePath);
+        const module = await evaluateImport({ doc: moduleDoc, engine });
+        cleanupInstances.push(module.onCleanup);
+        return module.moduleCode;
+      },
+    });
 
     editor = new TiptapEditor({
       element: element,
@@ -84,10 +60,9 @@ export const Editor = ({ document, moduleLoader }: EditorProps) => {
       onCreate: ({ editor }) => evaluate(editor),
       onUpdate: ({ editor }) => evaluate(editor),
       onDestroy() {
-        // TODO: Cleanup created signals
+        cleanupInstances.forEach(f => f());
+        engine?.destroy();
       },
-      // content: testContent,
-      // onTransaction: () => { editor = editor; },
     });
   });
 

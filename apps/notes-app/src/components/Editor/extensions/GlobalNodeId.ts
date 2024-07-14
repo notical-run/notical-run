@@ -19,12 +19,6 @@ export const GlobalNodeId = Node.create({
           },
         },
       },
-      {
-        types: ['doc'],
-        attributes: {
-          initializedNodeIDs: { default: false },
-        },
-      },
     ];
   },
 
@@ -40,15 +34,13 @@ export const GlobalNodeId = Node.create({
               tr.setNodeAttribute(pos, 'nodeId', `${crypto.randomUUID()}`);
             } else if (node.isText) {
               const nodeMark = node.marks.find(m => markTypes.has(m.type.name));
-              if (nodeMark) {
-                if (!nodeMark.attrs.nodeId) {
-                  nodeMark.removeFromSet(node.marks);
-                  (nodeMark as any).attrs = {
-                    ...nodeMark.attrs,
-                    nodeId: `${crypto.randomUUID()}`,
-                  };
-                  nodeMark.addToSet(node.marks);
-                }
+              if (nodeMark && !nodeMark.attrs.nodeId) {
+                nodeMark.removeFromSet(node.marks);
+                (nodeMark as any).attrs = {
+                  ...nodeMark.attrs,
+                  nodeId: `${crypto.randomUUID()}`,
+                };
+                nodeMark.addToSet(node.marks);
               }
             }
           });
