@@ -9,7 +9,8 @@ export const workspaceFactory = async (
     name: 'Workspace 1',
     slug: 'workspace-1',
     ...workspace,
-    authorId: workspace?.authorId ?? (await createUser()).id!,
+    authorId:
+      workspace?.authorId ?? (await createUser({ email: 'workspace-creator@email.com' })).id!,
   };
 };
 

@@ -4,14 +4,14 @@
    - ( ) Show decoration
    - ( ) Get content from page
 ** Backend
-   - ( ) e2e tests
-   - ( ) Refactor api and authorization
+   - ( ) Refactor api authorization
    - ( ) Create workspace
 ** UI
    - ( ) Improve forms + validations
    - ( ) Show api errors
    - ( ) Improve styles for editor
    - ( ) Default to read-only mode and then allow editing
+   - ( ) e2e tests
 ** Others
    - ( ) Prevent re-creating node view on update for code block
 

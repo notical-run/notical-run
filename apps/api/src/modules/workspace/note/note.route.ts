@@ -1,135 +1,66 @@
 import { Hono } from 'hono';
-import { db } from '../../../db';
-import { Note, Workspace } from '../../../db/schema';
-import { desc, eq, sql } from 'drizzle-orm';
 import { privateRoute, SessionVars } from '../../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
+import { createNewNote, getNote, getWorkspaceNotes, updateNote } from './note.data';
+import { authorizeWorkspace, validateWorkspace } from '../../../validators/workspace';
+import { validateNote } from '../../../validators/note';
 
-import { validator } from 'hono/validator';
+export const noteRoute = new Hono<{
+  Variables: SessionVars & { workspaceId: string; noteId?: string };
+}>()
+  .use(validateWorkspace)
 
-const authorizeWorkspace = validator('param', async (param: { workspaceSlug: string }, c) => {
-  if (!param.workspaceSlug) return c.json({ error: 'Empty workspace' }, 401);
-  const user = c.get('user')!;
-  const workspace = await db.query.Workspace.findFirst({
-    where: eq(Workspace.slug, param.workspaceSlug),
-    columns: { authorId: true },
-  });
+  .get('/', privateRoute, authorizeWorkspace, async c => {
+    const slug = c.req.param('workspaceSlug')!;
 
-  if (user && workspace && workspace.authorId !== user.id)
-    return c.json({ error: `You don't have access to this workspace` }, 401);
+    const workspace = await getWorkspaceNotes(slug);
 
-  return param;
-});
+    return c.json(workspace!.notes);
+  })
 
-export const noteRoute = new Hono<{ Variables: SessionVars }>()
-  .get('/:noteId', async c => {
+  .get('/:noteId', validateNote, async c => {
     const slug = c.req.param('workspaceSlug')!;
     const noteId = c.req.param('noteId');
-    const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.slug, slug),
-      with: {
-        notes: {
-          limit: 1,
-          where: eq(Note.name, noteId),
-          columns: {
-            id: true,
-            name: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          with: {
-            author: {},
-          },
-        },
-      },
-    });
 
-    if (!workspace?.notes[0]) return c.json({ error: 'Note not found' }, 404);
+    const note = await getNote(slug, noteId);
 
-    return c.json(workspace?.notes[0]);
+    return c.json(note);
   })
 
-  // Private routes
-  .use('*', privateRoute)
+  .post(
+    '/',
+    privateRoute,
+    authorizeWorkspace,
+    zValidator('json', z.object({ name: z.string() })),
+    async c => {
+      const noteJson = c.req.valid('json');
+      const user = c.get('user')!;
 
-  .get('/', authorizeWorkspace, async c => {
-    const slug = c.req.param('workspaceSlug')!;
-    const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.slug, slug!),
-      with: {
-        notes: {
-          orderBy: desc(Note.updatedAt),
-          columns: {
-            id: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          with: {
-            author: {},
-          },
-        },
-      },
-    });
-    if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
-
-    return c.json(workspace.notes);
-  })
-
-  .post('/', authorizeWorkspace, zValidator('json', z.object({ name: z.string() })), async c => {
-    const noteJson = c.req.valid('json');
-    const user = c.get('user')!;
-    const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.slug, c.req.param('workspaceSlug')!),
-      columns: { id: true },
-    });
-    if (!workspace) return c.json({ error: 'Workspace not found' }, 404);
-
-    const note = await db
-      .insert(Note)
-      .values({
+      const note = await createNewNote({
         name: noteJson.name,
-        workspaceId: workspace.id,
+        workspaceId: c.get('workspaceId'),
         authorId: user.id,
-      })
-      .returning({ id: Note.id, name: Note.name })
-      .onConflictDoNothing();
+      });
 
-    if (note.length === 0) return c.json({ error: 'Note already exists' }, 422);
+      if (!note) return c.json({ error: 'Note already exists' }, 422);
 
-    return c.json(note[0], 201);
-  })
+      return c.json({ id: note.id, name: note.name }, 201);
+    },
+  )
 
   .patch(
     '/:noteId',
+    privateRoute,
     authorizeWorkspace,
+    validateNote,
     zValidator('json', z.object({ content: z.string().optional() })),
     async c => {
-      const workspaceSlug = c.req.param('workspaceSlug')!;
-      const noteId = c.req.param('noteId');
+      const noteId = c.get('noteId')!;
       const noteJson = c.req.valid('json');
 
-      const workspace = await db.query.Workspace.findFirst({
-        where: eq(Workspace.slug, workspaceSlug),
-        columns: { id: true },
-        with: {
-          notes: {
-            limit: 1,
-            where: eq(Note.name, noteId),
-            columns: { id: true },
-          },
-        },
-      });
-      if (!workspace?.notes[0].id) return c.json({ error: 'Not found' }, 404);
+      const note = await updateNote(noteId, noteJson);
 
-      const result = await db
-        .update(Note)
-        .set({ ...noteJson, updatedAt: sql`now()` })
-        .where(eq(Note.id, workspace.notes[0].id))
-        .returning({ id: Note.id, name: Note.name, contents: Note.content });
-
-      return c.json(result[0], 200);
+      return c.json({ id: note.id, name: note.name }, 200);
     },
   );
