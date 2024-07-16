@@ -2,7 +2,7 @@ import { Editor as TiptapEditor } from '@tiptap/core';
 import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
-import { onCleanup, onMount } from 'solid-js';
+import { createEffect, onCleanup, onMount } from 'solid-js';
 import clsx from 'clsx';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
@@ -10,11 +10,12 @@ import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
 
 export type EditorProps = {
+  editable?: boolean;
   document: Y.Doc;
   moduleLoader: (modulePath: string) => Promise<Y.Doc>;
 };
 
-export const Editor = ({ document, moduleLoader }: EditorProps) => {
+export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
   let element: HTMLElement;
   let editor: TiptapEditor;
 
@@ -35,7 +36,6 @@ export const Editor = ({ document, moduleLoader }: EditorProps) => {
 
     const evaluate = async (editor: TiptapEditor) => {
       await evaluateAllNodes(editor, engine, {});
-      console.log('>>>>>>>>> eval done');
     };
 
     engine = await createEvalEngine({
@@ -57,6 +57,7 @@ export const Editor = ({ document, moduleLoader }: EditorProps) => {
           class: editorClass,
         },
       },
+      editable,
       onCreate: ({ editor }) => evaluate(editor),
       onUpdate: ({ editor }) => evaluate(editor),
       onDestroy() {
@@ -64,6 +65,10 @@ export const Editor = ({ document, moduleLoader }: EditorProps) => {
         engine?.destroy();
       },
     });
+  });
+
+  createEffect(() => {
+    if (editable !== undefined) editor?.setEditable(editable, false);
   });
 
   onCleanup(() => {

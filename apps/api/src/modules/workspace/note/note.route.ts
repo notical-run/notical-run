@@ -20,12 +20,18 @@ export const noteRoute = new Hono<{
   })
 
   .get('/:noteId', validateNote, async c => {
+    const user = c.get('user');
     const slug = c.req.param('workspaceSlug')!;
     const noteId = c.req.param('noteId');
 
     const note = await getNote(slug, noteId);
 
-    return c.json(note);
+    return c.json({
+      ...note,
+      permissions: {
+        canEdit: note?.author.id === user?.id,
+      },
+    });
   })
 
   .post(

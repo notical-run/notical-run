@@ -1,10 +1,10 @@
 * Curent
 ** Evaluation
-   - ( ) `here()` for code blocks
+   - ( ) here() for code blocks
    - ( ) Show decoration
    - ( ) Get content from page
+   - ( ) Pause evaluation update loop (for debugging)
 ** Backend
-   - ( ) Refactor api authorization
    - ( ) Create workspace
 ** UI
    - ( ) Improve forms + validations
@@ -16,6 +16,8 @@
    - ( ) Prevent re-creating node view on update for code block
 
 * Bugs
+  - ( ) Fix duplicate node id issue for copy paste
+  - ( ) If blocks have duplicate ids, don't re-evaluate (workaround for future issues)
   - ( ) Fix issue with import not working sometimes
   - ( ) Fix memory leak. (Cleanup quickjs ctx+runtime on exit)
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
@@ -25,6 +27,7 @@
    - ( ) Allow running stuff on click for show decoration
    - ( ) Select text programmatically
    - ( ) Replace content
+   - ( ) Prompt/Alert/Confirm apis with custom UI
 ** Backend
    - ( ) Delete note
    - ( ) Private notes
@@ -85,6 +88,8 @@
   - ( ) Make requests to openai (how to manage secrets?)
 
 * Improvements
+  - ( ) Re-map error messages to be more helpful
+  --- ( ) better error when there are multiple exports of the same name in a note being imported
   - ( ) Improve markdown editing experience
   - ( ) Truncate the inline result decoration
   - ( ) Debounce evaluation checks

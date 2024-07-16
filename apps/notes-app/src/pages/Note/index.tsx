@@ -26,6 +26,8 @@ const WorkspaceNote = () => {
   const document = new Y.Doc();
 
   const updateNote = useDebounced(() => {
+    if (!noteResult.data?.permissions.canEdit) return;
+
     const content = noteResult.data?.content;
     const update = Y.encodeStateAsUpdateV2(document);
     const b64Update = fromUint8Array(update);
@@ -84,11 +86,15 @@ const WorkspaceNote = () => {
       <div class="px-2">
         <div class="mx-auto max-w-4xl">
           <div class="text-right text-sm text-slate-500">
-            @{slug}/{noteId} by {noteResult.data?.author.name}
+            @{slug}/{noteId} by {noteResult.data?.author?.name}
           </div>
           <div class="border border-gray-100">
             <Show when={!!noteResult.data?.id} keyed>
-              <Editor document={document} moduleLoader={moduleLoader} />
+              <Editor
+                editable={noteResult.data?.permissions.canEdit}
+                document={document}
+                moduleLoader={moduleLoader}
+              />
             </Show>
           </div>
         </div>
