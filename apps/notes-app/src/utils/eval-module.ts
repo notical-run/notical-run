@@ -1,11 +1,40 @@
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
+import { Editor } from '@tiptap/core';
+
+const findNodeById = (editor: Editor, id: string): [number, number] | null => {
+  let foundNodePos = null;
+  editor.state.doc.content.descendants((node, pos) => {
+    if (node.attrs?.nodeId === id) {
+      foundNodePos = [pos, node.nodeSize];
+      return false;
+    }
+  });
+
+  return foundNodePos;
+};
 
 export const evalModule = async (code: string, engine: EvalEngine, options: EvalNodeOptions) => {
   try {
     const quickVM = engine.quickVM;
 
-    const moduleResult = await quickVM.evalCodeAsync(code, `${options.id}.js`, {
+    const nodePosAndSize = engine.withEditor(editor => findNodeById(editor, options.id));
+    const hereRef = JSON.stringify({
+      pos: nodePosAndSize?.[0] ?? options.pos,
+      nodeSize: nodePosAndSize?.[1] ?? options.nodeSize,
+      id: options.id,
+      __native__: '',
+    });
+
+    const moduleCode = `
+const here = () => {
+  _internals.listenToUpdate();
+  return ${hereRef};
+};
+
+${code}`;
+
+    const moduleResult = await quickVM.evalCodeAsync(moduleCode, `${options.id}.js`, {
       type: 'module',
     });
     if (moduleResult.error) {

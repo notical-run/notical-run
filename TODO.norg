@@ -16,8 +16,7 @@
    - ( ) Prevent re-creating node view on update for code block
 
 * Bugs
-  - ( ) Fix duplicate node id issue for copy paste
-  - ( ) If blocks have duplicate ids, don't re-evaluate (workaround for future issues)
+  - ( ) Fix issue with `here` being used inside code blocks
   - ( ) Fix issue with import not working sometimes
   - ( ) Fix memory leak. (Cleanup quickjs ctx+runtime on exit)
   - ( ) Fix issue with inline buttons needing 2 clicks sometimes
