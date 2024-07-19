@@ -1,5 +1,5 @@
 import { Navigate, RouteDefinition, Router } from '@solidjs/router';
-import Workspaces from './pages/workspaces';
+import Workspaces from './pages/Workspaces';
 import WorkspaceNotes from './pages/WorkspaceNotes';
 import WorkspaceNote from './pages/Note';
 import { Login } from './pages/login';

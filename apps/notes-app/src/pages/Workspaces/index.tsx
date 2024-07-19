@@ -9,10 +9,12 @@ const Workspaces = () => {
   return (
     <Page>
       <div class="mx-auto max-w-4xl">
+        <h1 class="text-slate-400 font-bold">My Workspaces</h1>
+
         {workspacesResult.data?.map(workspace => (
           <A
             href={links.workspaceNotes(workspace.slug)}
-            class="block px-4 py-3 shadow-sm rounded-md border border-gray-100 mb-2 text-slate-700"
+            class="block px-4 py-3 shadow-sm rounded-md border border-slate-150 mb-2"
           >
             <div class="pb-1">
               {workspace.name} (<span class="text-slate-900 font-bold">@{workspace.slug}</span>)

@@ -8,7 +8,7 @@ export type PageProps = {
 export const Page = ({ children, breadcrumbs }: ParentProps<PageProps>) => {
   return (
     <div>
-      <div class="flex justify-between gap-2 px-4 py-2 border-b">
+      <div class="flex justify-between gap-2 px-4 py-2 border-b border-b-slate-150 shadow-sm">
         <div class="flex items-center">
           <A href="/" class="text-xl">
             notical.run
@@ -37,7 +37,7 @@ export const Page = ({ children, breadcrumbs }: ParentProps<PageProps>) => {
         </div>
       </div>
 
-      <div class="p-4">{children}</div>
+      <main class="p-4">{children}</main>
     </div>
   );
 };

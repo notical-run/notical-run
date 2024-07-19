@@ -17,7 +17,9 @@ const WorkspaceNotes = () => {
 
   return (
     <Page breadcrumbs={[{ text: <WorkspaceSelector selected={slug()} /> }]}>
-      <div class="flex justify-end pb-2">
+      <div class="flex justify-between items-end pb-2">
+        <h1 class="text-slate-400 font-bold">Notes</h1>
+
         <Button onClick={() => setDialogOpen(true)} class="text-sm flex items-center gap-2">
           <FaSolidPlus size={10} />
           New note
@@ -30,11 +32,12 @@ const WorkspaceNotes = () => {
             {note => (
               <A
                 href={links.workspaceNote(slug(), note.name)}
-                class="block px-4 py-3 shadow-sm rounded-md border border-gray-100 mb-2 text-slate-700"
+                class="block px-4 py-3 shadow-sm rounded-md border border-slate-150 mb-2"
               >
                 <div>
-                  <div>
-                    <span class="text-slate-500">@{slug()}</span>/
+                  <div class="flex items-center">
+                    <span class="text-slate-500 text-xs">@{slug()}</span>
+                    <span class="text-slate-500 text-md">/</span>
                     <span class="text-slate-900 font-bold">{note.name}</span>
                   </div>
                 </div>
