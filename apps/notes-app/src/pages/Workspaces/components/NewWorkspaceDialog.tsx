@@ -43,10 +43,10 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
             <TextInput name="slug" placeholder="Workspace ID (Eg: my-workspace)" />
 
             <Dialog.Content.Footer>
-              <Dialog.Close as={Button} class="text-sm">
+              <Dialog.Close as={Button} variant="primary-bordered">
                 Cancel
               </Dialog.Close>
-              <Button class="text-sm" type="submit" disabled={workspaceCreator.isPending}>
+              <Button type="submit" disabled={workspaceCreator.isPending}>
                 {workspaceCreator.isPending ? 'Createing...' : 'Create'}
               </Button>
             </Dialog.Content.Footer>

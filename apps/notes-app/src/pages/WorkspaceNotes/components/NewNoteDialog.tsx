@@ -42,10 +42,10 @@ export const NewNoteDialog = (props: DialogRootProps) => {
             <TextInput name="name" placeholder="Note name (Eg: my-note)" />
 
             <Dialog.Content.Footer>
-              <Dialog.Close as={Button} class="text-sm">
+              <Dialog.Close as={Button} variant="primary-bordered">
                 Cancel
               </Dialog.Close>
-              <Button class="text-sm" type="submit" disabled={createNoteMutation.isPending}>
+              <Button type="submit" disabled={createNoteMutation.isPending}>
                 {createNoteMutation.isPending ? 'Createing...' : 'Create'}
               </Button>
             </Dialog.Content.Footer>
