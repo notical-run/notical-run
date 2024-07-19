@@ -1,19 +1,21 @@
 * Curent
-** Evaluation
-   - ( ) here() for code blocks
-   - ( ) Show decoration
-   - ( ) Get content from page
-   - ( ) Pause evaluation update loop (for debugging)
 ** Backend
    - ( ) Create workspace
+   - ( ) Private notes
+   - ( ) Fork note
+   - ( ) Delete note
 ** UI
+   - ( ) Sidebar? More ui stuff
    - ( ) Improve forms + validations
    - ( ) Show api errors
    - ( ) Improve styles for editor
-   - ( ) Default to read-only mode and then allow editing
-   - ( ) e2e tests
-** Others
-   - ( ) Prevent re-creating node view on update for code block
+   - ( ) Not found pages
+** Evaluation
+   - ( ) Show decoration
+   - ( ) Get content from page
+   - ( ) Pause evaluation update loop (for debugging)
+   - ( ) Add small debounce for evaluator?
+   - ( ) here() for code blocks (or make it inline only?)
 
 * Bugs
   - ( ) Fix issue with `here` being used inside code blocks
@@ -27,21 +29,22 @@
    - ( ) Select text programmatically
    - ( ) Replace content
    - ( ) Prompt/Alert/Confirm apis with custom UI
+   - ( ) Button next to import stmnt to open imported note
 ** Backend
-   - ( ) Delete note
-   - ( ) Private notes
-   - ( ) Fork note
    - ( ) github oauth
-   - ( ) confirm email (+ sendgrid)
+   - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
    - ( ) Create a sample workspace by default on signup
    - ( ) Template notes
    - ( ) Delete workspace
+   - ( ) Home page
+   - ( ) e2e tests
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so
    - ( ) Alternative way to insert/show content
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
+   - ( ) Link to another note
    - ( ) Prevent export updates from being in undo history
    - ( ) Editing sticky toolbar
    - ( ) Allow creating links wysiwyg way
@@ -56,11 +59,13 @@
    - ( ) Giphy integration
    - ( ) Emoji integration
    - ( ) Excalidraw/tldraw/draw.io integration
+   - ( ) Default to read-only mode and then allow editing?
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Don't show permission request if user is the author
    - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
    - ( ) Keybindings
+   - ( ) Allow creating a new note from within note
 ** Collaboration
    - ( ) invite to workspace/workspace collaborators
    - ( ) hocuspocus or y-websocket server for realtime?
@@ -78,6 +83,7 @@
 * Supported features/ideas
   - (-) Note based calculator
   - ( ) Task management
+  - ( ) Journaling
   - ( ) Simplified canvas api for drawing
   - ( ) Datetime picker
   - ( ) Fetch and present external data
@@ -89,14 +95,16 @@
 * Improvements
   - ( ) Re-map error messages to be more helpful
   --- ( ) better error when there are multiple exports of the same name in a note being imported
-  - ( ) Improve markdown editing experience
+  - ( ) *perf* Prevent re-creating node view on update for code block
   - ( ) Truncate the inline result decoration
+  - ( ) Improve markdown editing experience
   - ( ) Debounce evaluation checks
+  - ( ) Use `[native globalThis]` for `globalThis` inline show
   - ( ) If export (or inline func) has args, ask user for input?
 
 * Maybe
   - ( ) Slash commands
-  - ( ) Button next to import stmnt to open imported note
+  - ( ) Folders? Purely for presenting notes in workspace view
   - ( ) Block-ey UI with drag and drop
   - ( ) Support images with image upload
   - ( ) Debug view for showing current state

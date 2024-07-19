@@ -1,6 +1,7 @@
 import { createMutation, createQuery, useQueryClient } from '@tanstack/solid-query';
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
+import { Accessor } from 'solid-js';
 
 export const useWorkspaces = () => {
   return createQuery(() => ({
@@ -9,47 +10,52 @@ export const useWorkspaces = () => {
   }));
 };
 
-export const useWorkspaceNotes = (workspaceSlug: string) => {
+export const useWorkspaceNotes = (workspaceSlug: Accessor<string>) => {
   return createQuery(() => ({
-    queryKey: queryKeys.workspaceNotes(workspaceSlug),
+    queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: async () =>
       apiClient.api.workspaces[':workspaceSlug'].notes
-        .$get({ param: { workspaceSlug } })
+        .$get({ param: { workspaceSlug: workspaceSlug() } })
         .then(responseJson),
   }));
 };
 
-export const useNote = (workspaceSlug: string, noteId: string) => {
+export const fetchNote = (workspaceSlug: string, noteId: string) =>
+  apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
+    .$get({ param: { workspaceSlug: workspaceSlug, noteId: noteId } })
+    .then(responseJson);
+
+export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
   return createQuery(() => ({
-    queryKey: queryKeys.note(workspaceSlug, noteId),
-    queryFn: async () =>
-      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
-        .$get({ param: { workspaceSlug, noteId } })
-        .then(responseJson),
+    queryKey: queryKeys.note(workspaceSlug(), noteId()),
+    queryFn: async () => fetchNote(workspaceSlug(), noteId()),
   }));
 };
 
-export const useCreateNote = (workspaceSlug: string) => {
+export const useCreateNote = (workspaceSlug: Accessor<string>) => {
   const queryClient = useQueryClient();
 
+  const params = { workspaceSlug: workspaceSlug() };
   return createMutation(() => ({
-    mutationFn: async (params: { name: string }) =>
+    mutationFn: async (body: { name: string }) =>
       apiClient.api.workspaces[':workspaceSlug'].notes
-        .$post({ param: { workspaceSlug }, json: params })
+        .$post({ param: params, json: body })
         .then(responseJson),
     onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.workspaceNotes(workspaceSlug),
+        queryKey: queryKeys.workspaceNotes(workspaceSlug()),
       });
     },
   }));
 };
 
-export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
+export const useUpdateNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
+  const params = { workspaceSlug: workspaceSlug(), noteId: noteId() };
   return createMutation(() => ({
-    mutationFn: async (params: { name?: string; content?: string }) =>
+    mutationFn: async (body: { name?: string; content?: string }) =>
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
-        .$patch({ param: { workspaceSlug, noteId }, json: params })
+        .$patch({ param: params, json: body })
         .then(responseJson),
+    enabled: !!workspaceSlug() && !!noteId(),
   }));
 };

@@ -1,34 +1,26 @@
 import { useParams } from '@solidjs/router';
 import { Editor } from '../../components/Editor';
-import { useNote, useUpdateNote } from '../../api/queries/workspace';
+import { fetchNote, useNote, useUpdateNote } from '../../api/queries/workspace';
 import { Page } from '../../components/Page';
-import { links } from '../../components/Navigation';
 import { createEffect, Show } from 'solid-js';
 import * as Y from 'yjs';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { apiClient, responseJson } from '../../utils/api-client';
-import { useWorkspace } from '@/layouts/workspace';
-
-const useDebounced = (func: any, wait: number) => {
-  let timeout: any;
-  return function (...args: any[]) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
+import { useWorkspaceContext } from '@/layouts/workspace';
+import { WorkspaceSelector } from '@/components/WorkspaceSelector';
+import { useDebounced } from '@/utils/use-debounced';
 
 const WorkspaceNote = () => {
-  const { slug } = useWorkspace();
-  const { noteId } = useParams<{ noteId: string }>();
-  const noteResult = useNote(slug, noteId);
-  const noteUpdater = useUpdateNote(slug, noteId);
+  const { slug } = useWorkspaceContext();
+  const params = useParams<{ noteId: string }>();
+  const noteQuery = useNote(slug, () => params.noteId);
+  const noteUpdater = useUpdateNote(slug, () => params.noteId);
 
   const document = new Y.Doc();
 
   const updateNote = useDebounced(() => {
-    if (!noteResult.data?.permissions.canEdit) return;
+    if (!noteQuery.data?.permissions.canEdit) return;
 
-    const content = noteResult.data?.content;
+    const content = noteQuery.data?.content;
     const update = Y.encodeStateAsUpdateV2(document);
     const b64Update = fromUint8Array(update);
     // TODO: Figure out why this is getting called
@@ -38,7 +30,7 @@ const WorkspaceNote = () => {
   }, 1000);
 
   createEffect(() => {
-    const content = noteResult.data?.content;
+    const content = noteQuery.data?.content;
     if (content) {
       Y.applyUpdateV2(document, toUint8Array(content));
     }
@@ -58,11 +50,7 @@ const WorkspaceNote = () => {
     if (!importMatch || importMatch.length < 3) throw new Error('Invalid import path');
 
     const [_, workspace, noteId] = importMatch;
-    const response = await apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
-      .$get({
-        param: { workspaceSlug: workspace, noteId },
-      })
-      .then(responseJson);
+    const response = await fetchNote(workspace, noteId);
     if (!response) throw new Error('Invalid response for note');
 
     const yDoc = new Y.Doc();
@@ -76,22 +64,19 @@ const WorkspaceNote = () => {
   return (
     <Page
       breadcrumbs={[
-        {
-          text: <>@{slug}</>,
-          href: links.workspaceNotes(slug),
-        },
-        { text: <>{noteResult.data?.name ?? 'Loading...'}</> },
+        { text: <WorkspaceSelector selected={slug()} /> },
+        { text: <>{noteQuery.data?.name ?? 'Loading...'}</> },
       ]}
     >
       <div class="px-2">
         <div class="mx-auto max-w-4xl">
           <div class="text-right text-sm text-slate-500">
-            @{slug}/{noteId} by {noteResult.data?.author?.name}
+            @{slug()}/{params.noteId} by {noteQuery.data?.author?.name}
           </div>
           <div class="border border-gray-100">
-            <Show when={!!noteResult.data?.id} keyed>
+            <Show when={!!noteQuery.data?.id} keyed>
               <Editor
-                editable={noteResult.data?.permissions.canEdit}
+                editable={noteQuery.data?.permissions.canEdit}
                 document={document}
                 moduleLoader={moduleLoader}
               />

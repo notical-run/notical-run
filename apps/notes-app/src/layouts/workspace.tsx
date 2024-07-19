@@ -1,17 +1,17 @@
 import { useParams } from '@solidjs/router';
-import { createContext, ParentProps, useContext } from 'solid-js';
+import { Accessor, createContext, createMemo, ParentProps, useContext } from 'solid-js';
 
 export type WorkspaceContext = {
-  slug: string;
+  slug: Accessor<string>;
 };
 
-const WorkspaceContext = createContext<WorkspaceContext>({ slug: '' });
+const WorkspaceContext = createContext<WorkspaceContext>();
 
-export const useWorkspace = () => useContext(WorkspaceContext);
+export const useWorkspaceContext = () => useContext(WorkspaceContext) ?? { slug: () => '' };
 
 export const WorkspaceLayout = (props: ParentProps) => {
-  const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
-  const slug = workspaceSlug.replace(/^@/, '');
+  const params = useParams<{ workspaceSlug: string }>();
+  const slug = createMemo(() => params.workspaceSlug.replace(/^@/, ''));
 
   return <WorkspaceContext.Provider value={{ slug }}>{props.children}</WorkspaceContext.Provider>;
 };

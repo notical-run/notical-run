@@ -5,33 +5,36 @@ import { Page } from '@/components/Page';
 import { links } from '@/components/Navigation';
 import { Button } from '@/components/_base/Button';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
-import { useWorkspace } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/layouts/workspace';
+import { WorkspaceSelector } from '@/components/WorkspaceSelector';
+import { FaSolidPlus } from 'solid-icons/fa';
 
 const WorkspaceNotes = () => {
-  const { slug } = useWorkspace();
-  const notesResult = useWorkspaceNotes(slug);
+  const { slug } = useWorkspaceContext();
+  const notesQuery = useWorkspaceNotes(slug);
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
   return (
-    <Page breadcrumbs={[{ text: <>@{slug}</> }]}>
+    <Page breadcrumbs={[{ text: <WorkspaceSelector selected={slug()} /> }]}>
       <div class="flex justify-end pb-2">
-        <Button onClick={() => setDialogOpen(true)} class="text-sm">
-          + New note
+        <Button onClick={() => setDialogOpen(true)} class="text-sm flex items-center gap-2">
+          <FaSolidPlus size={10} />
+          New note
         </Button>
       </div>
 
-      <Show when={!notesResult.isLoading} fallback={<div>Loading...</div>}>
+      <Show when={!notesQuery.isLoading} fallback={<div>Loading...</div>}>
         <div class="mx-auto max-w-4xl">
-          <For each={notesResult.data} fallback={<div>No notes</div>}>
+          <For each={notesQuery.data} fallback={<div>No notes</div>}>
             {note => (
               <A
-                href={links.workspaceNote(slug, note.name)}
+                href={links.workspaceNote(slug(), note.name)}
                 class="block px-4 py-3 shadow-sm rounded-md border border-gray-100 mb-2 text-slate-700"
               >
                 <div>
                   <div>
-                    <span class="text-slate-500">@{slug}</span>/
+                    <span class="text-slate-500">@{slug()}</span>/
                     <span class="text-slate-900 font-bold">{note.name}</span>
                   </div>
                 </div>

@@ -3,12 +3,12 @@ import { Button } from '@/components/_base/Button';
 import { Dialog, DialogRootProps } from '@/components/_base/Dialog';
 import { TextInput } from '@/components/_base/TextInput';
 import { links } from '@/components/Navigation';
-import { useNavigate, useParams } from '@solidjs/router';
+import { useWorkspaceContext } from '@/layouts/workspace';
+import { useNavigate } from '@solidjs/router';
 import toast from 'solid-toast';
 
 export const NewNoteDialog = (props: DialogRootProps) => {
-  const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
-  const slug = workspaceSlug.replace(/^@/, '');
+  const { slug } = useWorkspaceContext();
 
   const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ export const NewNoteDialog = (props: DialogRootProps) => {
         onSuccess: () => {
           props.onOpenChange(false);
           toast.success(`Note ${name} created`);
-          navigate(links.workspaceNote(slug, name));
+          navigate(links.workspaceNote(slug(), name));
         },
       },
     );

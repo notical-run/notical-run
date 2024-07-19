@@ -34,7 +34,7 @@ export const routes: RouteDefinition[] = [
 
   {
     path: '/:workspaceSlug',
-    component: () => (
+    component: (props) => (
       <WorkspaceLayout>
         <PrivateRoute>
           <WorkspaceNotes />
