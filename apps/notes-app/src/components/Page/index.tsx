@@ -2,7 +2,7 @@ import { A } from '@solidjs/router';
 import { For, JSX, ParentProps, Show, Suspense } from 'solid-js';
 
 const PageRoot = (props: ParentProps) => {
-  return <div class="h-screen overflow-none">{props.children}</div>;
+  return <div class="flex flex-col h-screen overflow-hidden">{props.children}</div>;
 };
 
 export type PageHeaderProps = {
@@ -39,12 +39,12 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
 };
 
 const PageBody = (props: ParentProps) => (
-  <div class="flex flex-row justify-stretch max-h-screen overflow-hidden">{props.children}</div>
+  <div class="flex flex-row justify-stretch flex-1 overflow-hidden">{props.children}</div>
 );
 
 const PageMain = (props: ParentProps) => {
   return (
-    <main class="p-4 flex-1 overflow-y-scroll">
+    <main class="p-4 flex-1 overflow-y-auto">
       <Suspense fallback={<div>Loading...</div>}>{props.children}</Suspense>
     </main>
   );

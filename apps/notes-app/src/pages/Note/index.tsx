@@ -1,7 +1,7 @@
 import { useParams } from '@solidjs/router';
 import { useNote } from '../../api/queries/workspace';
 import { Page } from '../../components/Page';
-import { createMemo, Show } from 'solid-js';
+import { Show } from 'solid-js';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { NoteSidebar } from '@/pages/Note/components/Sidebar';
@@ -10,10 +10,7 @@ import { NoteEditor } from '@/pages/Note/components/NoteEditor';
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
   const params = useParams<{ noteId: string }>();
-  const noteQuery = useNote(
-    slug,
-    createMemo(() => params.noteId),
-  );
+  const noteQuery = useNote(slug, () => params.noteId);
 
   return (
     <Page>
@@ -34,11 +31,9 @@ const WorkspaceNote = () => {
               <div class="text-right text-sm text-slate-500">
                 @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
               </div>
-              <div class="border border-gray-100">
-                <Show when={noteQuery.data?.id} keyed>
-                  <NoteEditor note={noteQuery.data!} />
-                </Show>
-              </div>
+              <Show when={noteQuery.data?.id} keyed>
+                <NoteEditor note={noteQuery.data!} />
+              </Show>
             </div>
           </div>
         </Page.Body.Main>

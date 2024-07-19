@@ -9,7 +9,7 @@ export const PopoverContent = (props: ParentProps) => {
   return (
     <CorvuPopover.Portal>
       <CorvuPopover.Overlay />
-      <CorvuPopover.Content class="border-t-2 border-t-slate-900 bg-white shadow-xl">
+      <CorvuPopover.Content class="border-t-2 border-t-slate-900 bg-white shadow-xl rounded-md">
         <CorvuPopover.Arrow size={12} class="text-slate-900" />
         <div class="border-b border-x border-slate-100">{props.children}</div>
       </CorvuPopover.Content>

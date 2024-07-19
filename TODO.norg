@@ -4,9 +4,7 @@
    - ( ) Fork note
    - ( ) Delete note
 ** UI
-   - ( ) Sidebar? More ui stuff
    - ( ) Improve forms + validations
-   - ( ) Show api errors
    - ( ) Improve styles for editor
    - ( ) Not found pages
 ** Evaluation
@@ -17,11 +15,12 @@
    - ( ) here() for code blocks (or make it inline only?)
 
 * Bugs
-  - ( ) Fix up key not working from inside code blocks
-  - ( ) Fix issue with `here` being used inside code blocks
-  - ( ) Fix issue with import not working sometimes
-  - ( ) Fix memory leak. (Cleanup quickjs ctx+runtime on exit)
-  - ( ) Fix issue with inline buttons needing 2 clicks sometimes
+  - ( ) Up key not working from inside code blocks
+  - ( ) Issue with `here` being used inside code blocks
+  - ( ) Issue with import not working sometimes
+  - ( ) Issue with inline buttons needing 2 clicks sometimes
+  - ( ) Doubleclick on buttons in editor select text
+  - ( ) Occasional memory leak?
 
 * Later
 ** Evaluation

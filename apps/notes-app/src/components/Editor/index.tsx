@@ -3,11 +3,11 @@ import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
 import { createEffect, onCleanup, onMount } from 'solid-js';
-import clsx from 'clsx';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
+import { twMerge } from 'tailwind-merge';
 
 export type EditorProps = {
   editable?: boolean;
@@ -23,7 +23,7 @@ export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
   const cleanupInstances: (() => void)[] = [];
 
   onMount(async () => {
-    const editorClass = clsx(
+    const editorClass = twMerge(
       'prose prose-base focus:outline-none p-4 max-w-full',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
       'prose-h1:text-3xl',

@@ -5,7 +5,7 @@ import { links } from '@/components/Navigation';
 import { A } from '@solidjs/router';
 import { createSignal, For } from 'solid-js';
 import { RiArrowsArrowDownSLine } from 'solid-icons/ri';
-import { FaSolidCircleDot, FaSolidPlus } from 'solid-icons/fa';
+import { FaSolidPlus } from 'solid-icons/fa';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
 
 export type WorkspaceSelectorProps = { selected: string };
@@ -26,12 +26,12 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
         </div>
 
         <Popover.Content>
-          <div class="bg-white min-w-60 shadow-lg text-sm">
+          <div class="min-w-60 shadow-lg text-sm">
             <Popover.Content.Heading class="text-slate-500 pb-2 hidden">
               Select workspace
             </Popover.Content.Heading>
 
-            <Popover.Content.Body>
+            <Popover.Content.Body class="pt-1">
               <For each={workspaces.data} fallback={<div>You don't have any workspaces</div>}>
                 {workspace => (
                   <Popover.Close
