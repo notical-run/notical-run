@@ -19,7 +19,7 @@ export const Button = (_props: ButtonProps) => {
 
         // sizes
         'text-xs px-2 py-1': props.size === 'sm',
-        'text-sm px-2 py-1': props.size === 'md',
+        'text-sm px-3 py-1': props.size === 'md',
         'text-md px-2 py-1': props.size === 'lg',
 
         // variants

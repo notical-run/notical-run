@@ -31,7 +31,12 @@ const Workspaces = () => {
             <List>
               <For
                 each={workspacesResult.data ?? []}
-                fallback={<List.Empty>You don't have any workspaces</List.Empty>}
+                fallback={
+                  <List.Empty
+                    title="You don't have any workspaces"
+                    subtitle="Create a workspace to get started"
+                  />
+                }
               >
                 {workspace => (
                   <List.Item>

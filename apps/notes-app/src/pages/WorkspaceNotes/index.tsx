@@ -36,7 +36,12 @@ const WorkspaceNotes = () => {
               <List>
                 <For
                   each={notesQuery.data}
-                  fallback={<List.Empty>This workspace is empty</List.Empty>}
+                  fallback={
+                    <List.Empty
+                      title="This workspace is empty"
+                      subtitle="Create a new note to get started"
+                    />
+                  }
                 >
                   {note => (
                     <List.Item>
