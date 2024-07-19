@@ -29,6 +29,7 @@ export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string
   return createQuery(() => ({
     queryKey: queryKeys.note(workspaceSlug(), noteId()),
     queryFn: async () => fetchNote(workspaceSlug(), noteId()),
+    suspense: true,
   }));
 };
 

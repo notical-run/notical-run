@@ -3,9 +3,10 @@ import { useWorkspaces } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
 import { links } from '@/components/Navigation';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
-import { createSignal } from 'solid-js';
+import { createSignal, For } from 'solid-js';
 import { Button } from '@/components/_base/Button';
 import { FaSolidPlus } from 'solid-icons/fa';
+import { List } from '@/components/_base/ListItems';
 
 const Workspaces = () => {
   const workspacesResult = useWorkspaces();
@@ -24,17 +25,24 @@ const Workspaces = () => {
           </Button>
         </div>
 
-        {workspacesResult.data?.map(workspace => (
-          <A
-            href={links.workspaceNotes(workspace.slug)}
-            class="block px-4 py-3 shadow-sm rounded-md border border-slate-150 mb-2"
+        <List>
+          <For
+            each={workspacesResult.data ?? []}
+            fallback={<List.Empty>You don't have any workspaces</List.Empty>}
           >
-            <div class="pb-1">
-              {workspace.name} (<span class="text-slate-900 font-bold">@{workspace.slug}</span>)
-            </div>
-            <div class="text-slate-600 text-sm">{workspace.notes.length} notes</div>
-          </A>
-        ))}
+            {workspace => (
+              <List.Item>
+                <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
+                  <div class="pb-1">
+                    {workspace.name} (
+                    <span class="text-slate-900 font-bold">@{workspace.slug}</span>)
+                  </div>
+                  <div class="text-slate-600 text-sm">{workspace.notes.length} notes</div>
+                </A>
+              </List.Item>
+            )}
+          </For>
+        </List>
       </div>
 
       <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />

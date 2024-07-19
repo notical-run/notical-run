@@ -1,5 +1,5 @@
 import { A } from '@solidjs/router';
-import { For, JSX, ParentProps, Show } from 'solid-js';
+import { For, JSX, ParentProps, Show, Suspense } from 'solid-js';
 
 export type PageProps = {
   breadcrumbs?: { href?: string; text: JSX.Element }[];
@@ -37,7 +37,9 @@ export const Page = ({ children, breadcrumbs }: ParentProps<PageProps>) => {
         </div>
       </div>
 
-      <main class="p-4">{children}</main>
+      <main class="p-4">
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      </main>
     </div>
   );
 };
