@@ -14,7 +14,7 @@ const Workspaces = () => {
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
   return (
-    <Page>
+    <Page title="My workspaces">
       <Page.Header />
       <Page.Body>
         <Page.Body.Main>

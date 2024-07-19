@@ -13,7 +13,7 @@ const WorkspaceNote = () => {
   const noteQuery = useNote(slug, () => params.noteId);
 
   return (
-    <Page>
+    <Page title={`@${slug()}/${params.noteId}`}>
       <Page.Header
         breadcrumbs={[
           { content: <WorkspaceSelector selected={slug()} /> },

@@ -1,7 +1,13 @@
+import { links } from '@/components/Navigation';
 import { A } from '@solidjs/router';
-import { For, JSX, ParentProps, Show, Suspense } from 'solid-js';
+import { createEffect, For, JSX, ParentProps, Show, Suspense } from 'solid-js';
 
-const PageRoot = (props: ParentProps) => {
+const PageRoot = (props: ParentProps & { title?: string }) => {
+  createEffect(() => {
+    if (props.title) document.title = `${props.title} - notical.run`;
+    else document.title = `notical.run`;
+  });
+
   return <div class="flex flex-col h-screen overflow-hidden">{props.children}</div>;
 };
 
@@ -30,7 +36,7 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
       </div>
 
       <div class="flex items-center">
-        <A href="/logout" class="text-xs text-violet-600">
+        <A href={links.logout()} class="text-xs text-violet-600">
           Logout
         </A>
       </div>

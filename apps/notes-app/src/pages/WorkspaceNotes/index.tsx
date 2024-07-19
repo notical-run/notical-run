@@ -17,7 +17,7 @@ const WorkspaceNotes = () => {
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
   return (
-    <Page>
+    <Page title={`Notes in @${slug()}`}>
       <Page.Header breadcrumbs={[{ content: <WorkspaceSelector selected={slug()} /> }]} />
       <Page.Body>
         {/* <Page.Body.SideMenu>Wow</Page.Body.SideMenu> */}

@@ -4,6 +4,7 @@ import { useSignup } from '../api/queries/auth';
 import { TextInput } from '../components/_base/TextInput';
 import { Button } from '../components/_base/Button';
 import { links } from '../components/Navigation';
+import { Page } from '@/components/Page';
 
 export const Signup = () => {
   const [_, updateSessionId] = createSessionId();
@@ -30,18 +31,21 @@ export const Signup = () => {
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
-      <form onSubmit={signupUser} class="block my-1 mx-auto max-w-xs">
-        <input />
-        <TextInput type="text" name="name" placeholder="Name" />
-        <TextInput type="email" name="email" placeholder="Email" />
-        <TextInput type="password" name="password" placeholder="Password" />
+    <Page title="Signup">
+      <form onSubmit={signupUser} class="block my-1 mx-auto w-full max-w-sm">
+        <h1>Signup</h1>
+
+        <TextInput type="text" name="name" placeholder="Eg: Note Taker" label="Name" />
+        <TextInput type="email" name="email" placeholder="Eg: notetaker@gmail.com" label="Email" />
+        <TextInput type="password" name="password" placeholder="*************" label="Password" />
         <Button type="submit" class="block w-full mt-2">
           Signup
         </Button>
-        <A href={links.login()}>Already have an account? Login</A>
+
+        <A href={links.login()} class="block text-sm text-slate-600 pt-2 hover:text-slate-900">
+          Already have an account? Login
+        </A>
       </form>
-    </div>
+    </Page>
   );
 };

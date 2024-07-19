@@ -4,4 +4,5 @@ export const links = {
   workspaceNote: (slug: string, noteId: string) => `/@${slug}/${noteId}`,
   login: () => '/login',
   signup: () => '/signup',
+  logout: () => '/logout',
 };

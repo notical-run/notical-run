@@ -4,6 +4,7 @@ import { useLogin } from '../api/queries/auth';
 import { TextInput } from '../components/_base/TextInput';
 import { Button } from '../components/_base/Button';
 import { links } from '../components/Navigation';
+import { Page } from '@/components/Page';
 
 export const Login = () => {
   const [_, updateSessionId] = createSessionId();
@@ -29,18 +30,20 @@ export const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={loginUser} class="block my-1 mx-auto max-w-xs">
-        <input />
-        <TextInput type="email" name="email" placeholder="Email" />
-        <TextInput type="password" name="password" placeholder="Password" />
+    <Page title="Login">
+      <form onSubmit={loginUser} class="block my-1 mx-auto w-full max-w-sm">
+        <h1>Login</h1>
+
+        <TextInput type="email" name="email" placeholder="Eg: notetaker@gmail.com" label="Email" />
+        <TextInput type="password" name="password" placeholder="*************" label="Password" />
         <Button type="submit" class="block w-full mt-2">
           Login
         </Button>
 
-        <A href={links.signup()}>Don't have an account? Signup</A>
+        <A href={links.signup()} class="block text-sm text-slate-600 pt-2 hover:text-slate-900">
+          Don't have an account? Signup
+        </A>
       </form>
-    </div>
+    </Page>
   );
 };
