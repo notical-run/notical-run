@@ -27,12 +27,21 @@ export class ApiError extends Error {
   public handled: boolean = false;
   constructor(
     public readonly response: Response,
-    errorMessage?: string,
+    errorMessage?: string | null,
   ) {
     super(errorMessage ?? response.statusText ?? 'Something went wrong');
     this.status = response.status ?? 500;
   }
 }
+
+const toErrorMessage = (e?: string | Record<any, any>): string | null => {
+  if (!e) return null;
+  if (typeof e === 'string') return e;
+  if (typeof e.message === 'string') return e.message;
+  if (e.name === 'ZodError' && e.issues)
+    return `Invalid values given ${e.issues.map?.((i: any) => i.path.join('.')).join(', ') ?? ''}`;
+  return null;
+};
 
 type ResponseOutput<CR extends ClientResponse<unknown>> =
   CR extends ClientResponse<infer Resp, any, 'json'>
@@ -49,7 +58,8 @@ export const responseJson = async <
 ): Promise<ResponseOutput<CR>> => {
   if (!response.ok) {
     const result: any = await response.json().catch(_ => null);
-    return Promise.reject(new ApiError(response, result?.error));
+    const errorMessage = toErrorMessage(result?.error);
+    return Promise.reject(new ApiError(response, errorMessage));
   }
 
   const result: any = await response.json();

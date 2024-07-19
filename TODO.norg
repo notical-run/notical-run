@@ -1,6 +1,5 @@
 * Curent
 ** Backend
-   - ( ) Create workspace
    - ( ) Private notes
    - ( ) Fork note
    - ( ) Delete note
@@ -10,7 +9,6 @@
    - ( ) Show api errors
    - ( ) Improve styles for editor
    - ( ) Not found pages
-   - ( ) Handle zod api errors in client
 ** Evaluation
    - ( ) Show decoration
    - ( ) Get content from page
@@ -19,6 +17,7 @@
    - ( ) here() for code blocks (or make it inline only?)
 
 * Bugs
+  - ( ) Fix up key not working from inside code blocks
   - ( ) Fix issue with `here` being used inside code blocks
   - ( ) Fix issue with import not working sometimes
   - ( ) Fix memory leak. (Cleanup quickjs ctx+runtime on exit)

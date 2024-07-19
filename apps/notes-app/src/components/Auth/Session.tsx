@@ -1,5 +1,5 @@
 import { Navigate } from '@solidjs/router';
-import { createSignal, ParentProps } from 'solid-js';
+import { createSignal, Match, ParentProps, Switch } from 'solid-js';
 import { getSessionId, setSessionId } from '../../utils/api-client';
 import { links } from '../Navigation';
 
@@ -16,6 +16,12 @@ export const createSessionId = () => {
 
 export const PrivateRoute = (props: ParentProps) => {
   const [sessionId] = createSessionId();
-  if (!sessionId()) return <Navigate href={links.login()} />;
-  return props.children;
+  return (
+    <Switch>
+      <Match when={sessionId()}>{props.children}</Match>
+      <Match when={!sessionId()}>
+        <Navigate href={links.login()} />
+      </Match>
+    </Switch>
+  );
 };
