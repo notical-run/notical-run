@@ -2,14 +2,27 @@ import { A } from '@solidjs/router';
 import { useWorkspaces } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
 import { links } from '@/components/Navigation';
+import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
+import { createSignal } from 'solid-js';
+import { Button } from '@/components/_base/Button';
+import { FaSolidPlus } from 'solid-icons/fa';
 
 const Workspaces = () => {
   const workspacesResult = useWorkspaces();
 
+  const [dialogOpen, setDialogOpen] = createSignal(false);
+
   return (
     <Page>
       <div class="mx-auto max-w-4xl">
-        <h1 class="text-slate-400 font-bold">My Workspaces</h1>
+        <div class="flex items-end justify-between pb-2">
+          <h1 class="text-slate-400 font-bold">My Workspaces</h1>
+
+          <Button onClick={() => setDialogOpen(true)} class="text-sm flex items-center gap-2">
+            <FaSolidPlus size={10} />
+            New workspace
+          </Button>
+        </div>
 
         {workspacesResult.data?.map(workspace => (
           <A
@@ -23,6 +36,8 @@ const Workspaces = () => {
           </A>
         ))}
       </div>
+
+      <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
     </Page>
   );
 };

@@ -10,6 +10,7 @@
    - ( ) Show api errors
    - ( ) Improve styles for editor
    - ( ) Not found pages
+   - ( ) Handle zod api errors in client
 ** Evaluation
    - ( ) Show decoration
    - ( ) Get content from page

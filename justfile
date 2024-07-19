@@ -3,6 +3,9 @@ set positional-arguments
 up *args:
   API_BASE_URL=http://localhost:3141 docker compose --profile development up --exit-code-from api "$@"
 
+restart *args:
+  docker compose restart api "$@"
+
 test *args:
   docker compose --profile test up --exit-code-from api-test "$@"
 

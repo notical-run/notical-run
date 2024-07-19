@@ -49,6 +49,20 @@ export const useCreateNote = (workspaceSlug: Accessor<string>) => {
   }));
 };
 
+export const useCreateWorkspace = () => {
+  const queryClient = useQueryClient();
+
+  return createMutation(() => ({
+    mutationFn: async (body: { name: string; slug: string }) =>
+      apiClient.api.workspaces.$post({ json: body }).then(responseJson),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.workspaces(),
+      });
+    },
+  }));
+};
+
 export const useUpdateNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
   const params = { workspaceSlug: workspaceSlug(), noteId: noteId() };
   return createMutation(() => ({

@@ -1,42 +1,32 @@
 import { Hono } from 'hono';
-import { db } from '../../db';
-import { desc, eq } from 'drizzle-orm';
-import { User, Workspace } from '../../db/schema';
 import { noteRoute } from './note/note.route';
 import { privateRoute, SessionVars } from '../../auth';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
+import { createWorkspace, getUserWorkspaces } from './workspace.data';
 
 export const workspaceRoute = new Hono<{ Variables: SessionVars }>()
   .route(':workspaceSlug/notes', noteRoute)
-  // Private routes
-  .use('*', privateRoute)
 
-  .get(':workspaceSlug', async c => {
-    const slug = c.req.param('workspaceSlug');
-    const workspace = await db.query.Workspace.findFirst({
-      where: eq(Workspace.slug, slug),
-    });
+  .post(
+    '/',
+    privateRoute,
+    zValidator('json', z.object({ name: z.string(), slug: z.string() })),
+    async c => {
+      const workspaceJson = c.req.valid('json');
+      const user = c.get('user')!;
+      const workspace = await createWorkspace({
+        ...workspaceJson,
+        authorId: user.id,
+      });
 
-    return c.json(workspace);
-  })
+      if (!workspace) return c.json({ error: 'Workspace already exists' }, 422);
+      return c.json(workspace);
+    },
+  )
 
-  .get('/', async c => {
+  .get('/', privateRoute, async c => {
     const currentUser = c.get('user')!;
-    const user = await db.query.User.findFirst({
-      where: eq(User.id, currentUser.id),
-      with: {
-        workspaces: {
-          with: {
-            notes: { columns: { id: true, name: true } },
-          },
-          orderBy: [desc(Workspace.createdAt)],
-          columns: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
-    });
-
-    return c.json(user?.workspaces ?? []);
+    const workspaces = await getUserWorkspaces(currentUser.id);
+    return c.json(workspaces ?? []);
   });
