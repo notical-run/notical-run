@@ -64,13 +64,13 @@ export const useCreateWorkspace = () => {
   }));
 };
 
-export const useUpdateNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
-  const params = { workspaceSlug: workspaceSlug(), noteId: noteId() };
+export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
+  const params = { workspaceSlug, noteId };
   return createMutation(() => ({
     mutationFn: async (body: { name?: string; content?: string }) =>
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
         .$patch({ param: params, json: body })
         .then(responseJson),
-    enabled: !!workspaceSlug() && !!noteId(),
+    enabled: !!workspaceSlug && !!noteId,
   }));
 };

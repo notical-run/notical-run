@@ -27,7 +27,7 @@ export const noteRoute = new Hono<{
     const note = await getNote(slug, noteId);
 
     return c.json({
-      ...note,
+      ...note!,
       permissions: {
         canEdit: note?.author.id === user?.id,
       },

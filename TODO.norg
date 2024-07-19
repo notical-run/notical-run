@@ -1,5 +1,5 @@
 * Curent
-** Backend
+** Product
    - ( ) Private notes
    - ( ) Fork note
    - ( ) Delete note
@@ -30,7 +30,9 @@
    - ( ) Replace content
    - ( ) Prompt/Alert/Confirm apis with custom UI
    - ( ) Button next to import stmnt to open imported note
-** Backend
+   - ( ) Allow disabling evaluation for a code blocks
+   - ( ) Allow disabling evaluation for inline blocks
+** Product
    - ( ) github oauth
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
    - ( ) Create a sample workspace by default on signup
@@ -38,6 +40,7 @@
    - ( ) Delete workspace
    - ( ) Home page
    - ( ) e2e tests
+   - ( ) Favorite notes
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so
@@ -52,7 +55,6 @@
    - ( ) Youtube embed
    - ( ) More complex task states
    - ( ) plantuml diagram support
-   - ( ) Allow disabling evaluation for a code block?
    - ( ) Placeholder texts
    - ( ) Drag and drop nodes
    - ( ) Heading anchors (link to heading)

@@ -26,7 +26,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
         </div>
 
         <Popover.Content>
-          <div class="bg-white shadow-lg text-sm">
+          <div class="bg-white min-w-60 shadow-lg text-sm">
             <Popover.Content.Heading class="text-slate-500 pb-2 hidden">
               Select workspace
             </Popover.Content.Heading>
@@ -41,14 +41,11 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
                       'text-slate-900 block w-full py-2 px-3': true,
                       'hover:bg-slate-100': props.selected !== workspace.slug,
                       '!text-slate-400': props.selected === workspace.slug,
-                      'flex justify-between items-center': true,
+                      'flex justify-between items-center gap-5': true,
                     }}
                     aria-disabled={props.selected === workspace.slug}
                   >
                     <span>@{workspace.slug}</span>
-                    {props.selected === workspace.slug && (
-                      <FaSolidCircleDot size={10} class="text-slate-300" />
-                    )}
                   </Popover.Close>
                 )}
               </For>
@@ -57,7 +54,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
                 <Popover.Close
                   as={Button}
                   size="sm"
-                  class="w-full flex gap-1 items-center"
+                  class="w-full flex gap-1 justify-center items-center"
                   onClick={() => setDialogOpen(true)}
                 >
                   <FaSolidPlus size={10} />

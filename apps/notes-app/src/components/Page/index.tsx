@@ -1,45 +1,67 @@
 import { A } from '@solidjs/router';
 import { For, JSX, ParentProps, Show, Suspense } from 'solid-js';
 
-export type PageProps = {
-  breadcrumbs?: { href?: string; text: JSX.Element }[];
+const PageRoot = (props: ParentProps) => {
+  return <div class="h-screen overflow-none">{props.children}</div>;
 };
 
-export const Page = ({ children, breadcrumbs }: ParentProps<PageProps>) => {
+export type PageHeaderProps = {
+  breadcrumbs?: { content: JSX.Element }[];
+};
+
+const PageHeader = (props: ParentProps<PageHeaderProps>) => {
   return (
-    <div>
-      <div class="flex justify-between gap-2 px-4 py-2 border-b border-b-slate-150 shadow-sm">
-        <div class="flex items-center">
-          <A href="/" class="text-xl">
-            notical.run
-          </A>
-          <For each={breadcrumbs}>
-            {(b, i) => (
-              <div class="flex text-xs mt-1">
-                <Show when={i() < (breadcrumbs ?? [])?.length}>
-                  <div class="px-2 text-slate-300">/</div>
-                </Show>
+    <div class="flex justify-between gap-2 px-4 py-2 border-b border-b-slate-150 shadow-sm">
+      <div class="flex items-center">
+        <A href="/" class="text-xl">
+          notical.run
+        </A>
+        <For each={props.breadcrumbs}>
+          {(crumb, i) => (
+            <div class="flex text-xs mt-1">
+              <Show when={i() < (props.breadcrumbs ?? [])?.length}>
+                <div class="px-2 text-slate-300">/</div>
+              </Show>
 
-                <Show when={!!b.href} fallback={<span class="text-slate-600">{b.text}</span>}>
-                  <A href={b.href!} class="text-slate-950">
-                    {b.text}
-                  </A>
-                </Show>
-              </div>
-            )}
-          </For>
-        </div>
-
-        <div class="flex items-center">
-          <A href="/logout" class="text-xs text-violet-600">
-            Logout
-          </A>
-        </div>
+              <span class="text-slate-600">{crumb.content}</span>
+            </div>
+          )}
+        </For>
       </div>
 
-      <main class="p-4">
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-      </main>
+      <div class="flex items-center">
+        <A href="/logout" class="text-xs text-violet-600">
+          Logout
+        </A>
+      </div>
     </div>
   );
 };
+
+const PageBody = (props: ParentProps) => (
+  <div class="flex flex-row justify-stretch max-h-screen overflow-hidden">{props.children}</div>
+);
+
+const PageMain = (props: ParentProps) => {
+  return (
+    <main class="p-4 flex-1 overflow-y-scroll">
+      <Suspense fallback={<div>Loading...</div>}>{props.children}</Suspense>
+    </main>
+  );
+};
+
+const PageSideMenu = (props: ParentProps) => {
+  return (
+    <div class="w-52 shadow border-r border-r-slate-150">
+      <div class="px-2 py-3">{props.children}</div>
+    </div>
+  );
+};
+
+export const Page = Object.assign(PageRoot, {
+  Header: PageHeader,
+  Body: Object.assign(PageBody, {
+    Main: PageMain,
+    SideMenu: PageSideMenu,
+  }),
+});

@@ -15,37 +15,42 @@ const Workspaces = () => {
 
   return (
     <Page>
-      <div class="mx-auto max-w-4xl">
-        <div class="flex items-end justify-between pb-2">
-          <h1 class="text-slate-400 font-bold">My Workspaces</h1>
+      <Page.Header />
+      <Page.Body>
+        <Page.Body.Main>
+          <div class="mx-auto max-w-4xl">
+            <div class="flex items-end justify-between pb-2">
+              <h1 class="text-slate-400 font-bold">My Workspaces</h1>
 
-          <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
-            <FaSolidPlus size={10} />
-            New workspace
-          </Button>
-        </div>
+              <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
+                <FaSolidPlus size={10} />
+                New workspace
+              </Button>
+            </div>
 
-        <List>
-          <For
-            each={workspacesResult.data ?? []}
-            fallback={<List.Empty>You don't have any workspaces</List.Empty>}
-          >
-            {workspace => (
-              <List.Item>
-                <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
-                  <div class="pb-1">
-                    {workspace.name} (
-                    <span class="text-slate-900 font-bold">@{workspace.slug}</span>)
-                  </div>
-                  <div class="text-slate-600 text-sm">{workspace.notes.length} notes</div>
-                </A>
-              </List.Item>
-            )}
-          </For>
-        </List>
-      </div>
+            <List>
+              <For
+                each={workspacesResult.data ?? []}
+                fallback={<List.Empty>You don't have any workspaces</List.Empty>}
+              >
+                {workspace => (
+                  <List.Item>
+                    <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
+                      <div class="pb-1">
+                        {workspace.name} (
+                        <span class="text-slate-900 font-bold">@{workspace.slug}</span>)
+                      </div>
+                      <div class="text-slate-600 text-sm">{workspace.notes.length} notes</div>
+                    </A>
+                  </List.Item>
+                )}
+              </For>
+            </List>
+          </div>
 
-      <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
+          <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
+        </Page.Body.Main>
+      </Page.Body>
     </Page>
   );
 };
