@@ -1,11 +1,13 @@
 import { useParams } from '@solidjs/router';
 import { useNote } from '../../api/queries/workspace';
 import { Page } from '../../components/Page';
-import { Show } from 'solid-js';
+import { Match, Show, Switch } from 'solid-js';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { NoteSidebar } from '@/pages/Note/components/Sidebar';
 import { NoteEditor } from '@/pages/Note/components/NoteEditor';
+import { LoadingView, ErrorView } from '@/components/ViewStates';
+import { toApiErrorMessage } from '@/utils/api-client';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
@@ -26,16 +28,28 @@ const WorkspaceNote = () => {
         </Page.Body.SideMenu>
 
         <Page.Body.Main>
-          <div class="px-2">
-            <div class="mx-auto max-w-4xl">
-              <div class="text-right text-sm text-slate-500">
-                @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
+          <Switch>
+            <Match when={noteQuery.isLoading}>
+              <LoadingView />
+            </Match>
+
+            <Match when={noteQuery.isError}>
+              <ErrorView title={toApiErrorMessage(noteQuery.error) ?? undefined} />
+            </Match>
+
+            <Match when={noteQuery.isSuccess}>
+              <div class="px-2">
+                <div class="mx-auto max-w-4xl">
+                  <div class="text-right text-sm text-slate-500">
+                    @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
+                  </div>
+                  <Show when={noteQuery.data?.id} keyed>
+                    <NoteEditor note={noteQuery.data!} />
+                  </Show>
+                </div>
               </div>
-              <Show when={noteQuery.data?.id} keyed>
-                <NoteEditor note={noteQuery.data!} />
-              </Show>
-            </div>
-          </div>
+            </Match>
+          </Switch>
         </Page.Body.Main>
       </Page.Body>
     </Page>

@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from 'solid-js';
+import { createSignal, For, Match, Switch } from 'solid-js';
 import { A } from '@solidjs/router';
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
@@ -9,6 +9,8 @@ import { useWorkspaceContext } from '@/layouts/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { FaSolidPlus } from 'solid-icons/fa';
 import { List } from '@/components/_base/ListItems';
+import { toApiErrorMessage } from '@/utils/api-client';
+import { ErrorView, LoadingView } from '@/components/ViewStates';
 
 const WorkspaceNotes = () => {
   const { slug } = useWorkspaceContext();
@@ -23,40 +25,50 @@ const WorkspaceNotes = () => {
         {/* <Page.Body.SideMenu>Wow</Page.Body.SideMenu> */}
         <Page.Body.Main>
           <div class="mx-auto max-w-4xl">
-            <div class="flex justify-between items-end pb-2">
-              <h1 class="text-slate-400 font-bold">Notes</h1>
+            <Switch>
+              <Match when={notesQuery.isLoading}>
+                <LoadingView />
+              </Match>
 
-              <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
-                <FaSolidPlus size={10} />
-                New note
-              </Button>
-            </div>
+              <Match when={notesQuery.isError}>
+                <ErrorView title={toApiErrorMessage(notesQuery.error) ?? undefined} />
+              </Match>
 
-            <Show when={!notesQuery.isLoading} fallback={<div>Loading...</div>}>
-              <List>
-                <For
-                  each={notesQuery.data}
-                  fallback={
-                    <List.Empty
-                      title="This workspace is empty"
-                      subtitle="Create a new note to get started"
-                    />
-                  }
-                >
-                  {note => (
-                    <List.Item>
-                      <A href={links.workspaceNote(slug(), note.name)} class="block px-4 py-3">
-                        <div class="flex items-center">
-                          <span class="text-slate-500 text-xs">@{slug()}</span>
-                          <span class="text-slate-500 text-md">/</span>
-                          <span class="text-slate-900 font-bold">{note.name}</span>
-                        </div>
-                      </A>
-                    </List.Item>
-                  )}
-                </For>
-              </List>
-            </Show>
+              <Match when={notesQuery.isSuccess}>
+                <div class="flex justify-between items-end pb-2">
+                  <h1 class="text-slate-400 font-bold">Notes</h1>
+
+                  <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
+                    <FaSolidPlus size={10} />
+                    New note
+                  </Button>
+                </div>
+
+                <List>
+                  <For
+                    each={notesQuery.data}
+                    fallback={
+                      <List.Empty
+                        title="This workspace is empty"
+                        subtitle="Create a new note to get started"
+                      />
+                    }
+                  >
+                    {note => (
+                      <List.Item>
+                        <A href={links.workspaceNote(slug(), note.name)} class="block px-4 py-3">
+                          <div class="flex items-center">
+                            <span class="text-slate-500 text-xs">@{slug()}</span>
+                            <span class="text-slate-500 text-md">/</span>
+                            <span class="text-slate-900 font-bold">{note.name}</span>
+                          </div>
+                        </A>
+                      </List.Item>
+                    )}
+                  </For>
+                </List>
+              </Match>
+            </Switch>
           </div>
 
           <NewNoteDialog open={dialogOpen()} onOpenChange={setDialogOpen} />

@@ -5,9 +5,7 @@
    - ( ) Delete note
    - ( ) Fix api test flakiness due to DB not being ready
 ** UI
-   - ( ) Improve forms + validations
    - ( ) Improve styles for editor
-   - ( ) Not found pages
 ** Evaluation
    - ( ) Show decoration
    - ( ) Get content from page
