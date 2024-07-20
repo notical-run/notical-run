@@ -1,6 +1,5 @@
 * Curent
 ** Product
-   - ( ) Private notes
    - ( ) Fork note
    - ( ) Delete note
    - ( ) Fix api test flakiness due to DB not being ready

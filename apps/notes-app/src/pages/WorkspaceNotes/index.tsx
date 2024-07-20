@@ -11,6 +11,7 @@ import { FaSolidPlus } from 'solid-icons/fa';
 import { List } from '@/components/_base/ListItems';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
+import { AiOutlineLock } from 'solid-icons/ai';
 
 const WorkspaceNotes = () => {
   const { slug } = useWorkspaceContext();
@@ -61,6 +62,9 @@ const WorkspaceNotes = () => {
                             <span class="text-slate-500 text-xs">@{slug()}</span>
                             <span class="text-slate-500 text-md">/</span>
                             <span class="text-slate-900 font-bold">{note.name}</span>
+                            {note.access === 'private' && (
+                              <AiOutlineLock class="ml-2 text-yellow-700" />
+                            )}
                           </div>
                         </A>
                       </List.Item>

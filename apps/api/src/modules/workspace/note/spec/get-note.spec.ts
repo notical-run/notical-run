@@ -47,6 +47,31 @@ request('GET /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
       });
     });
+
+    context('when a different user tries to access a public note', async () => {
+      it('returns the note', async () => {
+        const author = await createUser({ email: 'author@email.com' });
+        const reader = await createUser({ email: 'reader@email.com' });
+        const workspace = await createWorkspace({ slug: 'wp-1', authorId: author.id });
+        const note = await createNote({
+          name: 'note-1',
+          workspaceId: workspace.id,
+          access: 'public',
+        });
+
+        const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
+          method: 'GET',
+          headers: await headers({ authenticatedUserId: reader.id }),
+        });
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toMatchObject({
+          id: note.id,
+          name: note.name,
+          author: { id: author.id },
+        });
+      });
+    });
   });
 
   response.status('404', () => {
@@ -79,6 +104,31 @@ request('GET /workspaces/:workspaceSlug/notes/:noteId', () => {
 
         expect(response.status).toBe(404);
         expect(await response.json()).toMatchObject({ error: 'Note not found' });
+      });
+    });
+  });
+
+  response.status('403', () => {
+    context('when a different user tries to access a private note', async () => {
+      it('returns the note', async () => {
+        const author = await createUser({ email: 'author@email.com' });
+        const reader = await createUser({ email: 'reader@email.com' });
+        const workspace = await createWorkspace({ slug: 'wp-1', authorId: author.id });
+        await createNote({
+          name: 'note-1',
+          workspaceId: workspace.id,
+          access: 'private',
+        });
+
+        const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
+          method: 'GET',
+          headers: await headers({ authenticatedUserId: reader.id }),
+        });
+
+        expect(response.status).toBe(403);
+        expect(await response.json()).toMatchObject({
+          error: `You don't have access to view this private note`,
+        });
       });
     });
   });

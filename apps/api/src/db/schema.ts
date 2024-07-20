@@ -1,4 +1,4 @@
-import { date, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { date, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { timestampColumns } from '../utils/db';
 import { relations } from 'drizzle-orm';
 
@@ -39,7 +39,7 @@ export const Workspace = pgTable('workspaces', {
   authorId: uuid('author_id')
     .notNull()
     .references(() => User.id, { onDelete: 'cascade' }),
-  deletedAt: date('deleted_at'),
+  deletedAt: timestamp('deleted_at'),
   ...timestampColumns(),
 });
 export const workspaceRelations = relations(Workspace, ({ one, many }) => ({
@@ -47,6 +47,9 @@ export const workspaceRelations = relations(Workspace, ({ one, many }) => ({
   notes: many(Note),
 }));
 export type WorkspaceType = typeof Workspace.$inferInsert;
+
+// Note access types
+export const AccessType = pgEnum('accessType', ['public', 'private']);
 
 // Notes
 export const Note = pgTable(
@@ -62,6 +65,9 @@ export const Note = pgTable(
       .notNull()
       .references(() => User.id, { onDelete: 'cascade' }),
     deletedAt: date('deleted_at'),
+    access: AccessType('access')
+      .notNull()
+      .$default(() => 'public'),
     ...timestampColumns(),
   },
   t => ({

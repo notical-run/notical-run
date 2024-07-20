@@ -1,3 +1,9 @@
+DO $$ BEGIN
+ CREATE TYPE "public"."accessType" AS ENUM('public', 'private');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "notes" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -5,6 +11,7 @@ CREATE TABLE IF NOT EXISTS "notes" (
 	"workspace_id" uuid NOT NULL,
 	"author_id" uuid NOT NULL,
 	"deleted_at" date,
+	"access" "accessType" NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -30,7 +37,7 @@ CREATE TABLE IF NOT EXISTS "workspaces" (
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"author_id" uuid NOT NULL,
-	"deleted_at" date,
+	"deleted_at" timestamp,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
 	CONSTRAINT "workspaces_slug_unique" UNIQUE("slug")

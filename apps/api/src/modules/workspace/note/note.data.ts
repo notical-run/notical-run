@@ -13,6 +13,7 @@ export const getNote = async (workspaceSlug: string, noteId: string) => {
           id: true,
           name: true,
           content: true,
+          access: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -38,6 +39,7 @@ export const getWorkspaceNotes = async (workspaceSlug: string) => {
         columns: {
           id: true,
           name: true,
+          access: true,
           createdAt: true,
           updatedAt: true,
         },

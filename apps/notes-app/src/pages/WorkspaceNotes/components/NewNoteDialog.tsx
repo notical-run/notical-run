@@ -10,6 +10,7 @@ import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import { Show } from 'solid-js';
 import { toApiErrorMessage } from '@/utils/api-client';
+import { SwitchInput } from '@/components/_base/SwitchInput';
 
 const noteSchema = z.object({
   name: z
@@ -21,6 +22,7 @@ const noteSchema = z.object({
       /^[a-z0-9_-]+$/,
       'Name can only contain alphanumeric characters, hyphens (-) and underscores (_)',
     ),
+  private: z.boolean(),
 });
 
 type NoteSchemaType = z.infer<typeof noteSchema>;
@@ -55,6 +57,17 @@ export const NewNoteDialog = (props: DialogRootProps) => {
             <Field name="name">
               {(store, props) => (
                 <TextInput {...props} error={store.error} label="Name" placeholder="my-note" />
+              )}
+            </Field>
+
+            <Field name="private" type="boolean">
+              {(store, props) => (
+                <SwitchInput
+                  {...props}
+                  error={store.error}
+                  label="Make it a private note"
+                  class="mt-2"
+                />
               )}
             </Field>
 
