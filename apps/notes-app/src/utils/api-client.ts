@@ -34,7 +34,7 @@ export class ApiError extends Error {
   }
 }
 
-const toErrorMessage = (e?: string | Record<any, any>): string | null => {
+export const toApiErrorMessage = (e?: any): string | null => {
   if (!e) return null;
   if (typeof e === 'string') return e;
   if (typeof e.message === 'string') return e.message;
@@ -58,7 +58,7 @@ export const responseJson = async <
 ): Promise<ResponseOutput<CR>> => {
   if (!response.ok) {
     const result: any = await response.json().catch(_ => null);
-    const errorMessage = toErrorMessage(result?.error);
+    const errorMessage = toApiErrorMessage(result?.error);
     return Promise.reject(new ApiError(response, errorMessage));
   }
 

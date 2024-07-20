@@ -16,6 +16,7 @@ export const Button = (_props: ButtonProps) => {
       {...props}
       classList={{
         rounded: true,
+        'disabled:opacity-25': props.disabled,
 
         // sizes
         'text-xs px-2 py-1': props.size === 'sm',
