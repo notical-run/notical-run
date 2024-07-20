@@ -48,6 +48,41 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
     });
   });
 
+  response.status('400', () => {
+    context('when the note name is not present or empty', () => {
+      it('fails with an error', async () => {
+        const user = await createUser({ email: 'author@email.com' });
+        await createWorkspace({ slug: 'wp-1', authorId: user.id });
+
+        const session = await createSession(user.id);
+        const response = await route.request('/api/workspaces/wp-1/notes', {
+          method: 'POST',
+          body: JSON.stringify({ name: '' }),
+          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+        });
+
+        expect(response.status).toBe(400);
+      });
+    });
+
+    context('when the note name contains invalid characters', () => {
+      const names = ['hello world', 'he$$o', 'foo*1', 'p@lo'];
+      it.each(names)('fails with an error for "%s"', async name => {
+        const user = await createUser({ email: 'author@email.com' });
+        await createWorkspace({ slug: 'wp-1', authorId: user.id });
+
+        const session = await createSession(user.id);
+        const response = await route.request('/api/workspaces/wp-1/notes', {
+          method: 'POST',
+          body: JSON.stringify({ name }),
+          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+        });
+
+        expect(response.status).toBe(400);
+      });
+    });
+  });
+
   response.status('422', () => {
     context('when a note with the same name already exists in the workspace', () => {
       it('fails with an error message', async () => {

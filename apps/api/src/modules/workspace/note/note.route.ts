@@ -6,6 +6,16 @@ import { createNewNote, getNote, getWorkspaceNotes, updateNote } from './note.da
 import { authorizeWorkspace, validateWorkspace } from '../../../validators/workspace';
 import { validateNote } from '../../../validators/note';
 
+const noteCreateSchema = z.object({
+  name: z
+    .string()
+    .min(1)
+    .max(50)
+    .regex(/^[a-z0-9_-]+$/, 'Invalid ID'),
+});
+
+const noteUpdateSchema = z.object({ content: z.string().optional() });
+
 export const noteRoute = new Hono<{
   Variables: SessionVars & { workspaceId: string; noteId?: string };
 }>()
@@ -34,33 +44,27 @@ export const noteRoute = new Hono<{
     });
   })
 
-  .post(
-    '/',
-    privateRoute,
-    authorizeWorkspace,
-    zValidator('json', z.object({ name: z.string() })),
-    async c => {
-      const noteJson = c.req.valid('json');
-      const user = c.get('user')!;
+  .post('/', privateRoute, authorizeWorkspace, zValidator('json', noteCreateSchema), async c => {
+    const noteJson = c.req.valid('json');
+    const user = c.get('user')!;
 
-      const note = await createNewNote({
-        name: noteJson.name,
-        workspaceId: c.get('workspaceId'),
-        authorId: user.id,
-      });
+    const note = await createNewNote({
+      name: noteJson.name,
+      workspaceId: c.get('workspaceId'),
+      authorId: user.id,
+    });
 
-      if (!note) return c.json({ error: 'Note already exists' }, 422);
+    if (!note) return c.json({ error: 'Note already exists' }, 422);
 
-      return c.json({ id: note.id, name: note.name }, 201);
-    },
-  )
+    return c.json({ id: note.id, name: note.name }, 201);
+  })
 
   .patch(
     '/:noteId',
     privateRoute,
     authorizeWorkspace,
     validateNote,
-    zValidator('json', z.object({ content: z.string().optional() })),
+    zValidator('json', noteUpdateSchema),
     async c => {
       const noteId = c.get('noteId')!;
       const noteJson = c.req.valid('json');
