@@ -3,21 +3,19 @@
    - ( ) Delete note
    - ( ) Fix api test flakiness due to DB not being ready
    - ( ) Handle 403 for sidebar notes
-** Editor
-   - ( ) Placeholder texts
 ** Evaluation
-   - ( ) Show decoration
+   - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Get content from page
    - ( ) Pause evaluation update loop (for debugging)
    - ( ) Add small debounce for evaluator?
-   - ( ) here() for code blocks (or make it inline only?)
+   - ( ) Only render decoration when result (or show content) changes
+   - ( ) Make "show" content collapsible
 
 * Bugs
   - ( ) Up key not working from inside code blocks
   - ( ) Issue with `here` being used inside code blocks
   - ( ) Issue with import not working sometimes
-  - ( ) Issue with inline buttons needing 2 clicks sometimes
-  - ( ) Doubleclick on buttons in editor select text
+  - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
   - ( ) Occasional memory leak?
 
 * Later

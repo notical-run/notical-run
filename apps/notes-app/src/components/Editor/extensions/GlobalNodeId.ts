@@ -1,3 +1,4 @@
+import { setMarkAttributes } from '@/utils/editor';
 import { Node } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
 
@@ -41,9 +42,7 @@ export const GlobalNodeId = Node.create({
               if (nodeMark && (isIDDuplicated || !nodeMark.attrs.nodeId)) {
                 const uuid = crypto.randomUUID();
                 inUseUuids.add(uuid);
-                nodeMark.removeFromSet(node.marks);
-                (nodeMark as any).attrs = { ...nodeMark.attrs, nodeId: `${uuid}` };
-                nodeMark.addToSet(node.marks);
+                setMarkAttributes(node, nodeMark, { nodeId: `${uuid}` });
               }
             }
 

@@ -1,5 +1,6 @@
 import { getQuickJSRuntime } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
+import { findMarkById, setMarkAttributes } from '@/utils/editor';
 import { Scope } from 'quickjs-emscripten-core';
 import { createSignal } from 'solid-js';
 
@@ -57,7 +58,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
 
   const getDebug = () => quickVM && quickVM.getProp(quickVM.global, debugKey);
 
-  // const getShow = () => quickVM && quickVM.getProp(quickVM.global, showKey);
+  const getShow = () => quickVM && quickVM.getProp(quickVM.global, showKey);
 
   const getInsert = () => quickVM && quickVM.getProp(quickVM.global, insertKey);
 
@@ -66,7 +67,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
 
     const internals = scope.manage(getInternal()!);
     const debug = scope.manage(getDebug()!);
-    // const show = scope.manage(getShow()!);
+    const show = scope.manage(getShow()!);
     const insert = scope.manage(getInsert()!);
 
     const getSignal = (key: string) => {
@@ -117,6 +118,26 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
       })
       .consume(insertMarkdownBelowHandle => {
         quickVM!.setProp(insert, 'below', insertMarkdownBelowHandle);
+      });
+
+    quickVM
+      .newFunction('_show', (hookH, textH) => {
+        const hook = hookH?.consume(quickVM!.dump);
+        const text = textH?.consume(quickVM!.dump);
+
+        if (!hook || typeof hook.pos !== 'number')
+          throw new Error('Invalid target given to show.below');
+
+        options.withEditor(editor => {
+          const nodePosAndSize = findMarkById(editor, hook.id);
+          if (!nodePosAndSize) return;
+          const tr = editor.state.tr;
+          setMarkAttributes(nodePosAndSize.node, nodePosAndSize.mark, { anchoredContent: text });
+          editor.view.dispatch(tr);
+        });
+      })
+      .consume(showMarkdownBelowHandle => {
+        quickVM!.setProp(show, 'below', showMarkdownBelowHandle);
       });
 
     quickVM

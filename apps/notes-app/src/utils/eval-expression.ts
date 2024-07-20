@@ -3,21 +3,7 @@ import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { Editor } from '@tiptap/core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
-
-const findMarkById = (editor: Editor, id: string): [number, number] | null => {
-  let foundNodePos = null;
-  editor.state.doc.content.descendants((node, pos) => {
-    if (node.isText) {
-      const mark = node.marks.find(m => m.attrs?.nodeId === id);
-      if (mark) {
-        foundNodePos = [pos, node.nodeSize];
-        return false;
-      }
-    }
-  });
-
-  return foundNodePos;
-};
+import { findMarkById } from '@/utils/editor';
 
 export const evalExpression = async (
   code: string,
@@ -61,8 +47,8 @@ export const evalExpression = async (
       const nodePosAndSize = engine.withEditor(editor => findMarkById(editor, options.id));
 
       const hereRef = JSON.stringify({
-        pos: nodePosAndSize?.[0] ?? options.pos,
-        nodeSize: nodePosAndSize?.[1] ?? options.nodeSize,
+        pos: nodePosAndSize?.pos ?? options.pos,
+        nodeSize: nodePosAndSize?.node.nodeSize ?? options.nodeSize,
         id: options.id,
         __native__: '',
       });

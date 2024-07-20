@@ -4,6 +4,7 @@ import { evalExpression } from '@/utils/eval-expression';
 import { evalModule } from '@/utils/eval-module';
 import { Result } from '@/utils/result';
 import { EvalEngine } from '@/engine/types';
+import { setMarkAttributes } from '@/utils/editor';
 
 const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
 
@@ -86,9 +87,7 @@ export const evaluateAllNodes = async (
           if (!mark) return;
 
           const tr = editor.state.tr;
-          mark.removeFromSet(node.marks);
-          (mark as any).attrs = { ...mark.attrs, result };
-          mark.addToSet(node.marks);
+          setMarkAttributes(node, mark, { result });
           editor.view.dispatch(tr);
         };
 
