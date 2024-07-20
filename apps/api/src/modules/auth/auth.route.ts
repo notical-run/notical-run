@@ -24,10 +24,10 @@ export const authRoute = new Hono<{ Variables: SessionVars }>()
       where: eq(User.email, userJson.email),
       columns: { id: true, password: true },
     });
-    if (!user) return c.json({ error: 'Invalid email/password' }, 401);
+    if (!user) return c.json({ error: 'Invalid email/password' }, 403);
 
     const isValidPass = await verifyPassword(user.password, userJson.password);
-    if (!isValidPass) return c.json({ error: 'Invalid email/password' }, 401);
+    if (!isValidPass) return c.json({ error: 'Invalid email/password' }, 403);
 
     const session = await lucia.createSession(user.id, {});
     return c.json({ userId: user.id, sessionId: session.id });

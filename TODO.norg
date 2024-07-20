@@ -39,12 +39,15 @@
    - ( ) Home page
    - ( ) e2e tests
    - ( ) Favorite notes
+** Backend
+   - ( ) Fix issue with forever loading/api freeze in dev
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so
    - ( ) Alternative way to insert/show content
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
+   - ( ) Collapsable inline blocks
    - ( ) Link to another note
    - ( ) Prevent export updates from being in undo history
    - ( ) Editing sticky toolbar

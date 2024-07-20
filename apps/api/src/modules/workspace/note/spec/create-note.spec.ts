@@ -109,7 +109,9 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
       });
     });
+  });
 
+  response.status('403', () => {
     context('when user does not have access to workspace', () => {
       it('fails with an error message', async () => {
         const user = await createUser({ email: 'author@email.com' });
@@ -121,7 +123,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
           headers: await headers({ authenticatedUserId: user.id }),
         });
 
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(403);
         expect(await response.json()).toMatchObject({
           error: `You don't have access to this workspace`,
         });

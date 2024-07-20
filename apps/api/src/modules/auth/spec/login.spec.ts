@@ -23,7 +23,7 @@ request('POST /auth/login', () => {
     });
   });
 
-  response.status('401', () => {
+  response.status('403', () => {
     context('when the email is wrong', () => {
       it('fails with an error', async () => {
         await createUser({ email: 'user@email.com', password: '123123123' });
@@ -34,7 +34,7 @@ request('POST /auth/login', () => {
           headers: { 'Content-Type': 'application/json' },
         });
 
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(403);
         expect(await response.json()).toEqual({
           error: 'Invalid email/password',
         });
@@ -51,7 +51,7 @@ request('POST /auth/login', () => {
           headers: { 'Content-Type': 'application/json' },
         });
 
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(403);
         expect(await response.json()).toEqual({
           error: 'Invalid email/password',
         });

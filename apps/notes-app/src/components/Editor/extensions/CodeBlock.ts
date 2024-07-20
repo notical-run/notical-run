@@ -40,7 +40,9 @@ export const CodeBlock = CodeBlockLowlight.extend({
       const wrapper = html`<div data-collapsed="${node.attrs.collapsed}">
         <button
           class="${clsx(
-            'block w-full bg-gray-200 px-2 py-1',
+            'flex items-center gap-2',
+            'w-full px-2 py-1',
+            'bg-gray-100',
             'text-slate-500 text-left text-xs',
             {
               '-mb-6 rounded-t': !collapsed,
@@ -49,7 +51,8 @@ export const CodeBlock = CodeBlockLowlight.extend({
           )}"
           onClick=${toggleCollapsed}
         >
-          ${collapsed ? '▶' : '▼'}
+          <div>${collapsed ? '▶' : '▼'}</div>
+          ${collapsed && html`<div class="flex-1 border-b border-b-slate-300 border-dashed" />`}
         </button>
 
         <pre

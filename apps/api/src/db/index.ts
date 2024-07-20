@@ -8,6 +8,6 @@ if (!POSTGRES_CONNECTION_STRING) {
   throw new Error('Missing POSTGRES_CONNECTION_STRING');
 }
 
-export const queryClient = postgres(POSTGRES_CONNECTION_STRING);
+export const queryClient = postgres(POSTGRES_CONNECTION_STRING, { max: 10 });
 
-export const db = drizzle(queryClient, { schema });
+export const db = drizzle(queryClient, { schema, logger: false });

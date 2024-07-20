@@ -13,14 +13,14 @@ export const authorizeWorkspace = validator(
     });
 
     if (user && workspace && workspace.authorId !== user.id)
-      return c.json({ error: `You don't have access to this workspace` }, 401);
+      return c.json({ error: `You don't have access to this workspace` }, 403);
 
     return param;
   },
 );
 
 export const validateWorkspace = validator('param', async (param: { workspaceSlug: string }, c) => {
-  if (!param.workspaceSlug) return c.json({ error: 'Empty workspace slug' }, 401);
+  if (!param.workspaceSlug) return c.json({ error: 'Empty workspace slug' }, 403);
   const workspace = await db.query.Workspace.findFirst({
     where: eq(Workspace.slug, param.workspaceSlug),
     columns: { id: true },

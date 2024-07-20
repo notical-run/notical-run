@@ -28,7 +28,7 @@ db-drop *args: (exec "bun" "db:drop" args)
 db-reset *args: (exec "bun" "db:reset" args)
 db-seed: (exec "bun" "run" "./seeds/dev.ts")
 
-db-shell:
+db-sql:
   psql 'postgres://postgres:postgres@localhost:5432/notical-run'
 
 api-restart:
