@@ -6,31 +6,44 @@ import { links } from '@/components/Navigation';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { useNavigate } from '@solidjs/router';
 import toast from 'solid-toast';
+import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
+import { z } from 'zod';
+import { Show } from 'solid-js';
+import { toApiErrorMessage } from '@/utils/api-client';
+
+const noteSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Required')
+    .max(50, 'Name is too long')
+    .regex(/^[^\s]+$/, 'Name must not contain spaces')
+    .regex(
+      /^[a-z0-9_-]+$/,
+      'Name can only contain alphanumeric characters, hyphens (-) and underscores (_)',
+    ),
+});
+
+type NoteSchemaType = z.infer<typeof noteSchema>;
 
 export const NewNoteDialog = (props: DialogRootProps) => {
   const { slug } = useWorkspaceContext();
-
   const navigate = useNavigate();
 
-  const createNoteMutation = useCreateNote(slug);
+  const noteCreator = useCreateNote(slug);
+  const [, { Form, Field }] = createForm<NoteSchemaType>({
+    validate: zodForm(noteSchema),
+    validateOn: 'blur',
+    revalidateOn: 'input',
+  });
 
-  const createNote = (e: SubmitEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const name = formData.get('name') as string;
-
-    if (!name || !/^[a-z][a-z0-9_-]+$/i.test(name)) return;
-
-    createNoteMutation.mutate(
-      { name },
-      {
-        onSuccess: () => {
-          props.onOpenChange(false);
-          toast.success(`Note ${name} created`);
-          navigate(links.workspaceNote(slug(), name));
-        },
+  const createNote: SubmitHandler<NoteSchemaType> = payload => {
+    noteCreator.mutate(payload, {
+      onSuccess: result => {
+        props.onOpenChange(false);
+        toast.success(`Note ${result.name} created`);
+        navigate(links.workspaceNote(slug(), result.name));
       },
-    );
+    });
   };
 
   return (
@@ -38,18 +51,29 @@ export const NewNoteDialog = (props: DialogRootProps) => {
       <Dialog.Content>
         <Dialog.Content.Heading>New note</Dialog.Content.Heading>
         <Dialog.Content.Body>
-          <form onSubmit={createNote}>
-            <TextInput name="name" placeholder="Note name (Eg: my-note)" />
+          <Form onSubmit={createNote}>
+            <Field name="name">
+              {(store, props) => (
+                <TextInput {...props} error={store.error} label="Name" placeholder="my-note" />
+              )}
+            </Field>
+
+            <Show when={noteCreator.error}>
+              <div class="text-xs text-right text-red-700 mt-2">
+                {toApiErrorMessage(noteCreator.error)}
+              </div>
+            </Show>
 
             <Dialog.Content.Footer>
               <Dialog.Close as={Button} variant="primary-bordered">
                 Cancel
               </Dialog.Close>
-              <Button type="submit" disabled={createNoteMutation.isPending}>
-                {createNoteMutation.isPending ? 'Createing...' : 'Create'}
+
+              <Button type="submit" disabled={noteCreator.isPending}>
+                Create
               </Button>
             </Dialog.Content.Footer>
-          </form>
+          </Form>
         </Dialog.Content.Body>
       </Dialog.Content>
     </Dialog>
