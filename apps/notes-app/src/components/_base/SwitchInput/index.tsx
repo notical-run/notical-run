@@ -16,7 +16,7 @@ export const SwitchInput = (
       <input
         {...inputProps}
         type="checkbox"
-        class={cn('border-2 border-gray-200 size-4', 'appearance-none checked:bg-violet-600')}
+        class={cn('border-2 border-gray-200 size-4', 'appearance-none checked:bg-violet-800')}
       />
 
       <Show when={props.label}>

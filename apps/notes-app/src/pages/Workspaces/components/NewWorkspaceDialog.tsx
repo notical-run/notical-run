@@ -8,7 +8,8 @@ import toast from 'solid-toast';
 import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import { toApiErrorMessage } from '@/utils/api-client';
-import { Show } from 'solid-js';
+import { createEffect, Show } from 'solid-js';
+import slugify from 'slugify';
 
 const workspaceSchema = z.object({
   name: z.string().min(1, 'Required'),
@@ -29,7 +30,8 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
   const navigate = useNavigate();
 
   const workspaceCreator = useCreateWorkspace();
-  const [, { Form, Field }] = createForm<WorkspaceSchemaType>({
+  const [workspaceForm, { Form, Field }] = createForm<WorkspaceSchemaType>({
+    initialValues: { name: '', slug: '' },
     validate: zodForm(workspaceSchema),
     validateOn: 'blur',
     revalidateOn: 'input',
@@ -45,28 +47,47 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
     });
   };
 
+  createEffect(() => {
+    workspaceForm.internal.fieldNames.get(); // Listen to field name being registered
+    const fields = workspaceForm.internal.fields;
+
+    const name = fields.name?.value.get();
+    if (!fields.slug?.touched.get()) {
+      fields.slug?.value.set(
+        slugify(name ?? '', {
+          strict: true,
+          trim: true,
+          lower: true,
+          replacement: '-',
+        }),
+      );
+    }
+  });
+
   return (
     <Dialog {...props}>
       <Dialog.Content>
         <Dialog.Content.Heading>New workspace</Dialog.Content.Heading>
         <Dialog.Content.Body>
           <Form onSubmit={createWorkspace}>
-            <Field name="name">
+            <Field name="name" type="string">
               {(store, props) => (
                 <TextInput
                   {...props}
                   error={store.error}
+                  value={store.value || ''}
                   label="Workspace name"
                   placeholder="Personal notes workspace"
                 />
               )}
             </Field>
 
-            <Field name="slug">
+            <Field name="slug" type="string">
               {(store, props) => (
                 <TextInput
                   {...props}
                   error={store.error}
+                  value={store.value || ''}
                   name="slug"
                   label="Workspace ID"
                   placeholder="personal-notes-workspace"

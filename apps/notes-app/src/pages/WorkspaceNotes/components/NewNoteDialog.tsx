@@ -56,7 +56,13 @@ export const NewNoteDialog = (props: DialogRootProps) => {
           <Form onSubmit={createNote}>
             <Field name="name">
               {(store, props) => (
-                <TextInput {...props} error={store.error} label="Name" placeholder="my-note" />
+                <TextInput
+                  {...props}
+                  error={store.error}
+                  value={store.value || ''}
+                  label="Name"
+                  placeholder="my-note"
+                />
               )}
             </Field>
 
@@ -66,6 +72,7 @@ export const NewNoteDialog = (props: DialogRootProps) => {
                   {...props}
                   error={store.error}
                   label="Make it a private note"
+                  checked={store.value || false}
                   class="mt-2"
                 />
               )}
