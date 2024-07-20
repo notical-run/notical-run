@@ -1,5 +1,5 @@
-import { request, context, response } from '../../../../utils/test';
-import { createSession, createUser } from '../../../../factory/user';
+import { request, context, response, headers } from '../../../../utils/test';
+import { createUser } from '../../../../factory/user';
 import route from '../../../../index';
 import { createWorkspace } from '../../../../factory/workspace';
 import { createNote } from '../../../../factory/note';
@@ -19,11 +19,10 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
           workspaceId: workspace.id,
         });
 
-        const session = await createSession(user.id);
         await route.request('/api/workspaces/wp-1/notes/note-1', {
           method: 'PATCH',
           body: JSON.stringify({ content: 'new content' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         const updatedNote = await db.query.Note.findFirst({ where: eq(Note.id, note.id) });
@@ -40,6 +39,7 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
 
         const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
           method: 'PATCH',
+          headers: await headers(),
         });
 
         expect(response.status).toBe(401);
@@ -53,11 +53,10 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         const workspace = await createWorkspace({ slug: 'wp-1' });
         await createNote({ name: 'note-1', workspaceId: workspace.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
           method: 'PATCH',
           body: JSON.stringify({ content: 'hello' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(401);
@@ -74,11 +73,10 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         const user = await createUser();
         await createNote({ name: 'note-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
           method: 'PATCH',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(404);
@@ -91,11 +89,10 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         const user = await createUser();
         await createWorkspace({ slug: 'wp-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
           method: 'PATCH',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(404);

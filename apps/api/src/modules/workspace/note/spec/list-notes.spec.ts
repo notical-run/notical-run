@@ -1,5 +1,5 @@
-import { request, context, response } from '../../../../utils/test';
-import { createSession, createUser } from '../../../../factory/user';
+import { request, context, response, headers } from '../../../../utils/test';
+import { createUser } from '../../../../factory/user';
 import route from '../../../../index';
 import { createWorkspace } from '../../../../factory/workspace';
 import { createNote } from '../../../../factory/note';
@@ -16,10 +16,9 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         const n1 = await createNote({ name: 'note-1', workspaceId: workspace.id });
         const n2 = await createNote({ name: 'note-2', workspaceId: workspace.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'GET',
-          headers: { Authorization: `Bearer ${session.id}` },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(200);
@@ -33,7 +32,10 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
       it('fails with an error message', async () => {
         await createWorkspace({ slug: 'wp-1' });
 
-        const response = await route.request('/api/workspaces/wp-1/notes', { method: 'GET' });
+        const response = await route.request('/api/workspaces/wp-1/notes', {
+          method: 'GET',
+          headers: await headers(),
+        });
 
         expect(response.status).toBe(401);
         expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
@@ -45,10 +47,9 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         await createWorkspace({ slug: 'wp-1' });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'GET',
-          headers: { Authorization: `Bearer ${session.id}` },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(401);
@@ -64,10 +65,9 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
       it('fails with an error message', async () => {
         const user = await createUser();
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'GET',
-          headers: { Authorization: `Bearer ${session.id}` },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(404);

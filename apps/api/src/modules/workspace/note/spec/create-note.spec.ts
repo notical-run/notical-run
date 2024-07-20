@@ -1,5 +1,5 @@
-import { request, context, response } from '../../../../utils/test';
-import { createSession, createUser } from '../../../../factory/user';
+import { request, context, response, headers } from '../../../../utils/test';
+import { createUser } from '../../../../factory/user';
 import route from '../../../../index';
 import { createWorkspace } from '../../../../factory/workspace';
 import { createNote } from '../../../../factory/note';
@@ -14,11 +14,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         const workspaceNotes = await db.query.Workspace.findFirst({
@@ -32,11 +31,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         await createWorkspace({ slug: 'wp-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(201);
@@ -54,11 +52,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         await createWorkspace({ slug: 'wp-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: '' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(400);
@@ -71,11 +68,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         await createWorkspace({ slug: 'wp-1', authorId: user.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(400);
@@ -90,11 +86,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
         await createNote({ name: 'note-1', workspaceId: workspace.id });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: 'note-1' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(422);
@@ -120,11 +115,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const user = await createUser({ email: 'author@email.com' });
         await createWorkspace({ slug: 'wp-1' });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(401);
@@ -140,11 +134,10 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
       it('fails with an error message', async () => {
         const user = await createUser();
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces/wp-1/notes', {
           method: 'POST',
           body: JSON.stringify({ name: 'new-note' }),
-          headers: { Authorization: `Bearer ${session.id}`, 'Content-Type': 'application/json' },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(404);

@@ -1,5 +1,5 @@
-import { request, context, response } from '../../../utils/test';
-import { createSession, createUser } from '../../../factory/user';
+import { request, context, response, headers } from '../../../utils/test';
+import { createUser } from '../../../factory/user';
 import route from '../../../index';
 import { createWorkspace } from '../../../factory/workspace';
 
@@ -13,10 +13,9 @@ request('GET /workspaces', () => {
         const wp3 = await createWorkspace({ slug: 'wp-3', authorId: user.id });
         await createWorkspace({ slug: 'someone elses workspace' });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces', {
           method: 'GET',
-          headers: { Authorization: `Bearer ${session.id}` },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(200);
@@ -34,10 +33,9 @@ request('GET /workspaces', () => {
         await createWorkspace({ slug: 'someone elses workspace' });
         await createWorkspace({ slug: 'someone elses workspace2' });
 
-        const session = await createSession(user.id);
         const response = await route.request('/api/workspaces', {
           method: 'GET',
-          headers: { Authorization: `Bearer ${session.id}` },
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(200);
