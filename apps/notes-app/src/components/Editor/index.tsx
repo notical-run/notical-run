@@ -8,6 +8,7 @@ import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
 import { twMerge } from 'tailwind-merge';
+import './editor.css';
 
 export type EditorProps = {
   editable?: boolean;
@@ -15,7 +16,7 @@ export type EditorProps = {
   moduleLoader: (modulePath: string) => Promise<Y.Doc>;
 };
 
-export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
+export const Editor = (props: EditorProps) => {
   let element: HTMLElement;
   let editor: TiptapEditor;
 
@@ -41,7 +42,7 @@ export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
     engine = await createEvalEngine({
       withEditor: fn => fn(editor),
       moduleLoader: async modulePath => {
-        const moduleDoc = await moduleLoader(modulePath);
+        const moduleDoc = await props.moduleLoader(modulePath);
         const module = await evaluateImport({ doc: moduleDoc, engine });
         cleanupInstances.push(module.onCleanup);
         return module.moduleCode;
@@ -50,14 +51,15 @@ export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
 
     editor = new TiptapEditor({
       element: element,
-      extensions: getExtensions({ document }),
+      extensions: getExtensions({ document: props.document }),
+      autofocus: true,
       editorProps: {
         attributes: {
           spellcheck: 'false',
           class: editorClass,
         },
       },
-      editable,
+      editable: props.editable,
       onCreate: ({ editor }) => evaluate(editor),
       onUpdate: ({ editor }) => evaluate(editor),
       onDestroy() {
@@ -68,7 +70,7 @@ export const Editor = ({ editable, document, moduleLoader }: EditorProps) => {
   });
 
   createEffect(() => {
-    if (editable !== undefined) editor?.setEditable(editable, false);
+    if (props.editable !== undefined) editor?.setEditable(props.editable, false);
   });
 
   onCleanup(() => {

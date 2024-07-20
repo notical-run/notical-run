@@ -3,7 +3,7 @@ import { createEffect } from 'solid-js';
 import { useLogout } from '../api/queries/auth';
 import { createSessionId } from '../components/Auth/Session';
 
-export const Logout = () => {
+const Logout = () => {
   const [_, setSessionId] = createSessionId();
   const logoutRequest = useLogout();
   const navigate = useNavigate();
@@ -23,3 +23,5 @@ export const Logout = () => {
 
   return <div>Logging out...</div>;
 };
+
+export default Logout;

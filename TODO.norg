@@ -1,10 +1,10 @@
 * Curent
 ** Product
-   - ( ) Fork note
    - ( ) Delete note
    - ( ) Fix api test flakiness due to DB not being ready
-** UI
-   - ( ) Improve styles for editor
+   - ( ) Handle 403 for sidebar notes
+** Editor
+   - ( ) Placeholder texts
 ** Evaluation
    - ( ) Show decoration
    - ( ) Get content from page
@@ -30,6 +30,7 @@
    - ( ) Allow disabling evaluation for a code blocks
    - ( ) Allow disabling evaluation for inline blocks
 ** Product
+   - ( ) Fork note
    - ( ) github oauth
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
    - ( ) Create a sample workspace by default on signup
@@ -55,7 +56,6 @@
    - ( ) Youtube embed
    - ( ) More complex task states
    - ( ) plantuml diagram support
-   - ( ) Placeholder texts
    - ( ) Drag and drop nodes
    - ( ) Heading anchors (link to heading)
    - ( ) Giphy integration
@@ -95,6 +95,7 @@
   - ( ) Make requests to openai (how to manage secrets?)
 
 * Improvements
+  - ( ) Improve styles for editor
   - ( ) Re-map error messages to be more helpful
   --- ( ) better error when there are multiple exports of the same name in a note being imported
   - ( ) *perf* Prevent re-creating node view on update for code block

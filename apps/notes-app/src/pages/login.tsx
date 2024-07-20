@@ -17,7 +17,7 @@ const LoginSchema = z.object({
 
 type LoginSchemaType = z.infer<typeof LoginSchema>;
 
-export const Login = () => {
+const Login = () => {
   const [_sessionId, updateSessionId] = createSessionId();
   const authenticator = useLogin();
   const navigate = useNavigate();
@@ -84,3 +84,5 @@ export const Login = () => {
     </Page>
   );
 };
+
+export default Login;

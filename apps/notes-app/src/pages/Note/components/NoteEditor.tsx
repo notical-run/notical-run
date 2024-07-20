@@ -3,8 +3,9 @@ import { Editor } from '@/components/Editor';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { createEffect } from 'solid-js';
+import { createEffect, onMount } from 'solid-js';
 import * as Y from 'yjs';
+import { Editor as TiptapEditor } from '@tiptap/core';
 
 export type NoteEditorProps = {
   note: Awaited<ReturnType<typeof fetchNote>>;

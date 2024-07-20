@@ -11,9 +11,15 @@ import { CodeBlock } from './CodeBlock';
 import { TrailingNode } from './TrailingNode';
 import * as Y from 'yjs';
 import Collaboration from '@tiptap/extension-collaboration';
+import Placeholder from '@tiptap/extension-placeholder';
 
 export const getExtensions = ({ document }: { document: Y.Doc }) => [
   StarterKit.configure({ codeBlock: false, code: false, history: false }),
+  Placeholder.configure({
+    placeholder: 'Start writing...',
+    emptyEditorClass: 'is-editor-empty',
+    emptyNodeClass: 'is-node-empty',
+  }),
   Markdown.configure({
     html: false,
     tightLists: true,

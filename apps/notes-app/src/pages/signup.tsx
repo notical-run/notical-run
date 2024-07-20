@@ -18,7 +18,7 @@ const signupSchema = z.object({
 
 type SignupSchemaType = z.infer<typeof signupSchema>;
 
-export const Signup = () => {
+const Signup = () => {
   const [_sessionId, updateSessionId] = createSessionId();
   const signupMutation = useSignup();
   const navigate = useNavigate();
@@ -97,3 +97,5 @@ export const Signup = () => {
     </Page>
   );
 };
+
+export default Signup;
