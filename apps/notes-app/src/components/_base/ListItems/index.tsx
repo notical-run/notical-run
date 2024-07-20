@@ -1,5 +1,5 @@
 import { ParentProps } from 'solid-js';
-import { WarnView } from '@/components/ViewStates';
+import { EmptyView } from '@/components/ViewStates';
 
 export const ListRoot = (props: ParentProps) => {
   return <div class="flex flex-col gap-2">{props.children}</div>;
@@ -15,5 +15,5 @@ export const ListItem = (props: ParentProps) => {
 
 export const List = Object.assign(ListRoot, {
   Item: ListItem,
-  Empty: WarnView,
+  Empty: EmptyView,
 });
