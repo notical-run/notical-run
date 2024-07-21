@@ -1,16 +1,21 @@
 import CorvuPopover from '@corvu/popover';
 import { ParentProps } from 'solid-js';
+import { Placement } from '@floating-ui/utils';
 
-export const PopoverRoot = (props: ParentProps) => {
-  return <CorvuPopover floatingOptions={{ offset: 12 }}>{props.children}</CorvuPopover>;
+export const PopoverRoot = (props: ParentProps<{ placement?: Placement; offset?: number }>) => {
+  return (
+    <CorvuPopover placement={props.placement} floatingOptions={{ offset: props.offset ?? 10 }}>
+      {props.children}
+    </CorvuPopover>
+  );
 };
 
 export const PopoverContent = (props: ParentProps) => {
   return (
     <CorvuPopover.Portal>
       <CorvuPopover.Overlay />
-      <CorvuPopover.Content class="border-t-2 border-t-slate-900 bg-white shadow-xl rounded-md">
-        <CorvuPopover.Arrow size={12} class="text-slate-900" />
+      <CorvuPopover.Content class="border border-slate-200 bg-white shadow-xl rounded-md">
+        <CorvuPopover.Arrow size={14} class="text-slate-200" />
         <div class="border-b border-x border-slate-100">{props.children}</div>
       </CorvuPopover.Content>
     </CorvuPopover.Portal>

@@ -1,13 +1,16 @@
 * Ready to use
 ** Product
-   - ( ) Archive note
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) github oauth
    - ( ) Create a sample workspace by default on signup
    - ( ) Home page
    - ( ) Logo
-   - ( ) a way to convert markdown to ydoc
+   - ( ) Font
    - ( ) Handle 403 for sidebar notes
+   - ( ) Archive button as a dropdown
+   - ( ) Archive confirmation dialog
+   - ( ) a headless way to convert markdown to ydoc (for default/sample notes)
+   - ( ) Pagination
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Use readonly tiptap instance for "show" anchored content

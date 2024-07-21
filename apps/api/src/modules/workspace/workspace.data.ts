@@ -1,6 +1,6 @@
-import { desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, isNull } from 'drizzle-orm';
 import { db } from '../../db';
-import { User, Workspace, WorkspaceType } from '../../db/schema';
+import { Note, Workspace, WorkspaceType } from '../../db/schema';
 
 export const createWorkspace = async (payload: WorkspaceType) => {
   const workspace = await db
@@ -17,22 +17,20 @@ export const createWorkspace = async (payload: WorkspaceType) => {
 };
 
 export const getUserWorkspaces = async (userId: string) => {
-  const user = await db.query.User.findFirst({
-    where: eq(User.id, userId),
-    with: {
-      workspaces: {
-        with: {
-          notes: { columns: { id: true, name: true } },
-        },
-        orderBy: [desc(Workspace.createdAt)],
-        columns: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-    },
-  });
+  const workspaces = await db
+    .select({
+      id: Workspace.id,
+      name: Workspace.name,
+      slug: Workspace.slug,
+      createdAt: Workspace.createdAt,
+      notesCount: count(Note.id).as('noteCount'),
+    })
+    .from(Workspace)
+    .where(eq(Workspace.authorId, userId))
+    .leftJoin(Note, and(eq(Note.workspaceId, Workspace.id), isNull(Note.archivedAt)))
+    .groupBy(Workspace.id)
+    .orderBy(desc(Workspace.createdAt))
+    .execute();
 
-  return user?.workspaces;
+  return workspaces;
 };

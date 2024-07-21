@@ -38,7 +38,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
                     as={A}
                     href={links.workspaceNotes(workspace.slug)}
                     classList={{
-                      'text-slate-900 block w-full py-2 px-3': true,
+                      'text-slate-900 w-full py-2 px-3': true,
                       'hover:bg-slate-100': props.selected !== workspace.slug,
                       '!text-slate-400': props.selected === workspace.slug,
                       'flex justify-between items-center gap-5': true,

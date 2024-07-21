@@ -1,6 +1,5 @@
 import { createEffect, createRoot } from 'solid-js';
 import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
-import { Editor } from '@tiptap/core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
 import { findMarkById } from '@/utils/editor';

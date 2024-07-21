@@ -12,6 +12,7 @@ import { List } from '@/components/_base/ListItems';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { AiOutlineLock } from 'solid-icons/ai';
+import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
 
 const WorkspaceNotes = () => {
   const { slug } = useWorkspaceContext();
@@ -55,8 +56,11 @@ const WorkspaceNotes = () => {
                     }
                   >
                     {note => (
-                      <List.Item>
-                        <A href={links.workspaceNote(slug(), note.name)} class="block px-4 py-3">
+                      <List.Item class="flex items-center px-2">
+                        <A
+                          href={links.workspaceNote(slug(), note.name)}
+                          class="block px-2 py-3 flex-1"
+                        >
                           <div class="flex items-center">
                             <span class="text-slate-500 text-xs">@{slug()}</span>
                             <span class="text-slate-500 text-md">/</span>
@@ -66,6 +70,7 @@ const WorkspaceNotes = () => {
                             )}
                           </div>
                         </A>
+                        <NoteActionsDropdown workspaceSlug={slug()} noteId={note.name} />
                       </List.Item>
                     )}
                   </For>
