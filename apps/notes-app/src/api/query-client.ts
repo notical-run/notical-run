@@ -21,9 +21,10 @@ export const queryClient = new QueryClient({
     },
   }),
   mutationCache: new MutationCache({
-    onError(error: Error | ApiError) {
-      if (!(error as ApiError)?.handled) {
-        toast.error(error?.message ?? 'Something went wrong');
+    onError(_error) {
+      const error = _error as ApiError;
+      if (!error?.handled) {
+        toast.error(error.message ?? 'Something went wrong');
       }
     },
   }),

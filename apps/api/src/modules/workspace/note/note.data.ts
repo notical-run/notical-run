@@ -1,4 +1,4 @@
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
 import { db } from '../../../db';
 import { Workspace, Note, NoteType } from '../../../db/schema';
 
@@ -16,6 +16,7 @@ export const getNote = async (workspaceSlug: string, noteId: string) => {
           access: true,
           createdAt: true,
           updatedAt: true,
+          archivedAt: true,
         },
         with: {
           author: {
@@ -29,19 +30,38 @@ export const getNote = async (workspaceSlug: string, noteId: string) => {
   return workspace?.notes[0];
 };
 
-export const getWorkspaceNotes = async (workspaceSlug: string) => {
+type Filters = { archived?: boolean };
+
+const noteFiltersToCondition = (filters: Filters) => {
+  const cond = [];
+
+  if (filters.archived) {
+    cond.push(isNotNull(Note.archivedAt));
+  } else if (filters.archived === false) {
+    cond.push(isNull(Note.archivedAt));
+  }
+
+  if (cond.length === 0) return undefined;
+  return and(...cond);
+};
+
+export const getWorkspaceNotes = async (workspaceSlug: string, filters: Filters = {}) => {
+  const cond = noteFiltersToCondition(filters);
+
   return db.query.Workspace.findFirst({
     where: eq(Workspace.slug, workspaceSlug),
     columns: { id: true },
     with: {
       notes: {
         orderBy: desc(Note.updatedAt),
+        where: cond,
         columns: {
           id: true,
           name: true,
           access: true,
           createdAt: true,
           updatedAt: true,
+          archivedAt: true,
         },
         with: {
           author: {

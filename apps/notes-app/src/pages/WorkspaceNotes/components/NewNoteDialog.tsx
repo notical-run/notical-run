@@ -21,7 +21,7 @@ const noteSchema = z.object({
     .max(50, 'Name is too long')
     .regex(/^[^\s]+$/, 'Name must not contain spaces')
     .regex(
-      /^[a-z0-9_-]+$/,
+      /^[a-z0-9_-]+$/i,
       'Name can only contain alphanumeric characters, hyphens (-) and underscores (_)',
     ),
   private: z.boolean(),

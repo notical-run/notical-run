@@ -1,5 +1,5 @@
 DO $$ BEGIN
- CREATE TYPE "public"."accessType" AS ENUM('public', 'private');
+ CREATE TYPE "public"."access_type" AS ENUM('public', 'private');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS "notes" (
 	"content" text,
 	"workspace_id" uuid NOT NULL,
 	"author_id" uuid NOT NULL,
-	"deleted_at" date,
-	"access" "accessType" NOT NULL,
+	"archived_at" date,
+	"access" "access_type" NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );

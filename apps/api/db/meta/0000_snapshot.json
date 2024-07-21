@@ -1,5 +1,5 @@
 {
-  "id": "937accd0-ac48-4115-bcdb-742dd31ceb1a",
+  "id": "be4c0932-9606-4797-90f6-d31345df0abe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,15 +39,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "deleted_at": {
-          "name": "deleted_at",
+        "archived_at": {
+          "name": "archived_at",
           "type": "date",
           "primaryKey": false,
           "notNull": false
         },
         "access": {
           "name": "access",
-          "type": "accessType",
+          "type": "access_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -299,8 +299,8 @@
     }
   },
   "enums": {
-    "public.accessType": {
-      "name": "accessType",
+    "public.access_type": {
+      "name": "access_type",
       "schema": "public",
       "values": [
         "public",

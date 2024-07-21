@@ -15,7 +15,7 @@ export const useWorkspaceNotes = (workspaceSlug: Accessor<string>) => {
     queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: async () =>
       apiClient.api.workspaces[':workspaceSlug'].notes
-        .$get({ param: { workspaceSlug: workspaceSlug() } })
+        .$get({ param: { workspaceSlug: workspaceSlug() }, query: { archived: `${false}` } })
         .then(responseJson),
   }));
 };
@@ -65,11 +65,22 @@ export const useCreateWorkspace = () => {
 };
 
 export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
-  const params = { workspaceSlug, noteId };
+  const param = { workspaceSlug, noteId };
   return createMutation(() => ({
     mutationFn: async (body: { name?: string; content?: string }) =>
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
-        .$patch({ param: params, json: body })
+        .$patch({ param, json: body })
+        .then(responseJson),
+    enabled: !!workspaceSlug && !!noteId,
+  }));
+};
+
+export const useArchiveNote = (workspaceSlug: string, noteId: string) => {
+  const param = { workspaceSlug, noteId };
+  return createMutation(() => ({
+    mutationFn: async () =>
+      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
+        .$delete({ param })
         .then(responseJson),
     enabled: !!workspaceSlug && !!noteId,
   }));

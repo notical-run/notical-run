@@ -11,22 +11,38 @@ const noteCreateSchema = z.object({
     .string()
     .min(1)
     .max(50)
-    .regex(/^[a-z0-9_-]+$/, 'Invalid ID'),
+    .regex(/^[a-z0-9_-]+$/i, 'Invalid ID'),
   private: z.boolean().optional(),
 });
 
 const noteUpdateSchema = z.object({ content: z.string().optional() });
 
+const noteFiltersSchema = z.object({
+  archived: z
+    .string()
+    .regex(/^(true|false|1|0)$/)
+    .optional()
+    .transform(s => JSON.parse(s ?? 'null'))
+    .catch(undefined),
+});
+
 export const noteRoute = new Hono<{
   Variables: SessionVars & { workspaceId: string; noteId?: string };
 }>()
-  .get('/', privateRoute, validateWorkspace({ authorize: true }), async c => {
-    const slug = c.req.param('workspaceSlug')!;
+  .get(
+    '/',
+    privateRoute,
+    validateWorkspace({ authorize: true }),
+    zValidator('query', noteFiltersSchema),
+    async c => {
+      const slug = c.req.param('workspaceSlug')!;
+      const filters = c.req.valid('query');
 
-    const workspace = await getWorkspaceNotes(slug);
+      const workspace = await getWorkspaceNotes(slug, filters);
 
-    return c.json(workspace!.notes);
-  })
+      return c.json(workspace!.notes);
+    },
+  )
 
   .get('/:noteId', validateWorkspace(), validateNote({ authorize: true }), async c => {
     const user = c.get('user');
@@ -77,6 +93,24 @@ export const noteRoute = new Hono<{
 
       const note = await updateNote(noteId, noteJson);
 
+      if (!note) return c.json({ error: 'Unable to update note' }, 422);
+
       return c.json({ id: note.id, name: note.name }, 200);
+    },
+  )
+
+  .delete(
+    '/:noteId',
+    privateRoute,
+    validateWorkspace({ authorize: true }),
+    validateNote(),
+    async c => {
+      const noteId = c.get('noteId')!;
+
+      const note = await updateNote(noteId, { archivedAt: new Date() });
+
+      if (!note) return c.json({ error: 'Unable to archive note' }, 422);
+
+      return c.json({ success: true }, 200);
     },
   );

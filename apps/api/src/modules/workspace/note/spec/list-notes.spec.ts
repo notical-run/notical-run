@@ -25,6 +25,68 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
       });
     });
+
+    context('with filter archived', () => {
+      context('when archived is false', () => {
+        it('returns unarchived notes from the workspace', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          const workspace2 = await createWorkspace({ slug: 'wp-2', authorId: user.id });
+          await createNote({ name: 'note-1', workspaceId: workspace2.id });
+          await createNote({ name: 'note-2', workspaceId: workspace2.id });
+          const n1 = await createNote({ name: 'note-1', workspaceId: workspace.id });
+          const n2 = await createNote({ name: 'note-2', workspaceId: workspace.id });
+          await createNote({
+            name: 'note-3',
+            workspaceId: workspace.id,
+            archivedAt: new Date(),
+          });
+          await createNote({
+            name: 'note-4',
+            workspaceId: workspace.id,
+            archivedAt: new Date(),
+          });
+
+          const response = await route.request('/api/workspaces/wp-1/notes?archived=false', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
+      });
+
+      context('when archived is true', () => {
+        it('returns archived notes from the workspace', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          const workspace2 = await createWorkspace({ slug: 'wp-2', authorId: user.id });
+          await createNote({ name: 'note-1', workspaceId: workspace2.id });
+          await createNote({ name: 'note-2', workspaceId: workspace2.id });
+          await createNote({ name: 'note-1', workspaceId: workspace.id });
+          await createNote({ name: 'note-2', workspaceId: workspace.id });
+          const n1 = await createNote({
+            name: 'note-3',
+            workspaceId: workspace.id,
+            archivedAt: new Date(),
+          });
+          const n2 = await createNote({
+            name: 'note-4',
+            workspaceId: workspace.id,
+            archivedAt: new Date(),
+          });
+
+          const response = await route.request('/api/workspaces/wp-1/notes?archived=true', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
+      });
+    });
   });
 
   response.status('401', () => {

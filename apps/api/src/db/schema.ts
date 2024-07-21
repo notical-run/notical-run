@@ -2,6 +2,9 @@ import { date, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizz
 import { timestampColumns } from '../utils/db';
 import { relations } from 'drizzle-orm';
 
+// Note access types
+export const AccessType = pgEnum('access_type', ['public', 'private']);
+
 // Users
 export const User = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -48,9 +51,6 @@ export const workspaceRelations = relations(Workspace, ({ one, many }) => ({
 }));
 export type WorkspaceType = typeof Workspace.$inferInsert;
 
-// Note access types
-export const AccessType = pgEnum('accessType', ['public', 'private']);
-
 // Notes
 export const Note = pgTable(
   'notes',
@@ -64,7 +64,7 @@ export const Note = pgTable(
     authorId: uuid('author_id')
       .notNull()
       .references(() => User.id, { onDelete: 'cascade' }),
-    deletedAt: date('deleted_at'),
+    archivedAt: timestamp('archived_at'),
     access: AccessType('access')
       .notNull()
       .$default(() => 'public'),

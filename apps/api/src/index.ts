@@ -5,7 +5,6 @@ import { apiRoute } from './api';
 import { authenticationMiddleware } from './auth';
 import { csrf } from 'hono/csrf';
 import { timeout } from 'hono/timeout';
-import { bodyLimit } from 'hono/body-limit';
 
 const isDevEnv = import.meta.env.NODE_ENV === 'development';
 
@@ -25,9 +24,7 @@ app.use(
 
 app.use(csrf({ origin: ['localhost:3000', 'app.notical.run'] }));
 
-app.use(bodyLimit({ maxSize: 50 * 1024 }));
-
-app.use(timeout(10000));
+app.use(timeout(10_000));
 
 app.use(authenticationMiddleware);
 

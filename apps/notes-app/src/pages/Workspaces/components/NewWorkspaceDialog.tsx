@@ -21,7 +21,7 @@ const workspaceSchema = z.object({
     .regex(/^[^\s]+$/, 'ID must not contain spaces')
     .regex(
       /^[a-z0-9_-]+$/,
-      'ID can only contain alphanumeric characters, hyphens (-) and underscores (_)',
+      'ID can only contain lowercase alphanumeric characters, hyphens (-) and underscores (_)',
     ),
 });
 
