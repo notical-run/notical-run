@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@corvu/popover": "^0.2.0",
+    "@corvu/tooltip": "^0.2.0",
     "@jitl/quickjs-wasmfile-release-asyncify": "^0.29.2",
     "@modular-forms/solid": "^0.22.1",
     "@notical/api": "workspace:*",

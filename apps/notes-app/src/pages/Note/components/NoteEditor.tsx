@@ -3,9 +3,8 @@ import { Editor } from '@/components/Editor';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { createEffect, onMount } from 'solid-js';
+import { createEffect } from 'solid-js';
 import * as Y from 'yjs';
-import { Editor as TiptapEditor } from '@tiptap/core';
 
 export type NoteEditorProps = {
   note: Awaited<ReturnType<typeof fetchNote>>;
@@ -24,11 +23,10 @@ export const NoteEditor = (props: NoteEditorProps) => {
     const content = props.note?.content;
     const update = Y.encodeStateAsUpdateV2(yDoc);
     const b64Update = fromUint8Array(update);
-    // TODO: Figure out why this is getting called
     if (content !== b64Update) {
       noteUpdater.mutate({ content: b64Update });
     }
-  }, 1000);
+  }, 800);
 
   createEffect(() => {
     const content = props.note?.content;

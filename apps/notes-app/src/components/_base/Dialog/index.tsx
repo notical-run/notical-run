@@ -1,9 +1,10 @@
 import { ParentProps } from 'solid-js';
-import CorvuDialog from 'corvu/dialog';
+import CorvuDialog from '@corvu/dialog';
 
 export type DialogRootProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialFocusEl?: HTMLElement;
 };
 
 export const DialogRoot = (props: ParentProps<DialogRootProps>) => {
@@ -13,6 +14,7 @@ export const DialogRoot = (props: ParentProps<DialogRootProps>) => {
       onOpenChange={props.onOpenChange}
       closeOnEscapeKeyDown
       initialOpen={false}
+      initialFocusEl={props.initialFocusEl}
     >
       <CorvuDialog.Portal>
         <CorvuDialog.Overlay class="fixed inset-0 z-50 bg-black/50" />

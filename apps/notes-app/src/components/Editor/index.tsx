@@ -9,6 +9,7 @@ import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
 import { twMerge } from 'tailwind-merge';
 import './editor.css';
+import { useDebounced } from '@/utils/use-debounced';
 
 export type EditorProps = {
   editable?: boolean;
@@ -23,6 +24,10 @@ export const Editor = (props: EditorProps) => {
   let engine: EvalEngine;
   const cleanupInstances: (() => void)[] = [];
 
+  const evaluate = useDebounced(async (editor: TiptapEditor) => {
+    await evaluateAllNodes(editor, engine, {});
+  }, 100);
+
   onMount(async () => {
     const editorClass = twMerge(
       'prose prose-base focus:outline-none p-4 max-w-full',
@@ -34,10 +39,6 @@ export const Editor = (props: EditorProps) => {
       'prose-h5:text-md prose-h5:text-slate-600',
       'prose-h6:text-sm prose-h6:text-slate-600',
     );
-
-    const evaluate = async (editor: TiptapEditor) => {
-      await evaluateAllNodes(editor, engine, {});
-    };
 
     engine = await createEvalEngine({
       withEditor: fn => fn(editor),

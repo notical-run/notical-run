@@ -1,53 +1,62 @@
-* Curent
+* Ready to use
 ** Product
-   - ( ) Delete note
+   - ( ) Archive note
    - ( ) Handle 403 for sidebar notes
+   - ( ) Public workspaces (can list public notes in the workspace)
+   - ( ) github oauth
+   - ( ) Create a sample workspace by default on signup
+   - ( ) Home page
+   - ( ) Logo
+   - ( ) a way to convert markdown to ydoc
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
-   - ( ) Get content from page
-   - ( ) Pause evaluation update loop (for debugging)
+   - ( ) Use readonly tiptap instance for "show" anchored content
    - ( ) Add small debounce for evaluator?
    - ( ) Only render decoration when result (or show content) changes
    - ( ) Make "show" content collapsible
-
-* Bugs
-  - ( ) Up key not working from inside code blocks
-  - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
-  - ( ) Fix placeholder text position for items with indents (listitem, task item, etc)
-  - ( ) Issue with `here` being used inside code blocks
-  - ( ) Occasional memory leak?
+   - ( ) Allow running stuff on click for show decoration
+   - ( ) Get content programmatically
+   - ( ) Replace content
+** Editor
+   - ( ) Sticky toolbar
+   - ( ) Prevent code block collapse from being in undo history
+   - ( ) Link to another note
+   - ( ) Prevent export updates from being in undo history
+   - ( ) Plain text markdown editor
+** Bugs
+   - ( ) _imp_ Fix issue with forever loading/api freeze in dev
+   - ( ) Up key not working from inside code blocks
+   - ( ) REMOVE `here` from code blocks
+   - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
+   - ( ) Fix placeholder text position for items with indents (listitem, task item, etc)
+** Capabilities
+   - ( ) Permission based capabilities (Ask user if a feature can be used)
+   - ( ) Create a new note
 
 * Later
+** Bugs
+   - ( ) Occasional memory leak?
+   - ( ) Issue with `here` being used inside code blocks
 ** Evaluation
-   - ( ) Allow running stuff on click for show decoration
-   - ( ) Select text programmatically
-   - ( ) Replace content
+   - ( ) Pause evaluation update loop (for debugging)
    - ( ) Prompt/Alert/Confirm apis with custom UI
    - ( ) Button next to import stmnt to open imported note
    - ( ) Allow disabling evaluation for a code blocks
    - ( ) Allow disabling evaluation for inline blocks
+   - ( ) Persistant state
 ** Product
    - ( ) Fork note
-   - ( ) github oauth
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
-   - ( ) Create a sample workspace by default on signup
    - ( ) Template notes
-   - ( ) Delete workspace
-   - ( ) Home page
+   - ( ) Archive workspace (or delete?)
    - ( ) e2e tests
    - ( ) Favorite notes
-** Backend
-   - ( ) Fix issue with forever loading/api freeze in dev
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so
    - ( ) Alternative way to insert/show content
 ** Editor
-   - ( ) Prevent code block collapse from being in undo history
    - ( ) Collapsable inline blocks
-   - ( ) Link to another note
-   - ( ) Prevent export updates from being in undo history
-   - ( ) Editing sticky toolbar
    - ( ) Allow creating links wysiwyg way
    - ( ) Latex equation support (mathjax or katex)
    - ( ) Youtube embed
@@ -60,7 +69,6 @@
    - ( ) Excalidraw/tldraw/draw.io integration
    - ( ) Default to read-only mode and then allow editing?
 ** Capabilities
-   - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Don't show permission request if user is the author
    - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
    - ( ) Keybindings

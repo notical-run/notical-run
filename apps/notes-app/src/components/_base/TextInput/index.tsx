@@ -2,8 +2,8 @@ import { cn } from '@/utils/classname';
 import { JSX, Show, splitProps } from 'solid-js';
 
 type TextInputProps = {
-  label?: string;
-  error?: string;
+  label?: JSX.Element;
+  error?: JSX.Element;
 };
 
 export const TextInput = (_props: JSX.InputHTMLAttributes<HTMLInputElement> & TextInputProps) => {
@@ -12,7 +12,7 @@ export const TextInput = (_props: JSX.InputHTMLAttributes<HTMLInputElement> & Te
   return (
     <label class="block mt-2">
       <Show when={props.label}>
-        <div class="text-xs text-slate-700">{props.label}:</div>
+        <div class="text-xs text-slate-700">{props.label}</div>
       </Show>
       <input
         {...inputProps}

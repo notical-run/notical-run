@@ -39,9 +39,8 @@ const WorkspaceNotes = () => {
                 <div class="flex justify-between items-end pb-2">
                   <h1 class="text-slate-400 font-bold">Notes</h1>
 
-                  <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
-                    <FaSolidPlus size={10} />
-                    New note
+                  <Button onClick={() => setDialogOpen(true)}>
+                    <FaSolidPlus size={10} /> New note
                   </Button>
                 </div>
 

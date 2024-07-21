@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { createEffect, Show } from 'solid-js';
 import slugify from 'slugify';
+import { HelpInfo } from '@/components/_base/Tooltip/HelpInfo';
 
 const workspaceSchema = z.object({
   name: z.string().min(1, 'Required'),
@@ -76,7 +77,7 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
                   {...props}
                   error={store.error}
                   value={store.value || ''}
-                  label="Workspace name"
+                  label="Workspace name:"
                   placeholder="Personal notes workspace"
                 />
               )}
@@ -89,7 +90,15 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
                   error={store.error}
                   value={store.value || ''}
                   name="slug"
-                  label="Workspace ID"
+                  label={
+                    <div class="flex items-center gap-2">
+                      Workspace ID:
+                      <HelpInfo>
+                        ID used to reference your workspace. It can only contain alphanumeric
+                        characters, hyphens (-) and underscores (_)
+                      </HelpInfo>
+                    </div>
+                  }
                   placeholder="personal-notes-workspace"
                 />
               )}

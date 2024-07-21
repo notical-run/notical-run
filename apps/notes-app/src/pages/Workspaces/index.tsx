@@ -22,9 +22,8 @@ const Workspaces = () => {
             <div class="flex items-end justify-between pb-2">
               <h1 class="text-slate-400 font-bold">My Workspaces</h1>
 
-              <Button onClick={() => setDialogOpen(true)} class="flex items-center gap-2">
-                <FaSolidPlus size={10} />
-                New workspace
+              <Button onClick={() => setDialogOpen(true)}>
+                <FaSolidPlus size={10} /> New workspace
               </Button>
             </div>
 

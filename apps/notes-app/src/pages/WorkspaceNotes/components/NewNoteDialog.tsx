@@ -11,6 +11,8 @@ import { z } from 'zod';
 import { Show } from 'solid-js';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { SwitchInput } from '@/components/_base/SwitchInput';
+import { HelpInfo } from '@/components/_base/Tooltip/HelpInfo';
+import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 
 const noteSchema = z.object({
   name: z
@@ -32,7 +34,8 @@ export const NewNoteDialog = (props: DialogRootProps) => {
   const navigate = useNavigate();
 
   const noteCreator = useCreateNote(slug);
-  const [, { Form, Field }] = createForm<NoteSchemaType>({
+  const [formStore, { Form, Field }] = createForm<NoteSchemaType>({
+    initialValues: { private: true },
     validate: zodForm(noteSchema),
     validateOn: 'blur',
     revalidateOn: 'input',
@@ -49,7 +52,7 @@ export const NewNoteDialog = (props: DialogRootProps) => {
   };
 
   return (
-    <Dialog {...props}>
+    <Dialog initialFocusEl={formStore.internal.fields.name?.elements.get()[0]} {...props}>
       <Dialog.Content>
         <Dialog.Content.Heading>New note</Dialog.Content.Heading>
         <Dialog.Content.Body>
@@ -60,7 +63,15 @@ export const NewNoteDialog = (props: DialogRootProps) => {
                   {...props}
                   error={store.error}
                   value={store.value || ''}
-                  label="Name"
+                  label={
+                    <div class="flex items-center gap-2">
+                      Note ID
+                      <HelpInfo>
+                        Note ID used to reference the note in urls, imports, etc. It can only
+                        contain alphanumeric characters, hyphens (-) and underscores (_)
+                      </HelpInfo>
+                    </div>
+                  }
                   placeholder="my-note"
                 />
               )}
@@ -71,7 +82,21 @@ export const NewNoteDialog = (props: DialogRootProps) => {
                 <SwitchInput
                   {...props}
                   error={store.error}
-                  label="Make it a private note"
+                  label={
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        {store.value ? (
+                          <AiOutlineLock class="text-yellow-700" />
+                        ) : (
+                          <AiOutlineUnlock class="text-green-600" />
+                        )}
+                        Private note
+                      </div>
+                      <HelpInfo>
+                        Private notes cannot be read, referenced or imported by any other user
+                      </HelpInfo>
+                    </div>
+                  }
                   checked={store.value || false}
                   class="mt-2"
                 />
