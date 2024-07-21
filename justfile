@@ -1,7 +1,7 @@
 set positional-arguments
 
 up *args:
-  docker compose --profile development up --exit-code-from api "$@"
+  docker compose --profile development up "$@"
 
 restart *args:
   docker compose restart api "$@"
