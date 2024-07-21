@@ -7,3 +7,13 @@
   @apply text-slate-400 h-0 pointer-events-none float-left pl-1;
   content: attr(data-placeholder);
 }
+
+@font-face {
+  font-family: FiraCode;
+  src: url(/fonts/firacode/FiraCode.ttf);
+  font-display: swap;
+}
+
+pre, code {
+  font-family: FiraCode, DejaVu Sans Mono, Courier New, monospace;
+}
