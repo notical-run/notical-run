@@ -12,7 +12,7 @@ app.use(
   }),
 );
 
-if (import.meta.env.NODE_ENV !== 'test') {
+if (import.meta.env.NODE_ENV === 'development') {
   app.use(logger());
 }
 

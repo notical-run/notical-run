@@ -1,6 +1,6 @@
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { Lucia, Session as LuciaSession, User as LuciaUser, TimeSpan } from 'lucia';
-import { hash, verify } from '@node-rs/argon2';
+import { hash, verify } from '@node-rs/argon2/index.js';
 import { createMiddleware } from 'hono/factory';
 import { db } from '../db';
 import { Session, User } from '../db/schema';

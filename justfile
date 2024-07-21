@@ -1,7 +1,7 @@
 set positional-arguments
 
 up *args:
-  API_BASE_URL=http://localhost:3141 docker compose --profile development up --exit-code-from api "$@"
+  docker compose --profile development up --exit-code-from api "$@"
 
 restart *args:
   docker compose restart api "$@"
@@ -20,6 +20,9 @@ down:
 
 exec *args:
   docker compose exec -w /app/apps/api api "$@"
+
+up-build *args:
+  docker compose --profile production up --exit-code-from api-build "$@"
 
 shell *args: (exec "bash" args)
 db-generate *args: (exec "bun" "db:generate" "--name" args)

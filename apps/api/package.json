@@ -1,6 +1,7 @@
 {
   "name": "@notical/api",
   "scripts": {
+    "compile": "bun build --compile --outfile=./dist/api-bin --sourcemap=external ./src/index.ts",
     "check": "bun check:ts",
     "check:ts": "tsc",
     "drizzle-kit": "drizzle-kit",

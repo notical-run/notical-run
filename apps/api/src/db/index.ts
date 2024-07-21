@@ -10,4 +10,6 @@ if (!POSTGRES_CONNECTION_STRING) {
 
 export const queryClient = postgres(POSTGRES_CONNECTION_STRING, { max: 10 });
 
-export const db = drizzle(queryClient, { schema, logger: false });
+const enableLogger = import.meta.env.NODE_ENV === 'development';
+
+export const db = drizzle(queryClient, { schema, logger: enableLogger });

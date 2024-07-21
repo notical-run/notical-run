@@ -3,7 +3,7 @@ services:
     profiles: [development, e2e]
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./apps/api/Dockerfile.dev
     command: bun api dev
     ports:
       - 3141:3141
@@ -16,8 +16,23 @@ services:
     volumes:
       - .:/app
 
+  api-build:
+    profiles: [production]
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    command: bun api dev
+    ports:
+      - 3141:3141
+    environment:
+      PORT: 3141
+    env_file:
+      ./apps/api/.env.production
+    depends_on:
+      - postgres
+
   postgres:
-    profiles: [development, e2e]
+    profiles: [development, production]
     image: postgres:16.3-alpine
     environment:
       POSTGRES_USER: postgres
@@ -31,7 +46,7 @@ services:
     profiles: [test]
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./apps/api/Dockerfile.dev
     command: bun api test ${API_CMD_ARGS:-''}
     env_file:
       ./apps/api/.env.test
@@ -51,7 +66,7 @@ services:
     ports:
       - 5888:5888
 
-  client:
+  client-e2e:
     profiles: [e2e]
     image: oven/bun:1.1
     working_dir: /app
@@ -67,13 +82,13 @@ services:
     profiles: [e2e]
     image: mcr.microsoft.com/playwright:v1.45.1-jammy
     environment:
-      APP_BASE_URL: http://client:3000
+      APP_BASE_URL: http://client-e2e:3000
     working_dir: /app
     command: sh -c 'cd /app/e2e && npx playwright test'
     volumes:
       - .:/app
     depends_on:
-      - client
+      - client-e2e
       - api
 
 
