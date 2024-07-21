@@ -1,7 +1,7 @@
 * Curent
 ** Product
    - ( ) Delete note
-   - ( ) Fix api test flakiness due to DB not being ready
+   - ( ) Fix api test flakiness due to DB not being ready (retry db reset between each test if fail)
    - ( ) Handle 403 for sidebar notes
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)

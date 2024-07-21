@@ -14,9 +14,22 @@ export const request = (message: string, fn: () => any) => {
 
 export const response = { status: describe };
 
-export const cleanupData = async () => {
-  await recreateDB();
-  await runMigration();
+export const delay = (duration: number, val?: any) =>
+  new Promise(res => setTimeout(() => res(val), duration));
+
+export const cleanupData = async (attempts: number = 3) => {
+  try {
+    await recreateDB();
+    await runMigration();
+  } catch (e) {
+    if (attempts > 0) {
+      console.log('----------------- retrying --------------------');
+      await delay(1000);
+      await cleanupData(attempts - 1);
+    } else {
+      throw e;
+    }
+  }
 };
 
 export const headers = async (options: { authenticatedUserId?: string } = {}) => {

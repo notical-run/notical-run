@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.dev
-    command: sh -c 'bun api db:reset && bun api test ${API_CMD_ARGS:-''}'
+    command: bun api test ${API_CMD_ARGS:-''}
     env_file:
       ./apps/api/.env.test
     depends_on:
