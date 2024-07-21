@@ -7,6 +7,7 @@ import { createSignal, For } from 'solid-js';
 import { RiArrowsArrowDownSLine } from 'solid-icons/ri';
 import { FaSolidPlus } from 'solid-icons/fa';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
+import { IfAuthenticated } from '@/components/Auth/Session';
 
 export type WorkspaceSelectorProps = { selected: string };
 
@@ -19,10 +20,12 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
     <>
       <Popover.Root>
         <div class="flex items-center gap-2">
-          <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
-          <Popover.Trigger class="flex items-center justify-center size-5 rounded-full hover:bg-slate-300">
-            <RiArrowsArrowDownSLine size={14} />
-          </Popover.Trigger>
+          <IfAuthenticated fallback={<>@{props.selected}</>}>
+            <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
+            <Popover.Trigger class="flex items-center justify-center size-5 rounded-full hover:bg-slate-300">
+              <RiArrowsArrowDownSLine size={14} />
+            </Popover.Trigger>
+          </IfAuthenticated>
         </div>
 
         <Popover.Content>

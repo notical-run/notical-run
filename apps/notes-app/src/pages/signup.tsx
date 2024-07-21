@@ -1,4 +1,4 @@
-import { createSessionId } from '../components/Auth/Session';
+import { useSessionId } from '../components/Auth/Session';
 import { A, useNavigate } from '@solidjs/router';
 import { useSignup } from '../api/queries/auth';
 import { TextInput } from '../components/_base/TextInput';
@@ -19,7 +19,7 @@ const signupSchema = z.object({
 type SignupSchemaType = z.infer<typeof signupSchema>;
 
 const Signup = () => {
-  const [_sessionId, updateSessionId] = createSessionId();
+  const [_sessionId, updateSessionId] = useSessionId();
   const signupMutation = useSignup();
   const navigate = useNavigate();
 

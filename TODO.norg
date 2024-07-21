@@ -7,8 +7,6 @@
    - ( ) Logo
    - ( ) Font
    - ( ) Handle 403 for sidebar notes
-   - ( ) Archive button as a dropdown
-   - ( ) Archive confirmation dialog
    - ( ) a headless way to convert markdown to ydoc (for default/sample notes)
    - ( ) Pagination
 ** Evaluation
@@ -54,6 +52,8 @@
    - ( ) Archive workspace (or delete?)
    - ( ) e2e tests
    - ( ) Favorite notes
+   - ( ) Redirect to referrer path after login/signup
+   - ( ) Save last used workspace and load that by default
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Button to copy as markdown if so

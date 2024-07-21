@@ -1,3 +1,4 @@
+import { IfAuthenticated } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { A } from '@solidjs/router';
 import { createEffect, For, JSX, ParentProps, Show, Suspense } from 'solid-js';
@@ -22,6 +23,7 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
         <A href="/" class="text-xl">
           notical.run
         </A>
+
         <For each={props.breadcrumbs}>
           {(crumb, i) => (
             <div class="flex text-xs mt-1">
@@ -36,9 +38,17 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
       </div>
 
       <div class="flex items-center">
-        <A href={links.logout()} class="text-xs text-violet-600">
-          Logout
-        </A>
+        <IfAuthenticated
+          fallback={
+            <A href={links.login()} class="text-xs text-violet-600">
+              Login
+            </A>
+          }
+        >
+          <A href={links.logout()} class="text-xs text-violet-600">
+            Logout
+          </A>
+        </IfAuthenticated>
       </div>
     </div>
   );

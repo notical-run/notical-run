@@ -2,21 +2,30 @@ import { createMutation, createQuery, useQueryClient } from '@tanstack/solid-que
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
 import { Accessor } from 'solid-js';
+import { useSessionId } from '@/components/Auth/Session';
 
 export const useWorkspaces = () => {
+  const [sessionId] = useSessionId();
+
   return createQuery(() => ({
     queryKey: queryKeys.workspaces(),
     queryFn: async () => apiClient.api.workspaces.$get().then(responseJson),
+    initialData: [],
+    enabled: !!sessionId(),
   }));
 };
 
 export const useWorkspaceNotes = (workspaceSlug: Accessor<string>) => {
+  const [sessionId] = useSessionId();
+
   return createQuery(() => ({
     queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: async () =>
       apiClient.api.workspaces[':workspaceSlug'].notes
         .$get({ param: { workspaceSlug: workspaceSlug() }, query: { archived: `${false}` } })
         .then(responseJson),
+    initialData: [],
+    enabled: !!sessionId() && !!workspaceSlug(),
   }));
 };
 

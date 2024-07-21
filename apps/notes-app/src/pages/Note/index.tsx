@@ -10,6 +10,7 @@ import { LoadingView, ErrorView } from '@/components/ViewStates';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
+import { IfAuthenticated } from '@/components/Auth/Session';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
@@ -26,9 +27,11 @@ const WorkspaceNote = () => {
         ]}
       />
       <Page.Body>
-        <Page.Body.SideMenu>
-          <NoteSidebar />
-        </Page.Body.SideMenu>
+        <IfAuthenticated>
+          <Page.Body.SideMenu>
+            <NoteSidebar />
+          </Page.Body.SideMenu>
+        </IfAuthenticated>
 
         <Page.Body.Main>
           <Switch>
@@ -45,12 +48,15 @@ const WorkspaceNote = () => {
                 <div class="mx-auto max-w-4xl">
                   <div class="flex justify-end items-center gap-2 text-sm text-slate-500">
                     @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
-                    <NoteActionsDropdown
-                      workspaceSlug={slug()}
-                      noteId={noteQuery.data!.name!}
-                      onArchive={() => navigate(links.workspaceNotes(slug()))}
-                    />
+                    <IfAuthenticated>
+                      <NoteActionsDropdown
+                        workspaceSlug={slug()}
+                        noteId={noteQuery.data!.name!}
+                        onArchive={() => navigate(links.workspaceNotes(slug()))}
+                      />
+                    </IfAuthenticated>
                   </div>
+
                   <Show when={noteQuery.data?.id} keyed>
                     <NoteEditor note={noteQuery.data!} />
                   </Show>

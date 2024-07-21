@@ -57,7 +57,7 @@ export const responseJson = async <
   response: CR,
 ): Promise<ResponseOutput<CR>> => {
   if (!response.ok) {
-    const result: any = await response.json().catch(_ => null);
+    const result: any = await response.json().catch(error => ({ error }));
     const errorMessage = toApiErrorMessage(result?.error);
     return Promise.reject(new ApiError(response, errorMessage));
   }

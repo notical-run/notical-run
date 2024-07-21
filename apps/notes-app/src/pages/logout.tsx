@@ -1,10 +1,10 @@
 import { useNavigate } from '@solidjs/router';
 import { createEffect } from 'solid-js';
 import { useLogout } from '../api/queries/auth';
-import { createSessionId } from '../components/Auth/Session';
+import { useSessionId } from '../components/Auth/Session';
 
 const Logout = () => {
-  const [_, setSessionId] = createSessionId();
+  const [_, setSessionId] = useSessionId();
   const logoutRequest = useLogout();
   const navigate = useNavigate();
 
