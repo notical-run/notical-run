@@ -1,7 +1,7 @@
 import { IfAuthenticated } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { A } from '@solidjs/router';
-import { createEffect, For, JSX, ParentProps, Show, Suspense } from 'solid-js';
+import { createEffect, For, JSX, ParentProps, Suspense } from 'solid-js';
 
 const PageRoot = (props: ParentProps & { title?: string }) => {
   createEffect(() => {
@@ -20,16 +20,14 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
   return (
     <div class="flex justify-between gap-2 px-4 py-2 border-b border-b-slate-150 shadow-sm">
       <div class="flex items-center">
-        <A href="/" class="text-xl">
-          notical.run
+        <A href="/" class="text-xl pr-2" title="Dashboard">
+          <img src="/images/logo.png" class="size-6" alt="notical.run" />
         </A>
 
         <For each={props.breadcrumbs}>
-          {(crumb, i) => (
-            <div class="flex text-xs mt-1">
-              <Show when={i() < (props.breadcrumbs ?? [])?.length}>
-                <div class="px-2 text-slate-300">/</div>
-              </Show>
+          {crumb => (
+            <div class="flex items-center text-xs mt-1">
+              <div class="px-2 text-slate-300">/</div>
 
               <span class="text-slate-600">{crumb.content}</span>
             </div>
