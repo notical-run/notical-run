@@ -10,7 +10,7 @@
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup
    - (x) Archived note is uneditable
-   - ( ) Message above archived notes
+   - (x) Message above archived notes
    - ( ) Archived notes list
    - ( ) Check if user has access to workspace in note (hide workspace selector, sidebar, etc)
    - ( ) Add note button in note page sidebar

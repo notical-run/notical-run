@@ -11,12 +11,22 @@ import { toApiErrorMessage } from '@/utils/api-client';
 import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
 import { IfAuthenticated } from '@/components/Auth/Session';
+import { Alert } from '@/components/_base/Alert';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
   const params = useParams<{ noteId: string }>();
   const noteQuery = useNote(slug, () => params.noteId);
   const navigate = useNavigate();
+
+  const formatDate = (date: string) => {
+    const formatter = new Intl.DateTimeFormat('en-UK', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    return formatter.format(new Date(date));
+  };
 
   return (
     <Page title={`@${slug()}/${params.noteId}`}>
@@ -46,6 +56,12 @@ const WorkspaceNote = () => {
             <Match when={noteQuery.isSuccess}>
               <div class="px-2">
                 <div class="mx-auto max-w-4xl">
+                  <Show when={noteQuery.data?.archivedAt}>
+                    <Alert variant="warning" class="mb-3">
+                      This note was archived on: {formatDate(noteQuery.data!.archivedAt!)}
+                    </Alert>
+                  </Show>
+
                   <div class="flex justify-end items-center gap-2 text-sm text-slate-500">
                     @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
                     <IfAuthenticated>

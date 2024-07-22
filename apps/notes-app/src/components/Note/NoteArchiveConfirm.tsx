@@ -17,7 +17,7 @@ export const NoteArchiveConfirm = (props: ParentProps<NoteArchiveConfirmProps>) 
   const archive = () => {
     noteArchiver.mutate(undefined, {
       onSuccess() {
-        toast.success(`Toast @${props.workspaceSlug}/${props.noteId} has been archived`);
+        toast.success(`Note @${props.workspaceSlug}/${props.noteId} has been archived`);
         props.onArchive?.();
       },
     });
