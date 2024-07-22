@@ -35,7 +35,14 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
             </Popover.Content.Heading>
 
             <Popover.Content.Body class="pt-1">
-              <For each={workspaces.data} fallback={<div>You don't have any workspaces</div>}>
+              <For
+                each={workspaces.data}
+                fallback={
+                  <div class="text-center text-slate-500 text-sm p-2">
+                    You don't have any workspaces
+                  </div>
+                }
+              >
                 {workspace => (
                   <Popover.Close
                     as={A}

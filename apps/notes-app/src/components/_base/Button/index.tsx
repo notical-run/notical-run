@@ -19,7 +19,7 @@ export const Button = (_props: ButtonProps) => {
     <button
       {...buttonProps}
       class={cn(
-        'rounded flex items-center gap-2',
+        'rounded flex items-center justify-center gap-2',
         {
           'disabled:opacity-25': buttonProps.disabled,
 

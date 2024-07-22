@@ -23,7 +23,7 @@ const WorkspaceNote = () => {
       <Page.Header
         breadcrumbs={[
           { content: <WorkspaceSelector selected={slug()} /> },
-          { content: <>{noteQuery.data?.name ?? 'Loading...'}</> },
+          { content: <>{noteQuery.data?.name ?? '-'}</> },
         ]}
       />
       <Page.Body>
