@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { createNewNote, getNote, getWorkspaceNotes, updateNote } from './note.data';
 import { validateWorkspace } from '../../../validators/workspace';
 import { validateNote } from '../../../validators/note';
+import { NoteSelectType, WorkspaceSelectType } from '../../../db/schema';
 
 const noteCreateSchema = z.object({
   name: z
@@ -27,44 +28,51 @@ const noteFiltersSchema = z.object({
 });
 
 export const noteRoute = new Hono<{
-  Variables: SessionVars & { workspaceId: string; noteId?: string };
+  Variables: SessionVars & {
+    workspaceId: WorkspaceSelectType['id'];
+    noteId?: NoteSelectType['id'];
+  };
 }>()
   .get(
     '/',
     privateRoute,
-    validateWorkspace({ authorize: true }),
+    validateWorkspace({ authorizeFor: 'read_notes' }),
     zValidator('query', noteFiltersSchema),
-    async c => {
-      const slug = c.req.param('workspaceSlug')!;
+    async function listNotes$(c) {
       const filters = c.req.valid('query');
+      const workspaceId = c.get('workspaceId');
 
-      const workspace = await getWorkspaceNotes(slug, filters);
+      const workspace = await getWorkspaceNotes(workspaceId, filters);
 
       return c.json(workspace!.notes);
     },
   )
 
-  .get('/:noteId', validateWorkspace(), validateNote({ authorize: true }), async c => {
-    const user = c.get('user');
-    const slug = c.req.param('workspaceSlug')!;
-    const noteId = c.req.param('noteId');
+  .get(
+    '/:noteId',
+    validateWorkspace(),
+    validateNote({ authorizeFor: 'read' }),
+    async function getNote$(c) {
+      const user = c.get('user');
+      const noteId = c.get('noteId')!;
 
-    const note = await getNote(slug, noteId);
+      const note = await getNote(noteId);
 
-    return c.json({
-      ...note!,
-      permissions: {
-        canEdit: note?.author.id === user?.id,
-      },
-    });
-  })
+      return c.json({
+        ...note!,
+        permissions: {
+          canEdit: note?.author.id === user?.id && !note?.archivedAt,
+        },
+      });
+    },
+  )
 
   .post(
     '/',
     privateRoute,
-    validateWorkspace({ authorize: true }),
+    validateWorkspace({ authorizeFor: 'create_notes' }),
     zValidator('json', noteCreateSchema),
-    async c => {
+    async function createNote$(c) {
       const noteJson = c.req.valid('json');
       const user = c.get('user')!;
 
@@ -84,10 +92,10 @@ export const noteRoute = new Hono<{
   .patch(
     '/:noteId',
     privateRoute,
-    validateWorkspace({ authorize: true }),
-    validateNote(),
+    validateWorkspace(),
+    validateNote({ authorizeFor: 'update' }),
     zValidator('json', noteUpdateSchema),
-    async c => {
+    async function updateNote$(c) {
       const noteId = c.get('noteId')!;
       const noteJson = c.req.valid('json');
 
@@ -102,9 +110,9 @@ export const noteRoute = new Hono<{
   .delete(
     '/:noteId',
     privateRoute,
-    validateWorkspace({ authorize: true }),
-    validateNote(),
-    async c => {
+    validateWorkspace(),
+    validateNote({ authorizeFor: 'archive' }),
+    async function deleteNote$(c) {
       const noteId = c.get('noteId')!;
 
       const note = await updateNote(noteId, { archivedAt: new Date() });

@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
-import { Note, NoteType, Workspace } from '../db/schema';
+import { Note, NoteInsertType, Workspace } from '../db/schema';
 import { createWorkspace } from './workspace';
 
-export const noteFactory = async (note?: Partial<NoteType>): Promise<NoteType> => {
+export const noteFactory = async (note?: Partial<NoteInsertType>): Promise<NoteInsertType> => {
   const tempWorkspace = note?.workspaceId
     ? await db.query.Workspace.findFirst({ where: eq(Workspace.id, note?.workspaceId) })
     : await createWorkspace();
@@ -17,7 +17,7 @@ export const noteFactory = async (note?: Partial<NoteType>): Promise<NoteType> =
   };
 };
 
-export const createNote = async (note?: Partial<NoteType>) => {
+export const createNote = async (note?: Partial<NoteInsertType>) => {
   const newNote = await db
     .insert(Note)
     .values(await noteFactory(note))

@@ -1,33 +1,36 @@
 import { and, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
 import { db } from '../../../db';
-import { Workspace, Note, NoteType } from '../../../db/schema';
+import {
+  Workspace,
+  Note,
+  NoteInsertType,
+  NoteSelectType,
+  WorkspaceSelectType,
+} from '../../../db/schema';
 
-export const getNote = async (workspaceSlug: string, noteId: string) => {
-  const workspace = await db.query.Workspace.findFirst({
-    where: eq(Workspace.slug, workspaceSlug),
+export const getNote = async (noteId: NoteSelectType['id']) => {
+  const note = await db.query.Note.findFirst({
+    where: eq(Note.id, noteId),
+    columns: {
+      id: true,
+      name: true,
+      content: true,
+      access: true,
+      createdAt: true,
+      updatedAt: true,
+      archivedAt: true,
+    },
     with: {
-      notes: {
-        limit: 1,
-        where: eq(Note.name, noteId),
+      author: {
         columns: {
           id: true,
           name: true,
-          content: true,
-          access: true,
-          createdAt: true,
-          updatedAt: true,
-          archivedAt: true,
-        },
-        with: {
-          author: {
-            columns: { id: true, name: true },
-          },
         },
       },
     },
   });
 
-  return workspace?.notes[0];
+  return note;
 };
 
 type Filters = { archived?: boolean };
@@ -45,11 +48,14 @@ const noteFiltersToCondition = (filters: Filters) => {
   return and(...cond);
 };
 
-export const getWorkspaceNotes = async (workspaceSlug: string, filters: Filters = {}) => {
+export const getWorkspaceNotes = async (
+  workspaceId: WorkspaceSelectType['id'],
+  filters: Filters = {},
+) => {
   const cond = noteFiltersToCondition(filters);
 
   return db.query.Workspace.findFirst({
-    where: eq(Workspace.slug, workspaceSlug),
+    where: eq(Workspace.id, workspaceId),
     columns: { id: true },
     with: {
       notes: {
@@ -76,7 +82,7 @@ export const getWorkspaceNotes = async (workspaceSlug: string, filters: Filters 
   });
 };
 
-export const createNewNote = async (note: NoteType) => {
+export const createNewNote = async (note: NoteInsertType) => {
   const insertedNotes = await db
     .insert(Note)
     .values(note)
@@ -88,7 +94,7 @@ export const createNewNote = async (note: NoteType) => {
 
 export const updateNote = async (
   noteId: string,
-  update: Partial<Omit<NoteType, 'id' | 'name'>>,
+  update: Partial<Omit<NoteInsertType, 'id' | 'name'>>,
 ) => {
   const updatedNotes = await db
     .update(Note)

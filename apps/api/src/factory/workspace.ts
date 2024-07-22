@@ -1,10 +1,10 @@
 import { db } from '../db';
-import { Workspace, WorkspaceType } from '../db/schema';
+import { Workspace, WorkspaceInsertType } from '../db/schema';
 import { createUser } from './user';
 
 export const workspaceFactory = async (
-  workspace?: Partial<WorkspaceType>,
-): Promise<WorkspaceType> => {
+  workspace?: Partial<WorkspaceInsertType>,
+): Promise<WorkspaceInsertType> => {
   return {
     name: 'Workspace 1',
     slug: 'workspace-1',
@@ -15,7 +15,7 @@ export const workspaceFactory = async (
   };
 };
 
-export const createWorkspace = async (workspace?: Partial<WorkspaceType>) => {
+export const createWorkspace = async (workspace?: Partial<WorkspaceInsertType>) => {
   const newWorkspace = await db
     .insert(Workspace)
     .values(await workspaceFactory(workspace))

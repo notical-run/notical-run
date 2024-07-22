@@ -1,8 +1,8 @@
 import { and, count, desc, eq, isNull } from 'drizzle-orm';
 import { db } from '../../db';
-import { Note, Workspace, WorkspaceType } from '../../db/schema';
+import { Note, Workspace, WorkspaceInsertType } from '../../db/schema';
 
-export const createWorkspace = async (payload: WorkspaceType) => {
+export const createWorkspace = async (payload: WorkspaceInsertType) => {
   const workspace = await db
     .insert(Workspace)
     .values({ ...payload })
