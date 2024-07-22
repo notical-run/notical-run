@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "notes" (
 	"content" text,
 	"workspace_id" uuid NOT NULL,
 	"author_id" uuid NOT NULL,
-	"archived_at" date,
+	"archived_at" timestamp,
 	"access" "access_type" NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()

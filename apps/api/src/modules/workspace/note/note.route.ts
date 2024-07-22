@@ -6,6 +6,7 @@ import { createNewNote, getNote, getWorkspaceNotes, updateNote } from './note.da
 import { validateWorkspace } from '../../../validators/workspace';
 import { validateNote } from '../../../validators/note';
 import { NoteSelectType, WorkspaceSelectType } from '../../../db/schema';
+import { sql } from 'drizzle-orm';
 
 const noteCreateSchema = z.object({
   name: z
@@ -115,7 +116,7 @@ export const noteRoute = new Hono<{
     async function deleteNote$(c) {
       const noteId = c.get('noteId')!;
 
-      const note = await updateNote(noteId, { archivedAt: new Date() });
+      const note = await updateNote(noteId, { archivedAt: sql`now()` as unknown as Date });
 
       if (!note) return c.json({ error: 'Unable to archive note' }, 422);
 

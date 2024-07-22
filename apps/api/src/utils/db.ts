@@ -3,8 +3,9 @@ import { timestamp } from 'drizzle-orm/pg-core';
 
 export const timestampColumns = () =>
   ({
-    createdAt: timestamp('created_at').defaultNow(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
       .defaultNow()
-      .$onUpdate(() => sql`now()`),
+      .$onUpdate(() => sql`now()`)
+      .notNull(),
   }) as const;
