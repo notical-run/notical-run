@@ -1,13 +1,15 @@
+import { Editor as TiptapEditor } from '@tiptap/core';
 import { fetchNote, useUpdateNote } from '@/api/queries/workspace';
 import { Editor } from '@/components/Editor';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { createEffect } from 'solid-js';
+import { createEffect, Ref } from 'solid-js';
 import * as Y from 'yjs';
 
 export type NoteEditorProps = {
   note: Awaited<ReturnType<typeof fetchNote>>;
+  ref?: Ref<TiptapEditor>;
 };
 
 export const NoteEditor = (props: NoteEditorProps) => {
@@ -63,6 +65,7 @@ export const NoteEditor = (props: NoteEditorProps) => {
       editable={props.note?.permissions.canEdit}
       document={yDoc}
       moduleLoader={moduleLoader}
+      ref={props.ref}
     />
   );
 };

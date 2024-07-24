@@ -1,19 +1,14 @@
 * Focus
 ** Bugs
    - ( ) Redo doesnt work inside code blocks (exports update overwrites/Prevent export updates from being in undo history)
-   - ( ) Up key not working from inside code blocks
    - ( ) Fix placeholder text position for items with indents (listitem, task item, etc)
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
-   - ( ) Sticky toolbar
-   - ( ) Button to copy as markdown
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup
-   - (x) Archived note is uneditable
-   - (x) Message above archived notes
    - ( ) Archived notes list
    - ( ) Check if user has access to workspace in note (hide workspace selector, sidebar, etc)
-   - ( ) Add note button in note page sidebar
+   - ( ) "New note" button in note page sidebar
 
 * Ready to use
 ** Evaluation
@@ -28,8 +23,11 @@
    - ( ) REMOVE `here` from code blocks? (or fix reactivity)
    - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
+   - ( ) Up key not working from inside code blocks
 ** Editor
    - ( ) Link to another note
+   - ( ) Slash commands?
+   - ( ) Update entire link instead of just the selected text?
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) github oauth
@@ -79,11 +77,10 @@
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Alternative way to insert/show content
 ** Editor
-   - ( ) Collapsable inline blocks
-   - ( ) Allow creating links wysiwyg way
+   - ( ) Collapsable inline code marks
+   - ( ) Checkbox with 3 states (done, in progress, unchecked)
    - ( ) Latex equation support (mathjax or katex)
    - ( ) Youtube embed
-   - ( ) More complex task states
    - ( ) plantuml diagram support
    - ( ) Drag and drop nodes
    - ( ) Heading anchors (link to heading)
@@ -117,7 +114,9 @@
   - (-) Note based calculator
   - ( ) Task management
   - ( ) Journaling
-  - ( ) Simplified canvas api for drawing
+  - ( ) Unit conversions
+  - ( ) Currency conversions
+  - ( ) Simplified drawing/diagram tool
   - ( ) Datetime picker
   - ( ) Fetch and present external data
   - ( ) Draft and send custom emails (mail client)?
@@ -126,8 +125,8 @@
   - ( ) Make requests to openai (how to manage secrets?)
 
 * Maybe
-  - ( ) Slash commands
   - ( ) Block-ey UI with drag and drop
+  - ( ) Embed note on your website as an iframe?
   - ( ) Folders? Purely for presenting notes in workspace view
   - ( ) Support images with image upload
   - ( ) Print to PDF (including results)

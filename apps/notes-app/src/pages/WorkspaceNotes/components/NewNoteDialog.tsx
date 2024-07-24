@@ -44,7 +44,7 @@ export const NewNoteDialog = (props: DialogRootProps) => {
   const createNote: SubmitHandler<NoteSchemaType> = payload => {
     noteCreator.mutate(payload, {
       onSuccess: result => {
-        props.onOpenChange(false);
+        props.onOpenChange?.(false);
         toast.success(`Note ${result.name} created`);
         navigate(links.workspaceNote(slug(), result.name));
       },

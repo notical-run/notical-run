@@ -1,7 +1,8 @@
+import { Editor as TiptapEditor } from '@tiptap/core';
 import { useNavigate, useParams } from '@solidjs/router';
 import { useNote } from '../../api/queries/workspace';
 import { Page } from '../../components/Page';
-import { Match, Show, Switch } from 'solid-js';
+import { createSignal, Match, Show, Switch } from 'solid-js';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { NoteSidebar } from '@/pages/Note/components/Sidebar';
@@ -18,6 +19,7 @@ const WorkspaceNote = () => {
   const params = useParams<{ noteId: string }>();
   const noteQuery = useNote(slug, () => params.noteId);
   const navigate = useNavigate();
+  const [editorInstance, setEditorInstance] = createSignal<TiptapEditor>();
 
   const formatDate = (date: string) => {
     const formatter = new Intl.DateTimeFormat('en-UK', {
@@ -68,13 +70,14 @@ const WorkspaceNote = () => {
                       <NoteActionsDropdown
                         workspaceSlug={slug()}
                         noteId={noteQuery.data!.name!}
+                        editor={editorInstance()}
                         onArchive={() => navigate(links.workspaceNotes(slug()))}
                       />
                     </IfAuthenticated>
                   </div>
 
                   <Show when={noteQuery.data?.id} keyed>
-                    <NoteEditor note={noteQuery.data!} />
+                    <NoteEditor note={noteQuery.data!} ref={setEditorInstance} />
                   </Show>
                 </div>
               </div>

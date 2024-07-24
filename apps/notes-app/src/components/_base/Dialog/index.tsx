@@ -1,5 +1,6 @@
 import { ParentProps } from 'solid-js';
 import CorvuDialog from '@corvu/dialog';
+import { cn } from '@/utils/classname';
 
 export type DialogRootProps = {
   open?: boolean;
@@ -34,8 +35,12 @@ export const DialogContent = (props: ParentProps<{ class?: string }>) => {
   );
 };
 
-export const DialogContentHeading = (props: ParentProps) => {
-  return <CorvuDialog.Label class="text-lg font-bold">{props.children}</CorvuDialog.Label>;
+export const DialogContentHeading = (props: ParentProps & { class?: string }) => {
+  return (
+    <CorvuDialog.Label class={cn('text-lg font-bold flex items-center gap-2', props.class)}>
+      {props.children}
+    </CorvuDialog.Label>
+  );
 };
 
 export const DialogContentFooter = (props: ParentProps) => {

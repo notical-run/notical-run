@@ -12,50 +12,71 @@ import { TrailingNode } from './TrailingNode';
 import * as Y from 'yjs';
 import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Extension } from '@tiptap/core';
+import BubbleMenu from '@tiptap/extension-bubble-menu';
 
-export const getExtensions = ({ document }: { document: Y.Doc }) => [
-  StarterKit.configure({ codeBlock: false, code: false, history: false }),
-  Placeholder.configure({
-    placeholder: 'Start writing...',
-    emptyEditorClass: 'is-editor-empty',
-    emptyNodeClass: 'is-node-empty',
-  }),
-  Markdown.configure({
-    html: false,
-    tightLists: true,
-    linkify: true,
-    breaks: true,
-    transformPastedText: true,
-    transformCopiedText: false,
-  }),
-  Link.configure({
-    protocols: ['http', 'https', 'mailto'],
-    openOnClick: true,
-    linkOnPaste: true,
-    HTMLAttributes: { class: 'text-violet-900 underline' },
-  }),
-  TrailingNode,
+export const getExtensions = ({
+  document: yDoc,
+  inlineMenuElement,
+}: {
+  document: Y.Doc;
+  inlineMenuElement?: HTMLElement;
+}) =>
+  [
+    StarterKit.configure({ codeBlock: false, code: false, history: false }),
+    Placeholder.configure({
+      placeholder: ({ node }) => {
+        if (node.type.name === 'paragraph') return 'Start typing...';
+        return '';
+      },
+      emptyEditorClass: 'is-editor-empty',
+      emptyNodeClass: 'is-node-empty',
+    }),
+    Markdown.configure({
+      html: false,
+      tightLists: true,
+      linkify: true,
+      breaks: true,
+      transformPastedText: true,
+      transformCopiedText: false,
+    }),
+    Link.configure({
+      protocols: ['http', 'https', 'mailto'],
+      openOnClick: true,
+      linkOnPaste: true,
+      HTMLAttributes: { class: 'text-violet-900 underline' },
+    }),
+    TrailingNode,
+    inlineMenuElement &&
+      BubbleMenu.configure({
+        element: inlineMenuElement,
+        shouldShow: ({ editor, state }) => {
+          if (!editor.isActive('paragraph')) return false;
+          const isTextSelected = state.selection.from !== state.selection.to;
+          return isTextSelected;
+        },
+      }),
 
-  GlobalNodeId,
-  InlineCode,
-  CodeBlock.configure({
-    lowlight: createLowlight({ javascript }),
-    HTMLAttributes: { class: 'hljs' },
-    defaultLanguage: 'javascript',
-    exitOnTripleEnter: false,
-  }),
+    GlobalNodeId,
+    InlineCode,
+    CodeBlock.configure({
+      lowlight: createLowlight({ javascript }),
+      HTMLAttributes: { class: 'hljs' },
+      defaultLanguage: 'javascript',
+      exitOnTripleEnter: false,
+    }),
 
-  TaskItem.configure({
-    nested: true,
-    HTMLAttributes: {
-      class: 'flex items-start justify-start gap-3 [&_p]:my-0',
-    },
-  }),
-  TaskList.configure({
-    HTMLAttributes: {
-      class: 'list-none pl-1',
-    },
-  }),
+    TaskItem.configure({
+      nested: true,
+      HTMLAttributes: {
+        class: 'flex items-start justify-start gap-3 [&_p]:my-0',
+      },
+    }),
+    TaskList.configure({
+      HTMLAttributes: {
+        class: 'list-none pl-1',
+      },
+    }),
 
-  Collaboration.configure({ document: document }),
-];
+    Collaboration.configure({ document: yDoc }),
+  ].filter(Boolean) as Extension[];

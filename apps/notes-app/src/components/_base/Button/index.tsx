@@ -4,7 +4,7 @@ import { JSX, mergeProps, splitProps } from 'solid-js';
 type ButtonVariant = 'primary' | 'primary-bordered';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
 };

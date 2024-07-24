@@ -2,24 +2,28 @@ import { Editor as TiptapEditor } from '@tiptap/core';
 import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
-import { createEffect, onCleanup, onMount } from 'solid-js';
+import { createEffect, createSignal, onCleanup, onMount, Ref } from 'solid-js';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
 import { twMerge } from 'tailwind-merge';
-import './editor.css';
 import { useDebounced } from '@/utils/use-debounced';
+
+import './editor.css';
+import { InlineStyleBar } from '@/components/Editor/components/InlineStyleBar';
 
 export type EditorProps = {
   editable?: boolean;
   document: Y.Doc;
   moduleLoader: (modulePath: string) => Promise<Y.Doc>;
+  ref?: Ref<TiptapEditor>;
 };
 
 export const Editor = (props: EditorProps) => {
+  const [editor, setEditor] = createSignal<TiptapEditor>();
   let element: HTMLElement;
-  let editor: TiptapEditor;
+  let inlineMenuElement: HTMLElement;
 
   let engine: EvalEngine;
   const cleanupInstances: (() => void)[] = [];
@@ -38,10 +42,11 @@ export const Editor = (props: EditorProps) => {
       'prose-h4:text-lg',
       'prose-h5:text-md prose-h5:text-slate-600',
       'prose-h6:text-sm prose-h6:text-slate-600',
+      'prose-blockquote:text-slate-500',
     );
 
     engine = await createEvalEngine({
-      withEditor: fn => fn(editor),
+      withEditor: fn => fn(editor()!),
       moduleLoader: async modulePath => {
         const moduleDoc = await props.moduleLoader(modulePath);
         const module = await evaluateImport({ doc: moduleDoc, engine });
@@ -50,9 +55,9 @@ export const Editor = (props: EditorProps) => {
       },
     });
 
-    editor = new TiptapEditor({
+    const tiptapEditor = new TiptapEditor({
       element: element,
-      extensions: getExtensions({ document: props.document }),
+      extensions: getExtensions({ document: props.document, inlineMenuElement }),
       autofocus: true,
       editorProps: {
         attributes: {
@@ -68,15 +73,29 @@ export const Editor = (props: EditorProps) => {
         engine?.destroy();
       },
     });
+
+    // Update ref
+    if (props.ref) {
+      if (typeof props.ref === 'function') props.ref(tiptapEditor);
+      else props.ref = tiptapEditor;
+    }
+
+    setEditor(tiptapEditor);
   });
 
   createEffect(() => {
-    if (props.editable !== undefined) editor?.setEditable(props.editable, false);
+    if (props.editable !== undefined) editor()?.setEditable(props.editable, false);
   });
 
   onCleanup(() => {
-    editor?.destroy();
+    editor()?.destroy();
   });
 
-  return <div ref={el => (element = el)} />;
+  return (
+    <div>
+      <InlineStyleBar editor={editor()} ref={el => (inlineMenuElement = el)} />
+
+      <div ref={el => (element = el)} />
+    </div>
+  );
 };

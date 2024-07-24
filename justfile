@@ -38,4 +38,4 @@ api-restart:
   docker compose restart api
 
 client *args:
-  bun app dev "$@"
+  cd apps/notes-app && bun dev "$@"
