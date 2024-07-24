@@ -41,7 +41,7 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
   const createWorkspace: SubmitHandler<WorkspaceSchemaType> = workspacePayload => {
     workspaceCreator.mutate(workspacePayload, {
       onSuccess: result => {
-        props.onOpenChange(false);
+        props.onOpenChange?.(false);
         toast.success(`Workspace ${result.slug} created`);
         navigate(links.workspaceNotes(result.slug));
       },

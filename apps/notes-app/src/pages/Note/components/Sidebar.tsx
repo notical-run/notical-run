@@ -1,18 +1,21 @@
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { links } from '@/components/Navigation';
+import { useLayoutContext } from '@/components/Page/layout';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { A } from '@solidjs/router';
 import { AiOutlineLock } from 'solid-icons/ai';
 import { BiSolidNote } from 'solid-icons/bi';
-import { For } from 'solid-js';
+import { For, Show } from 'solid-js';
 
 export const NoteSidebar = () => {
   const { slug } = useWorkspaceContext();
   const notesQuery = useWorkspaceNotes(slug);
+  const { sidebarOpen } = useLayoutContext();
 
   return (
-    <div>
+    <Show when={sidebarOpen()}>
       <div class="text-slate-400 text-xs uppercase">Notes</div>
+
       <div class="flex flex-col mt-1">
         <For each={notesQuery.data ?? []}>
           {note => (
@@ -32,6 +35,6 @@ export const NoteSidebar = () => {
           )}
         </For>
       </div>
-    </div>
+    </Show>
   );
 };

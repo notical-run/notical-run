@@ -36,7 +36,6 @@
    - ( ) Examples workspace
    - ( ) Documentation workspace
    - ( ) Common library/utilities workspace
-   - ( ) Responsive to small screens
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically

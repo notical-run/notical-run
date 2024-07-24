@@ -1,18 +1,25 @@
+import { cn } from '@/utils/classname';
 import CorvuTooltip from '@corvu/tooltip';
-import { ParentProps } from 'solid-js';
+import { ComponentProps, ParentProps } from 'solid-js';
 
-const TooltipRoot = (props: ParentProps) => {
-  return (
-    <CorvuTooltip openDelay={200} closeDelay={100} hoverableContent>
-      {props.children}
-    </CorvuTooltip>
-  );
+type TooltipRootProps = ComponentProps<typeof CorvuTooltip>;
+
+const TooltipRoot = (props: ParentProps<TooltipRootProps>) => {
+  return <CorvuTooltip openDelay={200} closeDelay={100} hoverableContent {...props} />;
 };
 
-const TooltipContent = (props: ParentProps) => {
+type TooltipContentProps = ComponentProps<typeof CorvuTooltip.Content>;
+
+const TooltipContent = (props: ParentProps<TooltipContentProps>) => {
   return (
     <CorvuTooltip.Portal>
-      <CorvuTooltip.Content class="rounded-sm text-xs shadow-md bg-slate-100 text-slate-700 px-2 py-1 border border-slate-200 mt-1 z-50 max-w-96">
+      <CorvuTooltip.Content
+        {...props}
+        class={cn(
+          'rounded-sm text-xs shadow-md bg-slate-100 text-slate-700 px-2 py-1 border border-slate-200 mt-1 z-50 max-w-96',
+          props.class,
+        )}
+      >
         <CorvuTooltip.Arrow class="text-slate-200" size={10} />
         {props.children}
       </CorvuTooltip.Content>

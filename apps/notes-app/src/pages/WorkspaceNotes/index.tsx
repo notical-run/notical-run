@@ -10,7 +10,6 @@ import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { NoteList } from '@/pages/WorkspaceNotes/components/NoteList';
 import { List } from '@/components/_base/ListItems';
-import { A } from '@solidjs/router';
 import { links } from '@/components/Navigation';
 import { FiArchive } from 'solid-icons/fi';
 
@@ -23,16 +22,12 @@ const WorkspaceNotes = () => {
   return (
     <Page title={`Notes in @${slug()}`}>
       <Page.Header breadcrumbs={[{ content: <WorkspaceSelector selected={slug()} /> }]} />
+
       <Page.Body>
         <Page.Body.SideMenu>
-          <div class="text-xs">
-            <A
-              href={links.archivedWorkspaceNotes(slug())}
-              class="flex items-center gap-2 px-2 py-1 text-slate-600 hover:text-slate-400"
-            >
-              <FiArchive /> Archived notes
-            </A>
-          </div>
+          <Page.Body.SideMenuLink icon={<FiArchive />} href={links.archivedWorkspaceNotes(slug())}>
+            Archived notes
+          </Page.Body.SideMenuLink>
         </Page.Body.SideMenu>
 
         <Page.Body.Main>
@@ -50,7 +45,7 @@ const WorkspaceNotes = () => {
                 <div class="flex justify-between items-end pb-2">
                   <h1 class="text-slate-400 font-bold">Notes</h1>
 
-                  <Button onClick={() => setDialogOpen(true)}>
+                  <Button size="sm" onClick={() => setDialogOpen(true)}>
                     <FaSolidPlus size={10} /> New note
                   </Button>
                 </div>

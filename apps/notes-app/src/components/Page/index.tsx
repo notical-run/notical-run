@@ -1,7 +1,14 @@
 import { IfAuthenticated } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
+import { cn } from '@/utils/classname';
 import { A } from '@solidjs/router';
-import { createEffect, For, JSX, ParentProps, Suspense } from 'solid-js';
+import { createEffect, For, JSX, ParentProps, Show, Suspense } from 'solid-js';
+import { AiOutlineArrowLeft, AiOutlineMenu } from 'solid-icons/ai';
+import { LoadingView } from '@/components/ViewStates';
+import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
+import { Tooltip } from '@/components/_base/Tooltip';
+import { Dynamic } from 'solid-js/web';
+import { Button } from '@/components/_base/Button';
 
 const PageRoot = (props: ParentProps & { title?: string }) => {
   createEffect(() => {
@@ -9,7 +16,11 @@ const PageRoot = (props: ParentProps & { title?: string }) => {
     else document.title = `notical.run`;
   });
 
-  return <div class="flex flex-col h-screen overflow-hidden">{props.children}</div>;
+  return (
+    <LayoutProvider>
+      <div class="flex flex-col h-screen overflow-hidden">{props.children}</div>
+    </LayoutProvider>
+  );
 };
 
 export type PageHeaderProps = {
@@ -59,15 +70,63 @@ const PageBody = (props: ParentProps) => (
 const PageMain = (props: ParentProps) => {
   return (
     <main class="p-4 flex-1 overflow-y-auto">
-      <Suspense fallback={<div>Loading...</div>}>{props.children}</Suspense>
+      <Suspense fallback={<LoadingView />}>{props.children}</Suspense>
     </main>
   );
 };
 
-const PageSideMenu = (props: ParentProps) => {
+const PageSideMenuLink = (
+  props: ParentProps<{ icon: JSX.Element; href?: string; onClick?: () => void; class?: string }>,
+) => {
+  const { sidebarOpen } = useLayoutContext();
+
   return (
-    <div class="w-52 shadow border-r border-r-slate-150">
-      <div class="px-2 py-3">{props.children}</div>
+    <Tooltip placement="right">
+      <Tooltip.Trigger as="div" class="w-full">
+        <Dynamic
+          component={props.href ? A : p => <button {...p} />}
+          href={props.href!}
+          onClick={props.onClick}
+          class={cn(
+            'flex items-center justify-center gap-2 w-full px-2 py-3 text-slate-600 hover:text-slate-400',
+            { 'px-3 justify-start': sidebarOpen() },
+            props.class,
+          )}
+        >
+          {props.icon}
+          <Show when={sidebarOpen()}>{props.children}</Show>
+        </Dynamic>
+      </Tooltip.Trigger>
+
+      <Tooltip.Content class={cn('mt-0 ml-2', { hidden: sidebarOpen() })}>
+        {props.children}
+      </Tooltip.Content>
+    </Tooltip>
+  );
+};
+
+const PageSideMenu = (props: ParentProps) => {
+  const { sidebarOpen, isFixedSidebar, toggleSidebar } = useLayoutContext();
+
+  return (
+    <div class="relative h-full">
+      <div
+        class={cn('w-52 h-full shadow border-r border-r-slate-150 bg-white', {
+          'w-10': !isFixedSidebar(),
+          'w-52': sidebarOpen(),
+        })}
+      >
+        <Show when={!isFixedSidebar()}>
+          <button
+            onClick={toggleSidebar}
+            class="w-full py-3 flex items-center justify-center border-b text-sm hover:bg-slate-100"
+          >
+            {sidebarOpen() ? <AiOutlineArrowLeft /> : <AiOutlineMenu />}
+          </button>
+        </Show>
+
+        <div class="text-xs">{props.children}</div>
+      </div>
     </div>
   );
 };
@@ -77,5 +136,6 @@ export const Page = Object.assign(PageRoot, {
   Body: Object.assign(PageBody, {
     Main: PageMain,
     SideMenu: PageSideMenu,
+    SideMenuLink: PageSideMenuLink,
   }),
 });
