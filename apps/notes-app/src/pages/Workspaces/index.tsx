@@ -8,7 +8,8 @@ import { Button } from '@/components/_base/Button';
 import { FaSolidPlus } from 'solid-icons/fa';
 import { List } from '@/components/_base/ListItems';
 import { FiPlus } from 'solid-icons/fi';
-import { LoadingView } from '@/components/ViewStates';
+import { ErrorView, LoadingView } from '@/components/ViewStates';
+import { toApiErrorMessage } from '@/utils/api-client';
 
 const Workspaces = () => {
   const workspacesResult = useWorkspaces();
@@ -34,7 +35,11 @@ const Workspaces = () => {
                 <LoadingView subtitle="Loading workspaces" />
               </Match>
 
-              <Match when={workspacesResult.data?.length === 0}>
+              <Match when={workspacesResult.isError}>
+                <ErrorView title={toApiErrorMessage(workspacesResult.error) ?? undefined} />
+              </Match>
+
+              <Match when={workspacesResult.isSuccess && workspacesResult.data?.length === 0}>
                 <List.Empty
                   title="You don't have any workspaces"
                   subtitle="Workspaces allow you to group notes together"
@@ -45,8 +50,8 @@ const Workspaces = () => {
                 </List.Empty>
               </Match>
 
-              <Match when={true}>
-                <List grid>
+              <Match when={workspacesResult.isSuccess}>
+                <List grid class="animate-fade-in">
                   <For each={workspacesResult.data ?? []}>
                     {workspace => (
                       <List.Item>

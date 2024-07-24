@@ -51,12 +51,16 @@ const WorkspaceNotes = () => {
                 </div>
 
                 <NoteList
-                  notes={notesQuery.data}
+                  notes={notesQuery.data!}
                   fallback={
                     <List.Empty
                       title="This workspace is empty"
                       subtitle="Create a new note to get started"
-                    />
+                    >
+                      <Button size="lg" onClick={() => setDialogOpen(true)} class="mt-4 w-full">
+                        <FaSolidPlus size={10} /> Create a new note
+                      </Button>
+                    </List.Empty>
                   }
                 />
               </Match>

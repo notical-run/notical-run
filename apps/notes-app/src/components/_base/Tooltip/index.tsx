@@ -17,6 +17,7 @@ const TooltipContent = (props: ParentProps<TooltipContentProps>) => {
         {...props}
         class={cn(
           'rounded-sm text-xs shadow-md bg-slate-100 text-slate-700 px-2 py-1 border border-slate-200 mt-1 z-50 max-w-96',
+          'animate-fade-in',
           props.class,
         )}
       >

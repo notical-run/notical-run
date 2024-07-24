@@ -25,6 +25,7 @@ export const DialogContent = (props: ParentProps<{ class?: string }>) => {
           'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2': true,
           'w-full max-w-[500px] px-6 py-5': true,
           'rounded-lg border-2 border-slate-100 bg-white shadow-xl': true,
+          'animate-fade-in': true,
           [`${props.class}`]: !!props.class,
         }}
       >

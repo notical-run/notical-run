@@ -1,6 +1,7 @@
 * Focus
 ** Bugs
    - ( ) Redo doesnt work inside code blocks (exports update overwrites/Prevent export updates from being in undo history)
+   - ( ) Fix the ui flashing issue right after page load
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
 ** Product
@@ -36,6 +37,7 @@
    - ( ) Examples workspace
    - ( ) Documentation workspace
    - ( ) Common library/utilities workspace
+   - ( ) Think about lazy loading components
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically

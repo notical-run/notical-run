@@ -1,10 +1,6 @@
+.tiptap .is-node-empty::before,
 .tiptap .is-editor-empty:first-child::before {
-  @apply text-slate-400 h-0 pointer-events-none float-left pl-1;
-  content: attr(data-placeholder);
-}
-
-.tiptap .is-node-empty::before {
-  @apply text-slate-400 h-0 pointer-events-none float-left pl-1;
+  @apply text-slate-400 h-0 pointer-events-none float-left;
   content: attr(data-placeholder);
 }
 

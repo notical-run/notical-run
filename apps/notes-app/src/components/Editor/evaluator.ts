@@ -77,7 +77,7 @@ export const evaluateAllNodes = async (
 
       // Inline code
       if (node.isText) {
-        const nodeMark = node.marks.find(m => m.type.name === 'inlineCode');
+        const nodeMark = node.marks.find(m => m.type.name === 'code');
         if (!nodeMark) return;
         const previousCode = engine.nodeCache.get(nodeMark.attrs.nodeId);
         if (previousCode?.code === node.textContent) return;

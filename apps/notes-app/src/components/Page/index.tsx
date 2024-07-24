@@ -8,7 +8,6 @@ import { LoadingView } from '@/components/ViewStates';
 import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
 import { Tooltip } from '@/components/_base/Tooltip';
 import { Dynamic } from 'solid-js/web';
-import { Button } from '@/components/_base/Button';
 
 const PageRoot = (props: ParentProps & { title?: string }) => {
   createEffect(() => {
@@ -69,9 +68,9 @@ const PageBody = (props: ParentProps) => (
 
 const PageMain = (props: ParentProps) => {
   return (
-    <main class="p-4 flex-1 overflow-y-auto">
-      <Suspense fallback={<LoadingView />}>{props.children}</Suspense>
-    </main>
+    <Suspense fallback={<LoadingView />}>
+      <main class="p-4 flex-1 overflow-y-auto animate-fade-in">{props.children}</main>
+    </Suspense>
   );
 };
 

@@ -6,10 +6,9 @@ import { A } from '@solidjs/router';
 import { AiOutlineLock } from 'solid-icons/ai';
 import { For, JSX } from 'solid-js';
 import { FiArchive } from 'solid-icons/fi';
+import { WorkspaceNotesQueryResult } from '@/api/queries/workspace';
 
-type Note = any;
-
-export const NoteList = (props: { notes: Note[]; fallback?: JSX.Element }) => {
+export const NoteList = (props: { notes: WorkspaceNotesQueryResult; fallback?: JSX.Element }) => {
   const { slug } = useWorkspaceContext();
   return (
     <List>

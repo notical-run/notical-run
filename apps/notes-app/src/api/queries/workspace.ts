@@ -1,8 +1,17 @@
-import { createMutation, createQuery, useQueryClient } from '@tanstack/solid-query';
+import {
+  createMutation,
+  createQuery,
+  CreateQueryResult,
+  useQueryClient,
+} from '@tanstack/solid-query';
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
 import { Accessor } from 'solid-js';
 import { useSessionId } from '@/components/Auth/Session';
+
+type ResponseType<T> = T extends CreateQueryResult<infer R> ? R : never;
+
+export type WorkspacesQueryResult = ResponseType<ReturnType<typeof useWorkspaces>>;
 
 export const useWorkspaces = () => {
   const [sessionId] = useSessionId();
@@ -10,10 +19,11 @@ export const useWorkspaces = () => {
   return createQuery(() => ({
     queryKey: queryKeys.workspaces(),
     queryFn: async () => apiClient.api.workspaces.$get().then(responseJson),
-    initialData: [],
     enabled: !!sessionId(),
   }));
 };
+
+export type WorkspaceNotesQueryResult = ResponseType<ReturnType<typeof useWorkspaceNotes>>;
 
 export const useWorkspaceNotes = (
   workspaceSlug: Accessor<string>,
@@ -30,7 +40,6 @@ export const useWorkspaceNotes = (
           query: { archived: `${params?.archived ?? false}` },
         })
         .then(responseJson),
-    initialData: [],
     enabled: !!sessionId() && !!workspaceSlug(),
   }));
 };
@@ -39,6 +48,8 @@ export const fetchNote = (workspaceSlug: string, noteId: string) =>
   apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
     .$get({ param: { workspaceSlug: workspaceSlug, noteId: noteId } })
     .then(responseJson);
+
+export type NoteQueryResult = ResponseType<ReturnType<typeof useNote>>;
 
 export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
   return createQuery(() => ({

@@ -5,15 +5,6 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import { Result } from '../../../utils/result';
 import html from 'solid-js/html';
 
-declare module '@tiptap/core' {
-  interface Commands<ReturnType> {
-    inlineCode: {
-      updateResult: (result: any) => ReturnType;
-      toggleCode: () => ReturnType;
-    };
-  }
-}
-
 const toEvaluatedString = (result: any) => {
   if (result === undefined) return 'undefined';
   try {
@@ -28,8 +19,6 @@ const toEvaluatedString = (result: any) => {
 };
 
 export const InlineCode = Code.extend({
-  name: 'inlineCode',
-
   addAttributes() {
     return {
       ...this.parent,

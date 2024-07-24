@@ -33,7 +33,7 @@ const ArchivedWorkspaceNotes = () => {
                 <ErrorView title={toApiErrorMessage(notesQuery.error) ?? undefined} />
               </Match>
 
-              <Match when={notesQuery.isSuccess}>
+              <Match when={notesQuery.isSuccess && notesQuery.data}>
                 <div class="pb-2">
                   <A
                     href={links.workspaceNotes(slug())}
@@ -46,7 +46,7 @@ const ArchivedWorkspaceNotes = () => {
                 </div>
 
                 <NoteList
-                  notes={notesQuery.data}
+                  notes={notesQuery.data!}
                   fallback={<List.Empty title="You have no archived notes" />}
                 />
               </Match>
