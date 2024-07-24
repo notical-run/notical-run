@@ -8,7 +8,7 @@ import { useNavigate } from '@solidjs/router';
 import toast from 'solid-toast';
 import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
-import { Show } from 'solid-js';
+import { createSignal, ParentProps, Show } from 'solid-js';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { SwitchInput } from '@/components/_base/SwitchInput';
 import { HelpInfo } from '@/components/_base/Tooltip/HelpInfo';
@@ -29,7 +29,8 @@ const noteSchema = z.object({
 
 type NoteSchemaType = z.infer<typeof noteSchema>;
 
-export const NewNoteDialog = (props: DialogRootProps) => {
+export const NewNoteDialog = (props: ParentProps<DialogRootProps>) => {
+  const [dialogOpen, setDialogOpen] = createSignal(false);
   const { slug } = useWorkspaceContext();
   const navigate = useNavigate();
 
@@ -44,6 +45,7 @@ export const NewNoteDialog = (props: DialogRootProps) => {
   const createNote: SubmitHandler<NoteSchemaType> = payload => {
     noteCreator.mutate(payload, {
       onSuccess: result => {
+        setDialogOpen(false);
         props.onOpenChange?.(false);
         toast.success(`Note ${result.name} created`);
         navigate(links.workspaceNote(slug(), result.name));
@@ -52,7 +54,13 @@ export const NewNoteDialog = (props: DialogRootProps) => {
   };
 
   return (
-    <Dialog initialFocusEl={formStore.internal.fields.name?.elements.get()[0]} {...props}>
+    <Dialog
+      initialFocusEl={formStore.internal.fields.name?.elements.get()[0]}
+      open={dialogOpen()}
+      onOpenChange={setDialogOpen}
+      {...props}
+    >
+      {props.children}
       <Dialog.Content>
         <Dialog.Content.Heading>New note</Dialog.Content.Heading>
         <Dialog.Content.Body>

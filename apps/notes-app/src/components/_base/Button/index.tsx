@@ -1,7 +1,7 @@
 import { cn } from '@/utils/classname';
 import { JSX, mergeProps, splitProps } from 'solid-js';
 
-type ButtonVariant = 'primary' | 'primary-bordered';
+type ButtonVariant = 'primary' | 'primary-bordered' | 'plain';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 export type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -32,6 +32,7 @@ export const Button = (_props: ButtonProps) => {
           'bg-slate-900 text-white hover:bg-slate-700': props.variant === 'primary',
           'border border-slate-900 text-slate-900 hover:border-slate-500 hover:text-slate-500':
             props.variant === 'primary-bordered',
+          'rounded-none': props.variant === 'plain',
         },
         props.class,
       )}
