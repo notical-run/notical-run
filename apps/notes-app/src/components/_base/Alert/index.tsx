@@ -1,8 +1,12 @@
 import { cn } from '@/utils/classname';
 import { AiOutlineExclamationCircle } from 'solid-icons/ai';
-import { Match, mergeProps, ParentProps, Switch } from 'solid-js';
+import { JSX, Match, mergeProps, ParentProps, Switch } from 'solid-js';
 
-type AlertProps = { variant?: 'primary' | 'warning' | 'danger'; class?: string };
+type AlertProps = {
+  variant?: 'primary' | 'warning' | 'danger';
+  class?: string;
+  icon?: JSX.Element;
+};
 
 export const Alert = (_props: ParentProps<AlertProps>) => {
   const props = mergeProps({ variant: 'primary' }, _props);
@@ -20,13 +24,13 @@ export const Alert = (_props: ParentProps<AlertProps>) => {
     >
       <Switch>
         <Match when={props.variant === 'warning'}>
-          <AiOutlineExclamationCircle />
+          {props.icon ?? <AiOutlineExclamationCircle />}
         </Match>
         <Match when={props.variant === 'danger'}>
-          <AiOutlineExclamationCircle />
+          {props.icon ?? <AiOutlineExclamationCircle />}
         </Match>
         <Match when={props.variant === 'primary'}>
-          <AiOutlineExclamationCircle />
+          {props.icon ?? <AiOutlineExclamationCircle />}
         </Match>
       </Switch>
       {props.children}

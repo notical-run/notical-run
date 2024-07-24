@@ -1,6 +1,7 @@
 export const links = {
   workspaces: () => '/workspaces',
-  workspaceNotes: (slug: string) => `/@${slug}`,
+  workspaceNotes: (slug: string) => `/${slug}`,
+  archivedWorkspaceNotes: (slug: string) => `/${slug}/archived`,
   workspaceNote: (slug: string, noteId: string) => `/@${slug}/${noteId}`,
   login: () => '/login',
   signup: () => '/signup',

@@ -13,6 +13,7 @@ import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
 import { IfAuthenticated } from '@/components/Auth/Session';
 import { Alert } from '@/components/_base/Alert';
+import { FiArchive } from 'solid-icons/fi';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
@@ -59,7 +60,7 @@ const WorkspaceNote = () => {
               <div class="px-2">
                 <div class="mx-auto max-w-4xl">
                   <Show when={noteQuery.data?.archivedAt}>
-                    <Alert variant="warning" class="mb-3">
+                    <Alert variant="warning" class="mb-3" icon={<FiArchive />}>
                       This note was archived on: {formatDate(noteQuery.data!.archivedAt!)}
                     </Alert>
                   </Show>

@@ -8,6 +8,7 @@ import { PrivateRoute } from './components/Auth/Session';
 import { links } from './components/Navigation';
 import Logout from './pages/logout';
 import { WorkspaceLayout } from '@/layouts/workspace';
+import ArchivedWorkspaceNotes from '@/pages/WorkspaceNotes/archived';
 
 export const routes: RouteDefinition[] = [
   {
@@ -41,7 +42,16 @@ export const routes: RouteDefinition[] = [
         </PrivateRoute>
       </WorkspaceLayout>
     ),
-    matchFilters: { workspaceSlug: /^@/ },
+  },
+  {
+    path: '/:workspaceSlug/archived',
+    component: () => (
+      <WorkspaceLayout>
+        <PrivateRoute>
+          <ArchivedWorkspaceNotes />
+        </PrivateRoute>
+      </WorkspaceLayout>
+    ),
   },
 
   {

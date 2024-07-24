@@ -15,14 +15,20 @@ export const useWorkspaces = () => {
   }));
 };
 
-export const useWorkspaceNotes = (workspaceSlug: Accessor<string>) => {
+export const useWorkspaceNotes = (
+  workspaceSlug: Accessor<string>,
+  params?: { archived?: boolean },
+) => {
   const [sessionId] = useSessionId();
 
   return createQuery(() => ({
     queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: async () =>
       apiClient.api.workspaces[':workspaceSlug'].notes
-        .$get({ param: { workspaceSlug: workspaceSlug() }, query: { archived: `${false}` } })
+        .$get({
+          param: { workspaceSlug: workspaceSlug() },
+          query: { archived: `${params?.archived ?? false}` },
+        })
         .then(responseJson),
     initialData: [],
     enabled: !!sessionId() && !!workspaceSlug(),

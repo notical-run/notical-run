@@ -1,12 +1,10 @@
 * Focus
 ** Bugs
    - ( ) Redo doesnt work inside code blocks (exports update overwrites/Prevent export updates from being in undo history)
-   - ( ) Fix placeholder text position for items with indents (listitem, task item, etc)
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup
-   - ( ) Archived notes list
    - ( ) Check if user has access to workspace in note (hide workspace selector, sidebar, etc)
    - ( ) "New note" button in note page sidebar
 

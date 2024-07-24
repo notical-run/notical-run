@@ -1,45 +1,32 @@
 import { createSignal, Match, Switch } from 'solid-js';
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
-import { Button } from '@/components/_base/Button';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
-import { FaSolidPlus } from 'solid-icons/fa';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { NoteList } from '@/pages/WorkspaceNotes/components/NoteList';
 import { List } from '@/components/_base/ListItems';
 import { A } from '@solidjs/router';
 import { links } from '@/components/Navigation';
-import { FiArchive } from 'solid-icons/fi';
+import { AiOutlineArrowLeft } from 'solid-icons/ai';
 
-const WorkspaceNotes = () => {
+const ArchivedWorkspaceNotes = () => {
   const { slug } = useWorkspaceContext();
-  const notesQuery = useWorkspaceNotes(slug);
+  const notesQuery = useWorkspaceNotes(slug, { archived: true });
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
   return (
-    <Page title={`Notes in @${slug()}`}>
+    <Page title={`Archived notes in @${slug()}`}>
       <Page.Header breadcrumbs={[{ content: <WorkspaceSelector selected={slug()} /> }]} />
       <Page.Body>
-        <Page.Body.SideMenu>
-          <div class="text-xs">
-            <A
-              href={links.archivedWorkspaceNotes(slug())}
-              class="flex items-center gap-2 px-2 py-1 text-slate-600 hover:text-slate-400"
-            >
-              <FiArchive /> Archived notes
-            </A>
-          </div>
-        </Page.Body.SideMenu>
-
         <Page.Body.Main>
           <div class="mx-auto max-w-4xl">
             <Switch>
               <Match when={notesQuery.isLoading}>
-                <LoadingView />
+                <LoadingView title="Loading archived notes" />
               </Match>
 
               <Match when={notesQuery.isError}>
@@ -47,22 +34,20 @@ const WorkspaceNotes = () => {
               </Match>
 
               <Match when={notesQuery.isSuccess}>
-                <div class="flex justify-between items-end pb-2">
-                  <h1 class="text-slate-400 font-bold">Notes</h1>
-
-                  <Button onClick={() => setDialogOpen(true)}>
-                    <FaSolidPlus size={10} /> New note
-                  </Button>
+                <div class="pb-2">
+                  <A
+                    href={links.workspaceNotes(slug())}
+                    class="text-xs flex items-center gap-2 text-slate-600 hover:text-slate-400"
+                  >
+                    <AiOutlineArrowLeft />
+                    Back to notes
+                  </A>
+                  <h1 class="text-slate-400 font-bold pt-1">Archived notes</h1>
                 </div>
 
                 <NoteList
                   notes={notesQuery.data}
-                  fallback={
-                    <List.Empty
-                      title="This workspace is empty"
-                      subtitle="Create a new note to get started"
-                    />
-                  }
+                  fallback={<List.Empty title="You have no archived notes" />}
                 />
               </Match>
             </Switch>
@@ -75,4 +60,4 @@ const WorkspaceNotes = () => {
   );
 };
 
-export default WorkspaceNotes;
+export default ArchivedWorkspaceNotes;
