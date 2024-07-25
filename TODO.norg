@@ -2,8 +2,10 @@
 ** Bugs
    - ( ) Redo doesnt work inside code blocks (exports update overwrites/Prevent export updates from being in undo history)
    - ( ) Fix the ui flashing issue right after page load
+   - ( ) Prevent update if the data is not ready
 ** Editor
    - ( ) Prevent code block collapse from being in undo history
+   - ( ) Use solid for node view rendering
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup
    - ( ) Check if user has access to workspace in note (hide workspace selector, sidebar, etc)
@@ -27,6 +29,7 @@
    - ( ) Link to another note
    - ( ) Slash commands?
    - ( ) Update entire link instead of just the selected text?
+   - ( ) No curor on todo when text is empty
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) github oauth
@@ -38,6 +41,7 @@
    - ( ) Documentation workspace
    - ( ) Common library/utilities workspace
    - ( ) Think about lazy loading components
+   - ( ) Make nav bar responsive for small screens
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically

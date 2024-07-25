@@ -37,10 +37,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      PGPORT: 5880
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5880:5880
 
   api-test:
     profiles: [test]
@@ -62,9 +63,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      PGPORT: 5888
+      PGPORT: 5881
     ports:
-      - 5888:5888
+      - 5881:5881
 
   client-e2e:
     profiles: [e2e]

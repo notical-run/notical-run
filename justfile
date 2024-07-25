@@ -32,7 +32,7 @@ db-reset *args: (exec "bun" "db:reset" args)
 db-seed: (exec "bun" "run" "./seeds/dev.ts")
 
 db-sql:
-  psql 'postgres://postgres:postgres@localhost:5432/notical-run'
+  psql 'postgres://postgres:postgres@localhost:5880/notical-run'
 
 api-restart:
   docker compose restart api

@@ -16,13 +16,13 @@ if (isDevEnv) {
 
 app.use(
   cors({
-    origin: isDevEnv ? 'http://localhost:3000' : 'https://app.notical.run',
+    origin: isDevEnv ? 'http://localhost:3140' : 'https://app.notical.run',
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PATCH', 'DELETE'],
     maxAge: 600,
   }),
 );
 
-app.use(csrf({ origin: ['localhost:3000', 'app.notical.run'] }));
+app.use(csrf({ origin: ['localhost:3140', 'app.notical.run'] }));
 
 app.use(timeout(10_000));
 
