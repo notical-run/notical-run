@@ -11,7 +11,7 @@ export const useLayoutContext = () => useContext(LayoutContext)!;
 
 export const LayoutProvider = (props: ParentProps) => {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
-  const isFixedSidebar = useBreakpoint('sm');
+  const isFixedSidebar = useBreakpoint('md');
 
   const isSidebarOpen = () => [sidebarOpen(), isFixedSidebar()].some(Boolean);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen());

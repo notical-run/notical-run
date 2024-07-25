@@ -1,10 +1,8 @@
 * Focus
 ** Bugs
-   - ( ) Redo doesnt work inside code blocks (exports update overwrites/Prevent export updates from being in undo history)
    - ( ) Fix the ui flashing issue right after page load
    - ( ) Prevent update if the data is not ready
 ** Editor
-   - ( ) Prevent code block collapse from being in undo history
    - ( ) Use solid for node view rendering
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup

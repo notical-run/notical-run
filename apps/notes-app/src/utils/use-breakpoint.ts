@@ -1,9 +1,9 @@
 import { createSignal, onCleanup } from 'solid-js';
 
 export const breakpoints = {
-  sm: '(min-width: 700px)',
+  sm: '(min-width: 640px)',
   md: '(min-width: 800px)',
-  lg: '(min-width: 1000px)',
+  lg: '(min-width: 1200px)',
 } as const;
 
 type Breakpoint = keyof typeof breakpoints;

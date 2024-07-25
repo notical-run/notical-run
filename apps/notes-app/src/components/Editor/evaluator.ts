@@ -32,7 +32,8 @@ export const defaultEvalBlock = async (node: Node, pos: number, engine: EvalEngi
 
   engine.withEditor(editor => {
     const tr = editor.state.tr;
-    editor.view.dispatch(tr.setNodeAttribute(pos, 'exports', exports));
+    tr.setNodeAttribute(pos, 'exports', exports);
+    editor.view.dispatch(tr.setMeta('addToHistory', false));
   });
 };
 
@@ -88,7 +89,7 @@ export const evaluateAllNodes = async (
 
           const tr = editor.state.tr;
           setMarkAttributes(node, mark, { result });
-          editor.view.dispatch(tr);
+          editor.view.dispatch(tr.setMeta('addToHistory', false));
         };
 
         previousCode?.cleanup();

@@ -32,7 +32,8 @@ export const CodeBlock = CodeBlockLowlight.extend({
 
       const toggleCollapsed = () => {
         const tr = editor.state.tr;
-        editor.view.dispatch(tr.setNodeAttribute(getPos(), 'collapsed', !collapsed));
+        tr.setNodeAttribute(getPos(), 'collapsed', !collapsed);
+        editor.view.dispatch(tr.setMeta('addToHistory', false));
       };
 
       const code = html`<code></code>`;
