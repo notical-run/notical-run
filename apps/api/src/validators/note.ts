@@ -1,9 +1,27 @@
 import { eq } from 'drizzle-orm';
 import { validator } from 'hono/validator';
 import { db } from '../db';
-import { Note, Workspace } from '../db/schema';
+import { Note, NoteSelectType, Workspace, WorkspaceSelectType } from '../db/schema';
 
-type Actions = 'read' | 'update' | 'archive';
+type Actions = 'view' | 'update' | 'archive';
+
+export const notePermissions = {
+  view: (
+    workspace: Pick<WorkspaceSelectType, 'authorId'>,
+    note: Pick<NoteSelectType, 'access'>,
+    userId?: string,
+  ) => note.access !== 'private' || workspace.authorId === userId,
+  update: (
+    workspace: Pick<WorkspaceSelectType, 'authorId'>,
+    note: Pick<NoteSelectType, 'archivedAt'>,
+    userId?: string,
+  ) => Boolean(workspace.authorId === userId && !note.archivedAt),
+  archive: (
+    workspace: Pick<WorkspaceSelectType, 'authorId'>,
+    _note: Pick<NoteSelectType, 'archivedAt'>,
+    userId?: string,
+  ) => workspace.authorId === userId,
+} as const satisfies Record<Actions, (...args: any[]) => boolean>;
 
 export const validateNote = (options: { authorizeFor?: Actions } = {}) =>
   validator('param', async (param: { workspaceSlug: string; noteId: string }, c) => {
@@ -26,20 +44,20 @@ export const validateNote = (options: { authorizeFor?: Actions } = {}) =>
 
     const note = workspace?.notes[0];
 
-    if (options.authorizeFor === 'read') {
-      if (workspace?.notes[0].access === 'private' && workspace?.authorId !== user?.id)
+    if (options.authorizeFor === 'view') {
+      if (!notePermissions.view(workspace, note, user?.id))
         return c.json({ error: `You don't have access to view this private note` }, 403);
     }
 
     if (options.authorizeFor === 'update') {
-      if (workspace?.authorId !== user?.id)
+      if (!notePermissions.update(workspace, note, user?.id)) {
+        if (note.archivedAt) return c.json({ error: `Unable to update an archived note` }, 403);
         return c.json({ error: `You don't have access to update this note` }, 403);
-
-      if (note.archivedAt) return c.json({ error: `Unable to update an archived note` }, 403);
+      }
     }
 
     if (options.authorizeFor === 'archive') {
-      if (user && workspace && workspace.authorId !== user?.id)
+      if (!notePermissions.archive(workspace, note, user?.id))
         return c.json({ error: `You don't have access to this workspace` }, 403);
     }
 

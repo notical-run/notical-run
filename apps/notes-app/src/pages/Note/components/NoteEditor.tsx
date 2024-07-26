@@ -4,7 +4,7 @@ import { Editor } from '@/components/Editor';
 import { useWorkspaceContext } from '@/layouts/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { createEffect, Ref } from 'solid-js';
+import { onCleanup, onMount, Ref } from 'solid-js';
 import * as Y from 'yjs';
 
 export type NoteEditorProps = {
@@ -30,15 +30,17 @@ export const NoteEditor = (props: NoteEditorProps) => {
     }
   }, 800);
 
-  createEffect(() => {
+  onMount(() => {
     const content = props.note?.content;
     if (content) {
       Y.applyUpdateV2(yDoc, toUint8Array(content));
     }
 
-    yDoc.on('updateV2', () => {
-      updateNote();
-    });
+    yDoc.on('updateV2', updateNote);
+  });
+
+  onCleanup(() => {
+    yDoc.off('updateV2', updateNote);
   });
 
   const moduleLoader = async (modulePath: string) => {

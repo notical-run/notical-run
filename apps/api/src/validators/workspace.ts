@@ -1,9 +1,20 @@
 import { eq } from 'drizzle-orm';
 import { validator } from 'hono/validator';
 import { db } from '../db';
-import { Workspace } from '../db/schema';
+import { Workspace, WorkspaceSelectType } from '../db/schema';
 
-type Actions = 'read_notes' | 'create_notes';
+type Actions = 'view' | 'view_notes' | 'create_notes';
+
+export const workspacePermissions = {
+  view: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
+    Boolean(userId && workspace.authorId == userId),
+
+  view_notes: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
+    Boolean(userId && workspace.authorId == userId),
+
+  create_notes: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
+    Boolean(userId && workspace.authorId == userId),
+} as const satisfies Record<Actions, (...args: any[]) => boolean>;
 
 export const validateWorkspace = (options: { authorizeFor?: Actions } = {}) =>
   validator('param', async (param: { workspaceSlug: string }, c) => {
@@ -17,17 +28,23 @@ export const validateWorkspace = (options: { authorizeFor?: Actions } = {}) =>
 
     if (!workspace) return c.json({ error: `Workspace not found` }, 404);
 
-    if (options.authorizeFor === 'read_notes') {
-      if (user && workspace && workspace.authorId !== user?.id)
+    if (options.authorizeFor === 'view') {
+      if (!workspacePermissions.view(workspace!, user.id))
+        return c.json({ error: `You don't have access to this workspace` }, 403);
+    }
+
+    if (options.authorizeFor === 'view_notes') {
+      if (!workspacePermissions.view_notes(workspace!, user.id))
         return c.json({ error: `You don't have access to this workspace` }, 403);
     }
 
     if (options.authorizeFor === 'create_notes') {
-      if (user && workspace && workspace.authorId !== user?.id)
+      if (!workspacePermissions.create_notes(workspace!, user.id))
         return c.json({ error: `You don't have access to this workspace` }, 403);
     }
 
     c.set('workspaceId', workspace.id);
+    c.set('workspace', workspace);
 
     return param;
   });

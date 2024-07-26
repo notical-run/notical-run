@@ -11,7 +11,7 @@ import { LoadingView, ErrorView } from '@/components/ViewStates';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
-import { IfAuthenticated } from '@/components/Auth/Session';
+import { Authorize, IfAuthenticated } from '@/components/Auth/Session';
 import { Alert } from '@/components/_base/Alert';
 import { FiArchive } from 'solid-icons/fi';
 
@@ -40,11 +40,11 @@ const WorkspaceNote = () => {
         ]}
       />
       <Page.Body>
-        <IfAuthenticated>
+        <Authorize user="logged_in" workspace="view">
           <Page.Body.SideMenu>
             <NoteSidebar />
           </Page.Body.SideMenu>
-        </IfAuthenticated>
+        </Authorize>
 
         <Page.Body.Main>
           <Switch>
@@ -67,14 +67,12 @@ const WorkspaceNote = () => {
 
                   <div class="flex justify-end items-center gap-2 text-sm text-slate-500">
                     @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
-                    <IfAuthenticated>
-                      <NoteActionsDropdown
-                        workspaceSlug={slug()}
-                        noteId={noteQuery.data!.name!}
-                        editor={editorInstance()}
-                        onArchive={() => navigate(links.workspaceNotes(slug()))}
-                      />
-                    </IfAuthenticated>
+                    <NoteActionsDropdown
+                      workspaceSlug={slug()}
+                      noteId={noteQuery.data!.name!}
+                      editor={editorInstance()}
+                      onArchive={() => navigate(links.workspaceNotes(slug()))}
+                    />
                   </div>
 
                   <Show when={noteQuery.data?.id} keyed>

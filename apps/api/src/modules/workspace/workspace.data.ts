@@ -34,3 +34,17 @@ export const getUserWorkspaces = async (userId: string) => {
 
   return workspaces;
 };
+
+export const getWorkspace = async (workspaceID: string) => {
+  const workspace = await db.query.Workspace.findFirst({
+    where: eq(Workspace.id, workspaceID),
+    columns: {
+      id: true,
+      slug: true,
+      name: true,
+      authorId: true,
+    },
+  });
+
+  return workspace;
+};

@@ -1,17 +1,26 @@
-import {
-  createMutation,
-  createQuery,
-  CreateQueryResult,
-  useQueryClient,
-} from '@tanstack/solid-query';
+import { createMutation, createQuery, useQueryClient } from '@tanstack/solid-query';
 import { apiClient, responseJson } from '../../utils/api-client';
 import { queryKeys } from '../keys';
 import { Accessor } from 'solid-js';
 import { useSessionId } from '@/components/Auth/Session';
+import { QueryResponseType } from '@/utils/solid-helpers';
 
-type ResponseType<T> = T extends CreateQueryResult<infer R> ? R : never;
+export type WorkspaceQueryResult = QueryResponseType<ReturnType<typeof useWorkspace>>;
 
-export type WorkspacesQueryResult = ResponseType<ReturnType<typeof useWorkspaces>>;
+export const useWorkspace = (workspaceSlug: Accessor<string>) => {
+  const [sessionId] = useSessionId();
+
+  return createQuery(() => ({
+    queryKey: queryKeys.workspace(workspaceSlug()),
+    queryFn: async () =>
+      apiClient.api.workspaces[':workspaceSlug']
+        .$get({ param: { workspaceSlug: workspaceSlug() } })
+        .then(responseJson),
+    enabled: !!sessionId(),
+  }));
+};
+
+export type WorkspacesQueryResult = QueryResponseType<ReturnType<typeof useWorkspaces>>;
 
 export const useWorkspaces = () => {
   const [sessionId] = useSessionId();
@@ -23,7 +32,7 @@ export const useWorkspaces = () => {
   }));
 };
 
-export type WorkspaceNotesQueryResult = ResponseType<ReturnType<typeof useWorkspaceNotes>>;
+export type WorkspaceNotesQueryResult = QueryResponseType<ReturnType<typeof useWorkspaceNotes>>;
 
 export const useWorkspaceNotes = (
   workspaceSlug: Accessor<string>,
@@ -49,7 +58,7 @@ export const fetchNote = (workspaceSlug: string, noteId: string) =>
     .$get({ param: { workspaceSlug: workspaceSlug, noteId: noteId } })
     .then(responseJson);
 
-export type NoteQueryResult = ResponseType<ReturnType<typeof useNote>>;
+export type NoteQueryResult = QueryResponseType<ReturnType<typeof useNote>>;
 
 export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
   return createQuery(() => ({

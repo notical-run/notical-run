@@ -1,4 +1,4 @@
-import { IfAuthenticated } from '@/components/Auth/Session';
+import { Authorize, IfAuthenticated } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { cn } from '@/utils/classname';
 import { A } from '@solidjs/router';
@@ -46,7 +46,8 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
       </div>
 
       <div class="flex items-center">
-        <IfAuthenticated
+        <Authorize
+          user="logged_in"
           fallback={
             <A href={links.login()} class="text-xs text-violet-600">
               Login
@@ -56,7 +57,7 @@ const PageHeader = (props: ParentProps<PageHeaderProps>) => {
           <A href={links.logout()} class="text-xs text-violet-600">
             Logout
           </A>
-        </IfAuthenticated>
+        </Authorize>
       </div>
     </div>
   );

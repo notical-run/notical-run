@@ -7,7 +7,7 @@ import Signup from './pages/signup';
 import { PrivateRoute } from './components/Auth/Session';
 import { links } from './components/Navigation';
 import Logout from './pages/logout';
-import { WorkspaceLayout } from '@/layouts/workspace';
+import { WorkspaceProvider } from '@/layouts/workspace';
 import ArchivedWorkspaceNotes from '@/pages/WorkspaceNotes/archived';
 
 export const routes: RouteDefinition[] = [
@@ -36,30 +36,30 @@ export const routes: RouteDefinition[] = [
   {
     path: '/:workspaceSlug',
     component: () => (
-      <WorkspaceLayout>
+      <WorkspaceProvider>
         <PrivateRoute>
           <WorkspaceNotes />
         </PrivateRoute>
-      </WorkspaceLayout>
+      </WorkspaceProvider>
     ),
   },
   {
     path: '/:workspaceSlug/archived',
     component: () => (
-      <WorkspaceLayout>
+      <WorkspaceProvider>
         <PrivateRoute>
           <ArchivedWorkspaceNotes />
         </PrivateRoute>
-      </WorkspaceLayout>
+      </WorkspaceProvider>
     ),
   },
 
   {
     path: '/:workspaceSlug/:noteId',
     component: () => (
-      <WorkspaceLayout>
+      <WorkspaceProvider>
         <WorkspaceNote />
-      </WorkspaceLayout>
+      </WorkspaceProvider>
     ),
     matchFilters: { workspaceSlug: /^@/ },
   },

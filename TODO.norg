@@ -1,23 +1,23 @@
 * Focus
 ** Bugs
    - ( ) Fix the ui flashing issue right after page load
-   - ( ) Prevent update if the data is not ready
 ** Editor
    - ( ) Use solid for node view rendering
 ** Product
    - ( ) Create a sample workspace with tutorial notes by default on signup
-   - ( ) Check if user has access to workspace in note (hide workspace selector, sidebar, etc)
    - ( ) Unarchive
+** Evaluation
+   - ( ) Use readonly tiptap instance for "show" anchored content
 
 * Ready to use
 ** Evaluation
-   - ( ) Use readonly tiptap instance for "show" anchored content
    - ( ) Allow running stuff on click for show decoration
    - ( ) Get content programmatically
    - ( ) Replace content
    - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
    - ( ) Don't show export if not function
+   - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
    - ( ) REMOVE `here` from code blocks? (or fix reactivity)
    - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
@@ -31,15 +31,14 @@
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) github oauth
-   - ( ) Home page
-   - (-) Logo
-   - ( ) Handle 403 for sidebar notes
    - ( ) Pagination
-   - ( ) Examples workspace
-   - ( ) Documentation workspace
-   - ( ) Common library/utilities workspace
-   - ( ) Think about lazy loading components
+   - ( ) Examples workspace @examples/*
+   - ( ) landing page
+   - ( ) Documentation workspace @docs/*
+   - ( ) Common library/utilities workspace @notical/*
+   - ( ) Consider lazy loading components (layout will need to be moved)
    - ( ) Make nav bar responsive for small screens
+   - ( ) Dark theme
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically
@@ -73,7 +72,7 @@
    - ( ) Redirect to referrer path after login/signup
    - ( ) Save last used workspace and load that by default
    - ( ) With error "note already exists", if note is archived mention that it is archived
-   - ( ) Dark theme
+   - ( ) Versioning?
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Alternative way to insert/show content
