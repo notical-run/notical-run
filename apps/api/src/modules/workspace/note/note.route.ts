@@ -112,18 +112,38 @@ export const noteRoute = new Hono<{
     },
   )
 
-  .delete(
-    '/:noteId',
+  .post(
+    '/:noteId/archive',
     privateRoute,
     validateWorkspace(),
     validateNote({ authorizeFor: 'archive' }),
-    async function deleteNote$(c) {
+    async function archiveNote$(c) {
       const noteId = c.get('noteId')!;
 
       const note = await updateNote(noteId, { archivedAt: sql`now()` as unknown as Date });
 
       if (!note)
         return c.json({ error: 'Unable to archive note', error_code: 'cant_archive_note' }, 422);
+
+      return c.json({ success: true }, 200);
+    },
+  )
+
+  .post(
+    '/:noteId/unarchive',
+    privateRoute,
+    validateWorkspace(),
+    validateNote({ authorizeFor: 'archive' }),
+    async function unarchiveNote$(c) {
+      const noteId = c.get('noteId')!;
+
+      const note = await updateNote(noteId, { archivedAt: null });
+
+      if (!note)
+        return c.json(
+          { error: 'Unable to unarchive note', error_code: 'cant_unarchive_note' },
+          422,
+        );
 
       return c.json({ success: true }, 200);
     },

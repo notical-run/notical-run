@@ -116,8 +116,8 @@ export const useArchiveNote = (workspaceSlug: string, noteId: string) => {
 
   return createMutation(() => ({
     mutationFn: async () =>
-      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
-        .$delete({ param })
+      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId'].archive
+        .$post({ param })
         .then(responseJson),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
