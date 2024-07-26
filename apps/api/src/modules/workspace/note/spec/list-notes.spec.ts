@@ -100,7 +100,7 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
+        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });
@@ -118,7 +118,7 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
 
         expect(response.status).toBe(403);
         expect(await response.json()).toMatchObject({
-          error: `You don't have access to this workspace`,
+          error_code: 'cant_access_workspace',
         });
       });
     });
@@ -135,7 +135,7 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Workspace not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'workspace_not_found' });
       });
     });
   });

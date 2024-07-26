@@ -37,6 +37,7 @@ request('POST /workspaces', () => {
         });
 
         expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({ error: { name: 'ZodError' } });
       });
     });
 
@@ -51,6 +52,7 @@ request('POST /workspaces', () => {
         });
 
         expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({ error: { name: 'ZodError' } });
       });
     });
 
@@ -66,6 +68,7 @@ request('POST /workspaces', () => {
         });
 
         expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({ error: { name: 'ZodError' } });
       });
     });
   });
@@ -83,7 +86,7 @@ request('POST /workspaces', () => {
         });
 
         expect(response.status).toBe(422);
-        expect(await response.json()).toMatchObject({ error: 'Workspace already exists' });
+        expect(await response.json()).toMatchObject({ error_code: 'workspace_aleady_exists' });
       });
     });
   });
@@ -99,7 +102,7 @@ request('POST /workspaces', () => {
         });
 
         expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
+        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });

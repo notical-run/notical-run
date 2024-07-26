@@ -21,7 +21,7 @@ export const workspaceRoute = new Hono<{
 }>()
   .route(':workspaceSlug/notes', noteRoute)
 
-  .post('/', privateRoute, zValidator('json', workspaceSchema), async c => {
+  .post('/', privateRoute, zValidator('json', workspaceSchema), async function createWorkspace$(c) {
     const workspaceJson = c.req.valid('json');
     const user = c.get('user')!;
     const workspace = await createWorkspace({
@@ -29,23 +29,32 @@ export const workspaceRoute = new Hono<{
       authorId: user.id,
     });
 
-    if (!workspace) return c.json({ error: 'Workspace already exists' }, 422);
+    if (!workspace)
+      return c.json(
+        { error: 'Workspace already exists', error_code: 'workspace_aleady_exists' },
+        422,
+      );
     return c.json(workspace, 201);
   })
 
-  .get('/', privateRoute, async c => {
+  .get('/', privateRoute, async function listWorkspaces$(c) {
     const currentUser = c.get('user')!;
     const workspaces = await getUserWorkspaces(currentUser.id);
     return c.json(workspaces ?? []);
   })
 
-  .get('/:workspaceSlug', privateRoute, validateWorkspace({ authorizeFor: 'view' }), async c => {
-    const currentUser = c.get('user')!;
-    const workspaceId = c.get('workspaceId')!;
-    const workspace = await getWorkspace(workspaceId);
-    const permissions = {
-      canViewNotes: workspacePermissions.view_notes(workspace!, currentUser.id),
-      canCreateNotes: workspacePermissions.create_notes(workspace!, currentUser.id),
-    };
-    return c.json({ ...workspace!, permissions });
-  });
+  .get(
+    '/:workspaceSlug',
+    privateRoute,
+    validateWorkspace({ authorizeFor: 'view' }),
+    async function getWorkspace$(c) {
+      const currentUser = c.get('user')!;
+      const workspaceId = c.get('workspaceId')!;
+      const workspace = await getWorkspace(workspaceId);
+      const permissions = {
+        canViewNotes: workspacePermissions.view_notes(workspace!, currentUser.id),
+        canCreateNotes: workspacePermissions.create_notes(workspace!, currentUser.id),
+      };
+      return c.json({ ...workspace!, permissions });
+    },
+  );

@@ -86,7 +86,8 @@ export const noteRoute = new Hono<{
         access: noteJson.private ? 'private' : 'public',
       });
 
-      if (!note) return c.json({ error: 'Note already exists' }, 422);
+      if (!note)
+        return c.json({ error: 'Note already exists', error_code: 'note_already_exists' }, 422);
 
       return c.json({ id: note.id, name: note.name }, 201);
     },
@@ -104,7 +105,8 @@ export const noteRoute = new Hono<{
 
       const note = await updateNote(noteId, noteJson);
 
-      if (!note) return c.json({ error: 'Unable to update note' }, 422);
+      if (!note)
+        return c.json({ error: 'Unable to update note', error_code: 'cant_update_note' }, 422);
 
       return c.json({ id: note.id, name: note.name }, 200);
     },
@@ -120,7 +122,8 @@ export const noteRoute = new Hono<{
 
       const note = await updateNote(noteId, { archivedAt: sql`now()` as unknown as Date });
 
-      if (!note) return c.json({ error: 'Unable to archive note' }, 422);
+      if (!note)
+        return c.json({ error: 'Unable to archive note', error_code: 'cant_archive_note' }, 422);
 
       return c.json({ success: true }, 200);
     },

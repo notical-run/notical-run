@@ -40,25 +40,39 @@ export const validateNote = (options: { authorizeFor?: Actions } = {}) =>
       },
     });
 
-    if (!workspace?.notes[0]) return c.json({ error: `Note not found` }, 404);
+    if (!workspace?.notes[0])
+      return c.json({ error: `Note not found`, error_code: 'note_not_found' }, 404);
 
     const note = workspace?.notes[0];
 
     if (options.authorizeFor === 'view') {
       if (!notePermissions.view(workspace, note, user?.id))
-        return c.json({ error: `You don't have access to view this private note` }, 403);
+        return c.json(
+          { error: `You don't have access to view this private note`, error_code: 'private_note' },
+          403,
+        );
     }
 
     if (options.authorizeFor === 'update') {
       if (!notePermissions.update(workspace, note, user?.id)) {
-        if (note.archivedAt) return c.json({ error: `Unable to update an archived note` }, 403);
-        return c.json({ error: `You don't have access to update this note` }, 403);
+        if (note.archivedAt)
+          return c.json(
+            { error: `Unable to update an archived note`, error_code: 'cant_update_archived_note' },
+            403,
+          );
+        return c.json(
+          { error: `You don't have access to update this note`, error_code: 'cant_access_note' },
+          403,
+        );
       }
     }
 
     if (options.authorizeFor === 'archive') {
       if (!notePermissions.archive(workspace, note, user?.id))
-        return c.json({ error: `You don't have access to this workspace` }, 403);
+        return c.json(
+          { error: `You don't have access to this note`, error_code: 'cant_archive_note' },
+          403,
+        );
     }
 
     c.set('noteId', note.id);

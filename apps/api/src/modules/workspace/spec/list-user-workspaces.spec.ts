@@ -50,7 +50,7 @@ request('GET /workspaces', () => {
         const response = await route.request('/api/workspaces', { method: 'GET' });
 
         expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
+        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });

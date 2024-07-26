@@ -59,6 +59,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({ error: { name: 'ZodError' } });
       });
     });
 
@@ -75,6 +76,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(400);
+        expect(await response.json()).toMatchObject({ error: { name: 'ZodError' } });
       });
     });
   });
@@ -93,7 +95,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(422);
-        expect(await response.json()).toMatchObject({ error: 'Note already exists' });
+        expect(await response.json()).toMatchObject({ error_code: 'note_already_exists' });
       });
     });
   });
@@ -106,7 +108,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         const response = await route.request('/api/workspaces/wp-1/notes', { method: 'POST' });
 
         expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
+        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });
@@ -125,7 +127,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
 
         expect(response.status).toBe(403);
         expect(await response.json()).toMatchObject({
-          error: `You don't have access to this workspace`,
+          error_code: 'cant_access_workspace',
         });
       });
     });
@@ -143,7 +145,7 @@ request('POST /workspaces/:workspaceSlug/notes', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Workspace not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'workspace_not_found' });
       });
     });
   });

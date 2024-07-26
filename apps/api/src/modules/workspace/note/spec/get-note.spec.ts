@@ -86,7 +86,7 @@ request('GET /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Note not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'note_not_found' });
       });
     });
 
@@ -103,7 +103,7 @@ request('GET /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Note not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'note_not_found' });
       });
     });
   });
@@ -127,7 +127,7 @@ request('GET /workspaces/:workspaceSlug/notes/:noteId', () => {
 
         expect(response.status).toBe(403);
         expect(await response.json()).toMatchObject({
-          error: `You don't have access to view this private note`,
+          error_code: 'private_note',
         });
       });
     });

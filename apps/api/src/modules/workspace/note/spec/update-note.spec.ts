@@ -43,13 +43,13 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
 
         expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error: 'Unauthenticated request' });
+        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });
 
   response.status('403', () => {
-    context('when user does not have access to workspace', () => {
+    context('when user does not have access to note', () => {
       it('fails with an error message', async () => {
         const user = await createUser({ email: 'author@email.com' });
         const workspace = await createWorkspace({ slug: 'wp-1' });
@@ -63,7 +63,26 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
 
         expect(response.status).toBe(403);
         expect(await response.json()).toMatchObject({
-          error: `You don't have access to this workspace`,
+          error_code: 'cant_access_note',
+        });
+      });
+    });
+
+    context('when the note is archived', () => {
+      it('fails with an error message', async () => {
+        const user = await createUser({ email: 'author@email.com' });
+        const workspace = await createWorkspace({ slug: 'wp-1' });
+        await createNote({ name: 'note-1', workspaceId: workspace.id, archivedAt: new Date() });
+
+        const response = await route.request('/api/workspaces/wp-1/notes/note-1', {
+          method: 'PATCH',
+          body: JSON.stringify({ content: 'hello' }),
+          headers: await headers({ authenticatedUserId: user.id }),
+        });
+
+        expect(response.status).toBe(403);
+        expect(await response.json()).toMatchObject({
+          error_code: 'cant_update_archived_note',
         });
       });
     });
@@ -82,7 +101,7 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Workspace not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'workspace_not_found' });
       });
     });
 
@@ -98,7 +117,7 @@ request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
         });
 
         expect(response.status).toBe(404);
-        expect(await response.json()).toMatchObject({ error: 'Note not found' });
+        expect(await response.json()).toMatchObject({ error_code: 'note_not_found' });
       });
     });
   });
