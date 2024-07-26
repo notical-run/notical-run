@@ -1,10 +1,9 @@
-import { Authorize, IfAuthenticated } from '@/components/Auth/Session';
+import { Authorize } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { cn } from '@/utils/classname';
 import { A } from '@solidjs/router';
-import { createEffect, For, JSX, ParentProps, Show, Suspense } from 'solid-js';
+import { createEffect, For, JSX, ParentProps, Show } from 'solid-js';
 import { AiOutlineArrowLeft, AiOutlineMenu } from 'solid-icons/ai';
-import { LoadingView } from '@/components/ViewStates';
 import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
 import { Tooltip } from '@/components/_base/Tooltip';
 import { Dynamic } from 'solid-js/web';
@@ -68,11 +67,7 @@ const PageBody = (props: ParentProps) => (
 );
 
 const PageMain = (props: ParentProps) => {
-  return (
-    <Suspense fallback={<LoadingView />}>
-      <main class="p-4 flex-1 overflow-y-auto animate-fade-in">{props.children}</main>
-    </Suspense>
-  );
+  return <main class="p-4 flex-1 overflow-y-auto animate-fade-in">{props.children}</main>;
 };
 
 const PageSideMenuLink = (

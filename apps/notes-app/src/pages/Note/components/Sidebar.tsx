@@ -2,7 +2,7 @@ import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { links } from '@/components/Navigation';
 import { Page } from '@/components/Page';
 import { useLayoutContext } from '@/components/Page/layout';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
 import { A } from '@solidjs/router';
 import { AiOutlineLock } from 'solid-icons/ai';

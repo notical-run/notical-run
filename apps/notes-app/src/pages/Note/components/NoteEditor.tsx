@@ -1,7 +1,7 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { fetchNote, useUpdateNote } from '@/api/queries/workspace';
 import { Editor } from '@/components/Editor';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
 import { onCleanup, onMount, Ref } from 'solid-js';

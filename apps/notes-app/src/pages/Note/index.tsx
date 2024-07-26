@@ -3,7 +3,7 @@ import { useNavigate, useParams } from '@solidjs/router';
 import { useNote } from '../../api/queries/workspace';
 import { Page } from '../../components/Page';
 import { createSignal, Match, Show, Switch } from 'solid-js';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { NoteSidebar } from '@/pages/Note/components/Sidebar';
 import { NoteEditor } from '@/pages/Note/components/NoteEditor';

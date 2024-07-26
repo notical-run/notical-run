@@ -1,7 +1,7 @@
 import { List } from '@/components/_base/ListItems';
 import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { A } from '@solidjs/router';
 import { AiOutlineLock } from 'solid-icons/ai';
 import { For, JSX } from 'solid-js';

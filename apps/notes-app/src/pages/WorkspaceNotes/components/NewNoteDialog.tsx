@@ -3,7 +3,7 @@ import { Button } from '@/components/_base/Button';
 import { Dialog, DialogRootProps } from '@/components/_base/Dialog';
 import { TextInput } from '@/components/_base/TextInput';
 import { links } from '@/components/Navigation';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { useNavigate } from '@solidjs/router';
 import toast from 'solid-toast';
 import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';

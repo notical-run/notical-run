@@ -7,7 +7,7 @@ import Signup from './pages/signup';
 import { PrivateRoute } from './components/Auth/Session';
 import { links } from './components/Navigation';
 import Logout from './pages/logout';
-import { WorkspaceProvider } from '@/layouts/workspace';
+import { WorkspaceProvider } from '@/context/workspace';
 import ArchivedWorkspaceNotes from '@/pages/WorkspaceNotes/archived';
 
 export const routes: RouteDefinition[] = [

@@ -8,6 +8,7 @@ const NO_RETRY_STATUS = [401, 403, 404];
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      suspense: false,
       retry: (failureCount, error) =>
         !NO_RETRY_STATUS.includes((error as any).status) && failureCount < 3,
     },

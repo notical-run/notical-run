@@ -3,7 +3,7 @@ import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
 import { Button } from '@/components/_base/Button';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { FaSolidPlus } from 'solid-icons/fa';
 import { toApiErrorMessage } from '@/utils/api-client';

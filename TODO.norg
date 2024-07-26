@@ -1,37 +1,34 @@
 * Focus
 ** Bugs
-   - ( ) Fix the ui flashing issue right after page load
+   - ( ) REMOVE `here` from code blocks? (or fix reactivity)
+   - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
 ** Editor
    - ( ) Use solid for node view rendering
+   - ( ) Link to another note
 ** Product
+   - ( ) Initial/Default static markdown content in notes
    - ( ) Create a sample workspace with tutorial notes by default on signup
-   - ( ) Unarchive
+   - ( ) Public workspaces (can list public notes in the workspace)
+   - ( ) Pagination
 ** Evaluation
    - ( ) Use readonly tiptap instance for "show" anchored content
+   - ( ) Get content programmatically
+   - ( ) Replace content
 
 * Ready to use
 ** Evaluation
-   - ( ) Allow running stuff on click for show decoration
-   - ( ) Get content programmatically
-   - ( ) Replace content
    - ( ) Update codeblock on signal? (or use default as effectful)
+   - ( ) Allow running stuff on click for show decoration
    - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
    - ( ) Don't show export if not function
    - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
-   - ( ) REMOVE `here` from code blocks? (or fix reactivity)
-   - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
-   - ( ) Up key not working from inside code blocks
 ** Editor
-   - ( ) Link to another note
    - ( ) Slash commands?
    - ( ) Update entire link instead of just the selected text?
-   - ( ) No curor on todo when text is empty
 ** Product
-   - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) github oauth
-   - ( ) Pagination
    - ( ) Examples workspace @examples/*
    - ( ) landing page
    - ( ) Documentation workspace @docs/*
@@ -39,20 +36,22 @@
    - ( ) Consider lazy loading components (layout will need to be moved)
    - ( ) Make nav bar responsive for small screens
    - ( ) Dark theme
+   - ( ) User info on topbar
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically
    - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
 ** Infra
-   - ( ) Setup CI
    - ( ) Infra setup for api (digitalocean? | aws?)
    - ( ) Postgres DB setup (neon? | digitalocean? | aws?)
+   - ( ) Setup CI
 
 * Later
 ** Bugs
+   - ( ) Up key not working from inside code blocks
    - ( ) Occasional memory leak?
-   - ( ) Issue with `here` being used inside code blocks
    - ( ) Detect cyclic dependencies of signals
+   - ( ) No curor on todo when text is empty
 ** Evaluation
    - ( ) Pause evaluation update loop (for debugging)
    - ( ) Button next to import stmnt to open imported note

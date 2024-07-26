@@ -16,7 +16,7 @@ export const useWorkspace = (workspaceSlug: Accessor<string>) => {
       apiClient.api.workspaces[':workspaceSlug']
         .$get({ param: { workspaceSlug: workspaceSlug() } })
         .then(responseJson),
-    enabled: !!sessionId(),
+    enabled: Boolean(sessionId()),
   }));
 };
 
@@ -28,7 +28,7 @@ export const useWorkspaces = () => {
   return createQuery(() => ({
     queryKey: queryKeys.workspaces(),
     queryFn: async () => apiClient.api.workspaces.$get().then(responseJson),
-    enabled: !!sessionId(),
+    enabled: Boolean(sessionId()),
   }));
 };
 
@@ -49,7 +49,7 @@ export const useWorkspaceNotes = (
           query: { archived: `${params?.archived ?? false}` },
         })
         .then(responseJson),
-    enabled: !!sessionId() && !!workspaceSlug(),
+    enabled: Boolean(sessionId() && workspaceSlug()),
   }));
 };
 
@@ -61,10 +61,11 @@ export const fetchNote = (workspaceSlug: string, noteId: string) =>
 export type NoteQueryResult = QueryResponseType<ReturnType<typeof useNote>>;
 
 export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
+  const [sessionId] = useSessionId();
   return createQuery(() => ({
     queryKey: queryKeys.note(workspaceSlug(), noteId()),
     queryFn: async () => fetchNote(workspaceSlug(), noteId()),
-    suspense: true,
+    enabled: Boolean(sessionId() && workspaceSlug() && noteId()),
   }));
 };
 
@@ -82,6 +83,7 @@ export const useCreateNote = (workspaceSlug: Accessor<string>) => {
         queryKey: queryKeys.workspaceNotes(workspaceSlug()),
       });
     },
+    enabled: Boolean(workspaceSlug()),
   }));
 };
 
@@ -106,7 +108,7 @@ export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
         .$patch({ param, json: body })
         .then(responseJson),
-    enabled: !!workspaceSlug && !!noteId,
+    enabled: Boolean(workspaceSlug && noteId),
   }));
 };
 
@@ -123,7 +125,7 @@ export const useArchiveNote = (workspaceSlug: string, noteId: string) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
       queryClient.invalidateQueries({ queryKey: queryKeys.note(workspaceSlug, noteId) });
     },
-    enabled: !!workspaceSlug && !!noteId,
+    enabled: Boolean(workspaceSlug && noteId),
   }));
 };
 
@@ -140,6 +142,6 @@ export const useUnarchiveNote = (workspaceSlug: string, noteId: string) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
       queryClient.invalidateQueries({ queryKey: queryKeys.note(workspaceSlug, noteId) });
     },
-    enabled: !!workspaceSlug && !!noteId,
+    enabled: Boolean(workspaceSlug && noteId),
   }));
 };

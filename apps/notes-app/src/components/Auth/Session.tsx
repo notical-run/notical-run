@@ -4,7 +4,7 @@ import { getSessionId, setSessionId } from '../../utils/api-client';
 import { links } from '../Navigation';
 import { useCurrentUser } from '@/api/queries/user';
 import { and, or } from '@/utils/solid-helpers';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 
 export const useSessionId = () => {
   const [sessionId, setSid] = createSignal(getSessionId());

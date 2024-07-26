@@ -2,7 +2,7 @@ import { createSignal, Match, Switch } from 'solid-js';
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Page } from '@/components/Page';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
-import { useWorkspaceContext } from '@/layouts/workspace';
+import { useWorkspaceContext } from '@/context/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
