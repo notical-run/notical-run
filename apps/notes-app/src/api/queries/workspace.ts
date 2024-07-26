@@ -126,3 +126,20 @@ export const useArchiveNote = (workspaceSlug: string, noteId: string) => {
     enabled: !!workspaceSlug && !!noteId,
   }));
 };
+
+export const useUnarchiveNote = (workspaceSlug: string, noteId: string) => {
+  const queryClient = useQueryClient();
+  const param = { workspaceSlug, noteId };
+
+  return createMutation(() => ({
+    mutationFn: async () =>
+      apiClient.api.workspaces[':workspaceSlug'].notes[':noteId'].unarchive
+        .$post({ param })
+        .then(responseJson),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.note(workspaceSlug, noteId) });
+    },
+    enabled: !!workspaceSlug && !!noteId,
+  }));
+};
