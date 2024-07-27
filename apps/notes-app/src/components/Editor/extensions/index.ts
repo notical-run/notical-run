@@ -61,7 +61,6 @@ export const getExtensions = ({
     InlineCode,
     CodeBlock.configure({
       lowlight: createLowlight({ javascript }),
-      HTMLAttributes: { class: 'hljs' },
       defaultLanguage: 'javascript',
       exitOnTripleEnter: false,
     }),

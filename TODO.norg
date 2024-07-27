@@ -3,7 +3,6 @@
    - ( ) REMOVE `here` from code blocks? (or fix reactivity)
    - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
 ** Editor
-   - ( ) Use solid for node view rendering
    - ( ) Link to another note
 ** Product
    - ( ) Initial/Default static markdown content in notes
