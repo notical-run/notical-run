@@ -2,7 +2,7 @@ import { createEffect, createRoot } from 'solid-js';
 import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
-import { findMarkById } from '@/utils/editor';
+import { findNodeById } from '@/utils/editor';
 
 export const evalExpression = async (
   code: string,
@@ -43,7 +43,7 @@ export const evalExpression = async (
     handleCleanup(dispose);
 
     createEffect(async () => {
-      const nodePosAndSize = engine.withEditor(editor => findMarkById(editor, options.id));
+      const nodePosAndSize = engine.withEditor(editor => findNodeById(editor, options.id));
 
       const hereRef = JSON.stringify({
         pos: nodePosAndSize?.pos ?? options.pos,

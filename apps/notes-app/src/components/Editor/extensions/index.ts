@@ -37,7 +37,7 @@ export const getExtensions = ({
       tightLists: true,
       linkify: true,
       breaks: true,
-      transformPastedText: true,
+      transformPastedText: false,
       transformCopiedText: false,
     }),
     Link.configure({

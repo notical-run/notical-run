@@ -1,27 +1,12 @@
-import type { Mark, Node } from '@tiptap/pm/model';
+import type { Node } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/core';
 import { evalExpression } from '@/utils/eval-expression';
 import { evalModule } from '@/utils/eval-module';
 import { Result } from '@/utils/result';
 import { EvalEngine } from '@/engine/types';
-import { setMarkAttributes } from '@/utils/editor';
+import { findNodeById } from '@/utils/editor';
 
 const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
-
-const findMarkById = (editor: Editor, id: string): Mark | null => {
-  let foundNode = null;
-  editor.state.doc.content.descendants(node => {
-    if (node.isText) {
-      const mark = node.marks.find(m => m.attrs?.nodeId === id);
-      if (mark) {
-        foundNode = mark;
-        return false;
-      }
-    }
-  });
-
-  return foundNode;
-};
 
 export const defaultEvalBlock = async (node: Node, pos: number, engine: EvalEngine) => {
   const exports = await evalModule(node.textContent || 'null', engine, {
@@ -77,35 +62,31 @@ export const evaluateAllNodes = async (
       }
 
       // Inline code
-      if (node.isText) {
-        const nodeMark = node.marks.find(m => m.type.name === 'code');
-        if (!nodeMark) return;
-        const previousCode = engine.nodeCache.get(nodeMark.attrs.nodeId);
-        if (previousCode?.code === node.textContent) return;
+      if (node.type.name === 'code') {
+        const previousCode = engine.nodeCache.get(node.attrs.nodeId);
+        const code = node.textContent?.replace(/(^`)|(`$)/g, '') ?? '';
+        if (previousCode?.code === code) return;
 
         const onResult = (result: Result<Error, any>) => {
-          const mark = findMarkById(editor, nodeMark.attrs.nodeId);
-          if (!mark) return;
+          const foundNode = findNodeById(editor, node.attrs.nodeId);
+          if (!foundNode) return;
 
           const tr = editor.state.tr;
-          setMarkAttributes(node, mark, { result });
+          tr.setNodeAttribute(foundNode.pos, 'result', result);
           editor.view.dispatch(tr.setMeta('addToHistory', false));
         };
 
         previousCode?.cleanup();
 
-        await evalExpression(node.text || 'null', {
+        await evalExpression(code || 'null', {
           onResult,
           handleCleanup: cleanup => {
-            engine.nodeCache.set(nodeMark.attrs.nodeId, {
-              code: node.textContent,
-              cleanup,
-            });
+            engine.nodeCache.set(node.attrs.nodeId, { code, cleanup });
           },
           engine,
           options: {
             pos,
-            id: nodeMark.attrs.nodeId,
+            id: node.attrs.nodeId,
             nodeSize: node.nodeSize,
           },
         });

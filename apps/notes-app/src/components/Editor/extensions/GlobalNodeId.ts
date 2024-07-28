@@ -2,8 +2,8 @@ import { setMarkAttributes } from '@/utils/editor';
 import { Node } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
 
-const nodeTypes = new Set(['codeBlock']);
-const markTypes = new Set(['code', 'inlineCode']);
+const nodeTypes = new Set<string>(['codeBlock', 'code']);
+const markTypes = new Set<string>([]);
 
 export const GlobalNodeId = Node.create({
   name: 'globalNodeId',

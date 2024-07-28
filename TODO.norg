@@ -2,6 +2,8 @@
 ** Bugs
    - ( ) REMOVE `here` from code blocks? (or fix reactivity)
    - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
+   - ( ) Errors on page load are incorrect
+   - ( ) Deleting code block when empty should delete code block
 ** Editor
    - ( ) Link to another note
 ** Product
@@ -26,6 +28,8 @@
 ** Editor
    - ( ) Slash commands?
    - ( ) Update entire link instead of just the selected text?
+   - ( ) Ctrl+A inside code block should just select the code inside
+   - ( ) Ctrl+S should do nothing
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*

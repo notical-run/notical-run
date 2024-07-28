@@ -1,6 +1,18 @@
 import { Editor } from '@tiptap/core';
 import { Mark, Node } from '@tiptap/pm/model';
 
+export const findNodeById = (editor: Editor, id: string): { node: Node; pos: number } | null => {
+  let foundNodePos = null;
+  editor.state.doc.content.descendants((node, pos) => {
+    if (node.attrs?.nodeId === id) {
+      foundNodePos = { pos, node };
+      return false;
+    }
+  });
+
+  return foundNodePos;
+};
+
 export const findMarkById = (
   editor: Editor,
   id: string,

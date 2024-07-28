@@ -1,6 +1,6 @@
 import { getQuickJSRuntime } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
-import { findMarkById, setMarkAttributes } from '@/utils/editor';
+import { findNodeById } from '@/utils/editor';
 import { Scope } from 'quickjs-emscripten-core';
 import { createSignal } from 'solid-js';
 
@@ -121,19 +121,20 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
       });
 
     quickVM
-      .newFunction('_show', (hookH, textH) => {
+      .newFunction('_show', (hookH, _textH) => {
         const hook = hookH?.consume(quickVM!.dump);
-        const text = textH?.consume(quickVM!.dump);
+        // const text = textH?.consume(quickVM!.dump);
 
         if (!hook || typeof hook.pos !== 'number')
           throw new Error('Invalid target given to show.below');
 
         options.withEditor(editor => {
-          const nodePosAndSize = findMarkById(editor, hook.id);
+          const nodePosAndSize = findNodeById(editor, hook.id);
           if (!nodePosAndSize) return;
-          const tr = editor.state.tr;
-          setMarkAttributes(nodePosAndSize.node, nodePosAndSize.mark, { anchoredContent: text });
-          editor.view.dispatch(tr);
+          console.log('TODO: Anchor show');
+          // const tr = editor.state.tr;
+          // tr.setNodeAttribute(nodePosAndSize.pos, 'anchoredContent', text);
+          // editor.view.dispatch(tr);
         });
       })
       .consume(showMarkdownBelowHandle => {
