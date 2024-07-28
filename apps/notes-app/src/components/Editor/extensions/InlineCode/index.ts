@@ -44,13 +44,10 @@ export const InlineCode = Node.create({
       {
         find: /`([^`]+)`$/g,
         handler: ({ state, range, match }) => {
-          if (!match[0]) return;
-          const resolvedPos = state.doc.resolve(range.from);
-          if (resolvedPos.node().type === this.type) return;
-          const start = range.from;
-          const end = range.to;
-          const newNode = this.type.create(null, state.schema.text(match[0]));
-          state.tr.replaceWith(start, end, newNode);
+          if (!match[1]) return;
+          if (state.doc.resolve(range.from).node().type === this.type) return;
+          const newNode = this.type.create(null, state.schema.text(`\`${match[1]}\``));
+          state.tr.replaceWith(range.from, range.to, newNode);
         },
       },
     ];
@@ -97,6 +94,20 @@ export const InlineCode = Node.create({
 
         return false;
       },
+    };
+  },
+
+  addCommands() {
+    return {
+      toggleCode:
+        () =>
+        ({ tr, state }) => {
+          const { from, to } = state.selection;
+          const text = state.doc.textBetween(from, to);
+          const newNode = this.type.create(null, state.schema.text(`\`${text}\``));
+          tr.replaceWith(from, to, newNode);
+          return false;
+        },
     };
   },
 });

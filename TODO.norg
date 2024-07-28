@@ -30,6 +30,7 @@
    - ( ) Update entire link instead of just the selected text?
    - ( ) Ctrl+A inside code block should just select the code inside
    - ( ) Ctrl+S should do nothing
+   - ( ) Fix pasting markdown into the editor
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
