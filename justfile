@@ -31,6 +31,9 @@ db-drop *args: (exec "bun" "db:drop" args)
 db-reset *args: (exec "bun" "db:reset" args)
 db-seed: (exec "bun" "run" "./seeds/dev.ts")
 
+logs:
+  docker compose logs
+
 db-sql:
   psql 'postgres://postgres:postgres@localhost:5880/notical-run'
 

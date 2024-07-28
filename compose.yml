@@ -11,10 +11,10 @@ services:
       PORT: 3142
     env_file:
       ./apps/api/.env.development
+    volumes:
+      - .:/app:delegated
     depends_on:
       - postgres
-    volumes:
-      - .:/app
 
   api-build:
     profiles: [production]

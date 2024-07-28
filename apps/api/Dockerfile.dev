@@ -1,10 +1,10 @@
-FROM oven/bun:1.1
+FROM oven/bun:1.1.21
 
-RUN apt-get update && apt-get install -y git curl
+RUN apt update && apt install -y git curl
 
 WORKDIR /app
 
-COPY package.json bun.lockb ./
+COPY package.json **/package.json bun.lockb ./
 
 RUN bun install
 

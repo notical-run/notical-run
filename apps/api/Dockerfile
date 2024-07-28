@@ -1,12 +1,12 @@
-FROM oven/bun:1.1
+FROM oven/bun:1.1.21
 
-RUN apt-get update && apt-get install -y git curl
+RUN apt update && apt install -y git curl
 
 WORKDIR /app
 
 COPY . .
 
-RUN bun install
+RUN bun install --frozen-lockfile
 
 RUN bun api compile
 

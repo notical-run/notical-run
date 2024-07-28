@@ -1,9 +1,9 @@
 * Focus
 ** Bugs
-   - ( ) REMOVE `here` from code blocks? (or fix reactivity)
-   - ( ) Issue with inline buttons needing 2 clicks sometimes (accidental selection)
+   - ( ) Fix infinite update loop for update listener for hooks
    - ( ) Errors on page load are incorrect
    - ( ) Deleting code block when empty should delete code block
+   - ( ) REMOVE `here` from code blocks? (or fix reactivity)
 ** Editor
    - ( ) Link to another note
    - ( ) Fix pasting markdown into the editor
@@ -14,8 +14,7 @@
    - ( ) Pagination
 ** Evaluation
    - ( ) Get content programmatically
-   - ( ) Fix infinite update loop for update listener for hooks
-   - ( ) Replace content
+   - ( ) Delete content programatically
 
 * Ready to use
 ** Evaluation
@@ -26,6 +25,7 @@
    - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
+   - ( ) Issue with inline/exports buttons accidentally selecting code
 ** Editor
    - ( ) Slash commands?
    - ( ) Update entire link instead of just the selected text?
@@ -44,7 +44,8 @@
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically
-   - ( ) feat: fetch. Allow fetching data. (Ask for permission per host)
+   - ( ) Proxy server for fetch
+   - ( ) feat: fetch (+ request/response polyfill). Allow fetching data. (Ask for permission per host)
 ** Infra
    - ( ) Infra setup for api (digitalocean? | aws?)
    - ( ) Postgres DB setup (neon? | digitalocean? | aws?)
