@@ -6,14 +6,15 @@
    - ( ) Deleting code block when empty should delete code block
 ** Editor
    - ( ) Link to another note
+   - ( ) Fix pasting markdown into the editor
 ** Product
    - ( ) Initial/Default static markdown content in notes
    - ( ) Create a sample workspace with tutorial notes by default on signup
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) Pagination
 ** Evaluation
-   - ( ) Use readonly tiptap instance for "show" anchored content
    - ( ) Get content programmatically
+   - ( ) Fix infinite update loop for update listener for hooks
    - ( ) Replace content
 
 * Ready to use
@@ -30,7 +31,6 @@
    - ( ) Update entire link instead of just the selected text?
    - ( ) Ctrl+A inside code block should just select the code inside
    - ( ) Ctrl+S should do nothing
-   - ( ) Fix pasting markdown into the editor
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*

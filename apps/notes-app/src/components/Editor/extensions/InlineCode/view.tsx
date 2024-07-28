@@ -2,8 +2,9 @@ import { createSolidNodeView } from '@/components/Editor/node-view-renderer';
 import { cn } from '@/utils/classname';
 import { Result } from '@/utils/result';
 import { Editor } from '@tiptap/core';
-import { createEffect, createMemo, Match, Show, Switch } from 'solid-js';
+import { createEffect, createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 import { FaSolidCirclePlay } from 'solid-icons/fa';
+import { getExtensions } from '@/components/Editor/extensions';
 
 export type InlineCodeAttrs = {
   result?: null | Result<Error, any>;
@@ -39,27 +40,28 @@ export const AnchoredContent = (props: {
   content: InlineCodeAttrs['anchoredContent'];
 }) => {
   let editorEl: HTMLDivElement | undefined;
+  let editor: Editor | undefined;
+
+  onMount(() => {
+    editor = new Editor({
+      element: editorEl,
+      extensions: getExtensions({ disableTrailingNode: true }),
+      content: props.content,
+    });
+  });
+
+  onCleanup(() => editor?.destroy());
 
   createEffect(() => {
-    if (!props.content || !editorEl) return;
-    if (!props.content?.trim()) return null;
-    if (!props.editor.extensionStorage.markdown?.parser) {
-      throw new Error('Markdown parser not found');
-    }
-
-    // TODO: Use readonly tiptap instance instead?
-    const contentHTML: string =
-      props.editor.extensionStorage.markdown.parser.parse(props.content) ?? '';
-    if (!contentHTML.trim()) return null;
-
-    editorEl.innerHTML = contentHTML!;
+    if (!editorEl) return;
+    props.content && editor?.commands.setContent(props.content);
   });
 
   return (
     <div
       contenteditable={false}
       ref={el => (editorEl = el)}
-      class="border border-slate-300 px-2 py-1"
+      class="border border-slate-200 rounded px-3 pt-3 pb-2"
     />
   );
 };

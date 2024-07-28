@@ -18,9 +18,11 @@ import BubbleMenu from '@tiptap/extension-bubble-menu';
 export const getExtensions = ({
   document: yDoc,
   inlineMenuElement,
+  disableTrailingNode,
 }: {
-  document: Y.Doc;
+  document?: Y.Doc;
   inlineMenuElement?: HTMLElement;
+  disableTrailingNode?: boolean;
 }) =>
   [
     StarterKit.configure({ codeBlock: false, code: false, history: false }),
@@ -46,7 +48,7 @@ export const getExtensions = ({
       linkOnPaste: true,
       HTMLAttributes: { class: 'text-violet-900 underline' },
     }),
-    TrailingNode,
+    disableTrailingNode || TrailingNode,
     inlineMenuElement &&
       BubbleMenu.configure({
         element: inlineMenuElement,
@@ -77,5 +79,5 @@ export const getExtensions = ({
       },
     }),
 
-    Collaboration.configure({ document: yDoc }),
+    yDoc && Collaboration.configure({ document: yDoc }),
   ].filter(Boolean) as Extension[];
