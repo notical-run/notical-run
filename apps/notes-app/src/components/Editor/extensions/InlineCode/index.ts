@@ -15,6 +15,7 @@ export const InlineCode = Node.create({
   addAttributes() {
     return {
       result: { default: null, rendered: false, keepOnSplit: false },
+      anchoredContent: { default: null, rendered: false, keepOnSplit: false },
     };
   },
 

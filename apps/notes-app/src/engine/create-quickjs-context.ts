@@ -78,7 +78,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
     };
 
     quickVM
-      .newFunction('_internalSetState', (keyH, valH) => {
+      .newFunction('_internalsSetState', (keyH, valH) => {
         return Scope.withScope(scope => {
           if (!quickVM) return;
           const key = quickVM.dump(scope.manage(keyH));
@@ -121,9 +121,9 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
       });
 
     quickVM
-      .newFunction('_show', (hookH, _textH) => {
+      .newFunction('_show', (hookH, textH) => {
         const hook = hookH?.consume(quickVM!.dump);
-        // const text = textH?.consume(quickVM!.dump);
+        const text = textH?.consume(quickVM!.dump);
 
         if (!hook || typeof hook.pos !== 'number')
           throw new Error('Invalid target given to show.below');
@@ -131,10 +131,9 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
         options.withEditor(editor => {
           const nodePosAndSize = findNodeById(editor, hook.id);
           if (!nodePosAndSize) return;
-          console.log('TODO: Anchor show');
-          // const tr = editor.state.tr;
-          // tr.setNodeAttribute(nodePosAndSize.pos, 'anchoredContent', text);
-          // editor.view.dispatch(tr);
+          const tr = editor.state.tr;
+          tr.setNodeAttribute(nodePosAndSize.pos, 'anchoredContent', text);
+          editor.view.dispatch(tr.setMeta('addToHistory', false));
         });
       })
       .consume(showMarkdownBelowHandle => {

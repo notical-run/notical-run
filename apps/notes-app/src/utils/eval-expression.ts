@@ -54,7 +54,7 @@ export const evalExpression = async (
       const evalResult = await quickVM.evalCodeAsync(
         `{
 const here = () => {
-  _internals.listenToUpdate();
+  // _internals.listenToUpdate();
   return ${hereRef};
 };
 
