@@ -6,9 +6,9 @@ services:
       dockerfile: ./apps/api/Dockerfile.dev
     command: bun api dev
     ports:
-      - 3141:3141
+      - 3142:3142
     environment:
-      PORT: 3141
+      PORT: 3142
     env_file:
       ./apps/api/.env.development
     depends_on:
@@ -23,9 +23,9 @@ services:
       dockerfile: ./apps/api/Dockerfile
     command: bun api dev
     ports:
-      - 3141:3141
+      - 3142:3142
     environment:
-      PORT: 3141
+      PORT: 3142
     env_file:
       ./apps/api/.env.production
     depends_on:
@@ -73,9 +73,9 @@ services:
     working_dir: /app
     command: sh -c 'bun i && bun app dev'
     environment:
-      VITE_API_BASE_URL: ${API_BASE_URL:-http://api:3141}
+      VITE_API_BASE_URL: ${API_BASE_URL:-http://api:3142}
     ports:
-      - 3000:3000
+      - 3141:3141
     volumes:
       - .:/app
 
@@ -83,7 +83,7 @@ services:
     profiles: [e2e]
     image: mcr.microsoft.com/playwright:v1.45.1-jammy
     environment:
-      APP_BASE_URL: http://client-e2e:3000
+      APP_BASE_URL: http://client-e2e:3141
     working_dir: /app
     command: sh -c 'cd /app/e2e && npx playwright test'
     volumes:
