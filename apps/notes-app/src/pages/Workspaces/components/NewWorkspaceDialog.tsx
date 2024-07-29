@@ -77,6 +77,7 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
                   {...props}
                   error={store.error}
                   value={store.value || ''}
+                  aria-label="Workspace name"
                   label="Workspace name:"
                   placeholder="Personal notes workspace"
                 />
@@ -90,6 +91,7 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
                   error={store.error}
                   value={store.value || ''}
                   name="slug"
+                  aria-label="Workspace ID"
                   label={
                     <div class="flex items-center gap-2">
                       Workspace ID:

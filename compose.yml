@@ -63,9 +63,9 @@ services:
       dockerfile: ./apps/api/Dockerfile.dev
     command: bun api dev
     ports:
-      - 3143:3143
+      - 3242:3242
     environment:
-      PORT: 3143
+      PORT: 3242
     env_file:
       ./apps/api/.env.test
     volumes:
@@ -88,11 +88,11 @@ services:
     profiles: [e2e]
     image: oven/bun:1.1
     working_dir: /app
-    command: sh -c 'bun i && bun app dev'
+    command: sh -c 'bun i && bun app dev --port 3241'
     environment:
-      VITE_API_BASE_URL: ${API_BASE_URL:-http://api-e2e:3143}
+      VITE_API_BASE_URL: ${API_BASE_URL:-http://api-e2e:3242}
     ports:
-      - 3141:3141
+      - 3241:3241
     volumes:
       - .:/app
     depends_on:
@@ -104,7 +104,8 @@ services:
       context: .
       dockerfile: ./e2e/Dockerfile
     environment:
-      APP_BASE_URL: http://client-e2e:3141
+      APP_BASE_URL: http://client-e2e:3241
+      API_BASE_URL: http://api-e2e:3242
     working_dir: /app
     command: bun e2e test
     ports:

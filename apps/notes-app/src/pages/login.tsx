@@ -9,6 +9,7 @@ import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import { Show } from 'solid-js';
 import { toApiErrorMessage } from '@/utils/api-client';
+import { Alert } from '@/components/_base/Alert';
 
 const LoginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -67,15 +68,17 @@ const Login = () => {
           )}
         </Field>
 
-        <Show when={authenticator.error}>
-          <div class="text-xs text-right text-red-700 mt-2">
-            {toApiErrorMessage(authenticator.error)}
-          </div>
-        </Show>
-
         <Button type="submit" class="block w-full mt-2" disabled={authenticator.isPending}>
           Login
         </Button>
+
+        <Show when={authenticator.error}>
+          <div class="pt-4">
+            <Alert variant="danger">
+              {toApiErrorMessage(authenticator.error) ?? 'Something went wrong'}
+            </Alert>
+          </div>
+        </Show>
 
         <A href={links.signup()} class="block text-sm text-slate-600 mt-4 hover:text-slate-900">
           Don't have an account? Signup

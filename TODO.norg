@@ -48,8 +48,10 @@
    - ( ) feat: fetch (+ request/response polyfill). Allow fetching data. (Ask for permission per host)
 ** Infra
    - ( ) Infra setup for api (digitalocean? | aws?)
+   - ( ) Cleanup compose setup
    - ( ) Postgres DB setup (neon? | digitalocean? | aws?)
-   - ( ) Setup CI
+   - ( ) Setup simple CI
+   - ( ) CI + e2e
 
 * Later
 ** Bugs
@@ -71,7 +73,6 @@
    - ( ) Star notes
    - ( ) Template notes
    - ( ) Archive workspace
-   - ( ) e2e tests
    - ( ) Favorite notes
    - ( ) Redirect to referrer path after login/signup
    - ( ) Save last used workspace and load that by default

@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+if (!import.meta.env.API_BASE_URL) throw new Error('API_BASE_URL is not set');
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv

@@ -7,10 +7,16 @@ export const it = test;
 
 export const context = test.describe;
 
-export const page = (message: string, fn: () => void) => {
-  test.beforeEach(async () => {
-    await cleanupData();
-  });
+export const createPageCtx = (descr: (...a: any[]) => any) => (message: string, fn: () => void) => {
+  descr(message, () => {
+    test.beforeEach(async () => {
+      await cleanupData();
+    });
 
-  describe(message, fn);
+    fn();
+  });
 };
+
+export const page = Object.assign(createPageCtx(test.describe), {
+  only: createPageCtx(test.describe.only),
+});

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "test": "bunx --bun playwright test"
+    "test": "bunx --bun playwright test -j 1"
   },
   "dependencies": {
     "@notical/api": "workspace:*"

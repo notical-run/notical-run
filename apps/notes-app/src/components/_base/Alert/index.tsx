@@ -12,6 +12,7 @@ export const Alert = (_props: ParentProps<AlertProps>) => {
   const props = mergeProps({ variant: 'primary' }, _props);
   return (
     <div
+      role="alert"
       class={cn(
         'border px-3 py-1 text-sm rounded flex justify-start items-center gap-2',
         {

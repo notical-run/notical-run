@@ -51,10 +51,10 @@ const Workspaces = () => {
               </Match>
 
               <Match when={workspacesResult.isSuccess}>
-                <List grid class="animate-fade-in">
+                <List grid class="animate-fade-in" aria-label="My workspaces">
                   <For each={workspacesResult.data ?? []}>
                     {workspace => (
-                      <List.Item>
+                      <List.Item aria-label={`Workspace ${workspace.slug}`}>
                         <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
                           <div class="pb-1">
                             <div class="text-xs text-slate-600">{workspace.name}</div>
