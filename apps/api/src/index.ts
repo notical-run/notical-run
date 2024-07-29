@@ -7,6 +7,7 @@ import { csrf } from 'hono/csrf';
 import { timeout } from 'hono/timeout';
 
 const isDevEnv = import.meta.env.NODE_ENV === 'development';
+const isTestEnv = import.meta.env.NODE_ENV === 'test';
 
 const app = new Hono();
 
@@ -16,7 +17,7 @@ if (isDevEnv) {
 
 app.use(
   cors({
-    origin: isDevEnv ? 'http://localhost:3141' : 'https://app.notical.run',
+    origin: isDevEnv || isTestEnv ? '*' : 'https://app.notical.run',
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PATCH', 'DELETE'],
     maxAge: 600,
   }),

@@ -10,7 +10,10 @@ test *args:
   docker compose --profile test up --exit-code-from api-test "$@"
 
 e2e *args:
-  docker compose --profile e2e up --exit-code-from e2e "$@"
+  docker compose --profile e2e up "$@"
+
+e2e-restart *args:
+  docker compose restart e2e
 
 test-w *args:
   API_CMD_ARGS="--watch" just test "$@"

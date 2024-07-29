@@ -2,12 +2,13 @@ import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
+import * as path from 'node:path';
 
 export const runMigration = async () => {
   const queryClient = postgres(import.meta.env.POSTGRES_CONNECTION_STRING!, {
     max: 1,
   });
-  await migrate(drizzle(queryClient), { migrationsFolder: './db' });
+  await migrate(drizzle(queryClient), { migrationsFolder: path.join(__dirname, '../../db') });
   await queryClient.end();
 };
 
