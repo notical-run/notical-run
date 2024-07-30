@@ -101,14 +101,26 @@ export const useCreateWorkspace = () => {
   }));
 };
 
-export const useUpdateNote = (workspaceSlug: string, noteId: string) => {
+export const useUpdateNote = (
+  workspaceSlug: string,
+  noteId: string,
+  { invalidateCache }: { invalidateCache?: boolean } = {},
+) => {
+  const queryClient = useQueryClient();
   const param = { workspaceSlug, noteId };
+
   return createMutation(() => ({
-    mutationFn: async (body: { name?: string; content?: string }) =>
+    mutationFn: async (body: { content?: string; access?: NoteQueryResult['access'] }) =>
       apiClient.api.workspaces[':workspaceSlug'].notes[':noteId']
         .$patch({ param, json: body })
         .then(responseJson),
     enabled: Boolean(workspaceSlug && noteId),
+    onSuccess() {
+      if (invalidateCache) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.note(workspaceSlug, noteId) });
+      }
+    },
   }));
 };
 

@@ -1,6 +1,7 @@
 import { useArchiveNote, useUnarchiveNote } from '@/api/queries/workspace';
 import { Button } from '@/components/_base/Button';
 import { Dialog } from '@/components/_base/Dialog';
+import { useDialogContext } from '@corvu/popover';
 import { FaSolidTriangleExclamation } from 'solid-icons/fa';
 import { ParentProps } from 'solid-js';
 import toast from 'solid-toast';
@@ -15,12 +16,14 @@ export type NoteArchiveConfirmProps = {
 export const NoteArchiveConfirm = (props: ParentProps<NoteArchiveConfirmProps>) => {
   const noteArchiver = useArchiveNote(props.workspaceSlug, props.noteId);
   const noteUnarchiver = useUnarchiveNote(props.workspaceSlug, props.noteId);
+  const dialogCtx = useDialogContext();
 
   const archive = () => {
     if (props.unarchive) {
       noteUnarchiver.mutate(undefined, {
         onSuccess() {
           toast.success(`Note @${props.workspaceSlug}/${props.noteId} has been restored`);
+          dialogCtx.setOpen(false);
           props.onArchive?.();
         },
       });
@@ -28,6 +31,7 @@ export const NoteArchiveConfirm = (props: ParentProps<NoteArchiveConfirmProps>) 
       noteArchiver.mutate(undefined, {
         onSuccess() {
           toast.success(`Note @${props.workspaceSlug}/${props.noteId} has been archived`);
+          dialogCtx.setOpen(false);
           props.onArchive?.();
         },
       });

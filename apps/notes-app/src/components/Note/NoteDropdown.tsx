@@ -9,6 +9,8 @@ import { FaBrandsMarkdown } from 'solid-icons/fa';
 import toast from 'solid-toast';
 import { Authorize } from '@/components/Auth/Session';
 import { useNote } from '@/api/queries/workspace';
+import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
+import { NoteAccessChangeConfirm } from '@/components/Note/NoteAccessChangeConfirm';
 
 type NoteDropdownProps = {
   workspaceSlug: string;
@@ -40,16 +42,43 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
           <Popover.Content.Body>
             <div class="text-sm flex flex-col" role="listbox">
               <Show when={props.editor}>
-                <Dialog.Trigger
-                  as={Popover.Close}
+                <Popover.Close
                   role="listitem"
                   class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
                   onClick={copyAsMarkdown}
                 >
                   <FaBrandsMarkdown />
                   Copy as markdown
-                </Dialog.Trigger>
+                </Popover.Close>
               </Show>
+
+              <Authorize user="logged_in" workspace="view">
+                <Show when={noteQuery.data?.id}>
+                  <NoteAccessChangeConfirm
+                    workspaceSlug={props.workspaceSlug}
+                    noteId={noteQuery.data!.name!}
+                    noteAccess={noteQuery.data!.access === 'private' ? 'public' : 'private'}
+                  >
+                    <Dialog.Trigger
+                      as={Popover.Close}
+                      role="listitem"
+                      class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
+                    >
+                      {noteQuery.data!.access === 'private' ? (
+                        <>
+                          <AiOutlineUnlock class="text-green-600" />
+                          Make the note public
+                        </>
+                      ) : (
+                        <>
+                          <AiOutlineLock class="text-yellow-700" />
+                          Make the note private
+                        </>
+                      )}
+                    </Dialog.Trigger>
+                  </NoteAccessChangeConfirm>
+                </Show>
+              </Authorize>
 
               <Authorize user="logged_in" workspace="view">
                 <Switch>

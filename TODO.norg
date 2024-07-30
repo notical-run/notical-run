@@ -10,7 +10,6 @@
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) Pagination
-   - ( ) Allow switching private -> public -> private
 ** Evaluation
    - ( ) Get content programmatically
    - ( ) Delete content programatically
@@ -79,6 +78,7 @@
    - ( ) Save last used workspace and load that by default
    - ( ) With error "note already exists", if note is archived mention that it is archived
    - ( ) Versioning?
+   - ( ) KEep track of note imports/references
 ** Markdown or not
    - ( ) Decide if this should stay compatible with markdown
    - ( ) Alternative way to insert/show content

@@ -10,6 +10,7 @@ import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
 import { Alert } from '@/components/_base/Alert';
 import { FiArchive } from 'solid-icons/fi';
+import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
@@ -47,6 +48,11 @@ const WorkspaceNote = () => {
             </Show>
 
             <div class="flex justify-end items-center gap-2 text-sm text-slate-500">
+              {noteQuery.data!.access === 'public' ? (
+                <AiOutlineUnlock class="text-green-600" />
+              ) : (
+                <AiOutlineLock class="text-yellow-700" />
+              )}
               @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
               <NoteActionsDropdown
                 workspaceSlug={slug()}

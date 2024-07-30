@@ -48,7 +48,10 @@ export const validateNote = (options: { authorizeFor?: Actions } = {}) =>
     if (options.authorizeFor === 'view') {
       if (!notePermissions.view(workspace, note, user?.id))
         return c.json(
-          { error: `You don't have access to view this private note`, error_code: 'private_note' },
+          {
+            error: `You don't have access to view this private note: @${param.workspaceSlug}/${param.noteId}`,
+            error_code: 'private_note',
+          },
           403,
         );
     }
