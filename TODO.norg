@@ -41,6 +41,7 @@
    - ( ) Dark theme
    - ( ) User info on topbar
    - ( ) Share button (disabled for private notes with hint to make public)
+   - ( ) More e2e tests
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically

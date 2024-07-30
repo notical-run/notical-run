@@ -10,23 +10,69 @@ import { Note } from '../../../../db/schema';
 request('PATCH /workspaces/:workspaceSlug/notes/:noteId', () => {
   response.status('200', () => {
     context('when user has access to workspace', () => {
-      it('updates note contents', async () => {
-        const user = await createUser({ email: 'author@email.com' });
-        const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
-        const note = await createNote({
-          name: 'note-1',
-          content: 'current',
-          workspaceId: workspace.id,
-        });
+      context('with contents', () => {
+        it('updates note contents', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          const note = await createNote({
+            name: 'note-1',
+            content: 'current',
+            workspaceId: workspace.id,
+          });
 
-        await route.request('/api/workspaces/wp-1/notes/note-1', {
-          method: 'PATCH',
-          body: JSON.stringify({ content: 'new content' }),
-          headers: await headers({ authenticatedUserId: user.id }),
-        });
+          await route.request('/api/workspaces/wp-1/notes/note-1', {
+            method: 'PATCH',
+            body: JSON.stringify({ content: 'new content' }),
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
 
-        const updatedNote = await db.query.Note.findFirst({ where: eq(Note.id, note.id) });
-        expect(updatedNote).toMatchObject({ content: 'new content' });
+          const updatedNote = await db.query.Note.findFirst({ where: eq(Note.id, note.id) });
+          expect(updatedNote).toMatchObject({ content: 'new content' });
+        });
+      });
+
+      context('with access: public', () => {
+        it('makes the note public', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          const note = await createNote({
+            name: 'note-1',
+            content: 'current',
+            workspaceId: workspace.id,
+            access: 'private',
+          });
+
+          await route.request('/api/workspaces/wp-1/notes/note-1', {
+            method: 'PATCH',
+            body: JSON.stringify({ access: 'public' }),
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          const updatedNote = await db.query.Note.findFirst({ where: eq(Note.id, note.id) });
+          expect(updatedNote).toMatchObject({ access: 'public' });
+        });
+      });
+
+      context('with access: private', () => {
+        it('makes the note public', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          const note = await createNote({
+            name: 'note-1',
+            content: 'current',
+            workspaceId: workspace.id,
+            access: 'public',
+          });
+
+          await route.request('/api/workspaces/wp-1/notes/note-1', {
+            method: 'PATCH',
+            body: JSON.stringify({ access: 'private' }),
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          const updatedNote = await db.query.Note.findFirst({ where: eq(Note.id, note.id) });
+          expect(updatedNote).toMatchObject({ access: 'private' });
+        });
       });
     });
   });

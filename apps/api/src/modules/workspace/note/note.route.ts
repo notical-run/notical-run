@@ -17,7 +17,10 @@ const noteCreateSchema = z.object({
   private: z.boolean().optional(),
 });
 
-const noteUpdateSchema = z.object({ content: z.string().optional() });
+const noteUpdateSchema = z.object({
+  content: z.string().optional(),
+  access: z.enum(['private', 'public']).optional(),
+});
 
 const noteFiltersSchema = z.object({
   archived: z
