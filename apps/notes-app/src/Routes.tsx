@@ -1,14 +1,19 @@
 import { Navigate, RouteDefinition, Router } from '@solidjs/router';
-import WorkspaceNotes from './pages/WorkspaceNotes';
-import WorkspaceNote from './pages/Note';
-import Workspaces from './pages/Workspaces';
+import { WorkspaceProvider } from '@/context/workspace';
+import { lazy } from 'solid-js';
+import { LayoutWorkspaces } from '@/pages/Workspaces/layout';
+import { LayoutArchivedWorkspaceNotes, LayoutWorkspaceNotes } from '@/pages/WorkspaceNotes/layout';
+import { LayoutWorkspaceNote } from '@/pages/Note/layout';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import { PrivateRoute } from './components/Auth/Session';
 import { links } from './components/Navigation';
 import Logout from './pages/logout';
-import { WorkspaceProvider } from '@/context/workspace';
-import ArchivedWorkspaceNotes from '@/pages/WorkspaceNotes/archived';
+
+const Workspaces = lazy(() => import('./pages/Workspaces'));
+const WorkspaceNotes = lazy(() => import('./pages/WorkspaceNotes'));
+const ArchivedWorkspaceNotes = lazy(() => import('./pages/WorkspaceNotes/archived'));
+const WorkspaceNote = lazy(() => import('./pages/Note'));
 
 export const routes: RouteDefinition[] = [
   {
@@ -28,7 +33,9 @@ export const routes: RouteDefinition[] = [
     path: '/workspaces',
     component: () => (
       <PrivateRoute>
-        <Workspaces />
+        <LayoutWorkspaces>
+          <Workspaces />
+        </LayoutWorkspaces>
       </PrivateRoute>
     ),
   },
@@ -36,21 +43,25 @@ export const routes: RouteDefinition[] = [
   {
     path: '/:workspaceSlug',
     component: () => (
-      <WorkspaceProvider>
-        <PrivateRoute>
-          <WorkspaceNotes />
-        </PrivateRoute>
-      </WorkspaceProvider>
+      <PrivateRoute>
+        <WorkspaceProvider>
+          <LayoutWorkspaceNotes>
+            <WorkspaceNotes />
+          </LayoutWorkspaceNotes>
+        </WorkspaceProvider>
+      </PrivateRoute>
     ),
   },
   {
     path: '/:workspaceSlug/archived',
     component: () => (
-      <WorkspaceProvider>
-        <PrivateRoute>
-          <ArchivedWorkspaceNotes />
-        </PrivateRoute>
-      </WorkspaceProvider>
+      <PrivateRoute>
+        <WorkspaceProvider>
+          <LayoutArchivedWorkspaceNotes>
+            <ArchivedWorkspaceNotes />
+          </LayoutArchivedWorkspaceNotes>
+        </WorkspaceProvider>
+      </PrivateRoute>
     ),
   },
 
@@ -58,7 +69,9 @@ export const routes: RouteDefinition[] = [
     path: '/:workspaceSlug/:noteId',
     component: () => (
       <WorkspaceProvider>
-        <WorkspaceNote />
+        <LayoutWorkspaceNote>
+          <WorkspaceNote />
+        </LayoutWorkspaceNote>
       </WorkspaceProvider>
     ),
     matchFilters: { workspaceSlug: /^@/ },
