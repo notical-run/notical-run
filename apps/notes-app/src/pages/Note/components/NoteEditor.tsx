@@ -67,6 +67,7 @@ export const NoteEditor = (props: NoteEditorProps) => {
       editable={props.note?.permissions.canEdit}
       document={yDoc}
       moduleLoader={moduleLoader}
+      defaultContent={props.note?.content === null ? props.note.defaultMarkdownContent : null}
       ref={props.ref}
     />
   );

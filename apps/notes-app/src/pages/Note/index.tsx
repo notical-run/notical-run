@@ -11,7 +11,7 @@ import { LoadingView, ErrorView } from '@/components/ViewStates';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { links } from '@/components/Navigation';
 import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
-import { Authorize, IfAuthenticated } from '@/components/Auth/Session';
+import { Authorize } from '@/components/Auth/Session';
 import { Alert } from '@/components/_base/Alert';
 import { FiArchive } from 'solid-icons/fi';
 

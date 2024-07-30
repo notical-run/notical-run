@@ -15,6 +15,7 @@ export const getNote = async (noteId: NoteSelectType['id']) => {
       id: true,
       name: true,
       content: true,
+      defaultMarkdownContent: true,
       access: true,
       createdAt: true,
       updatedAt: true,

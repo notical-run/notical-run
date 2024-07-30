@@ -1,17 +1,16 @@
 * Focus
 ** Bugs
    - ( ) Fix infinite update loop for update listener for hooks
-   - ( ) Errors on page load are incorrect
+   - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block
    - ( ) REMOVE `here` from code blocks? (or fix reactivity)
 ** Editor
    - ( ) Link to another note
    - ( ) Fix pasting markdown into the editor
 ** Product
-   - ( ) Initial/Default static markdown content in notes
-   - ( ) Create a sample workspace with tutorial notes by default on signup
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) Pagination
+   - ( ) Allow switching private -> public -> private
 ** Evaluation
    - ( ) Get content programmatically
    - ( ) Delete content programatically
@@ -41,6 +40,7 @@
    - ( ) Make nav bar responsive for small screens
    - ( ) Dark theme
    - ( ) User info on topbar
+   - ( ) Share button (disabled for private notes with hint to make public)
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically

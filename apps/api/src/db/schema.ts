@@ -18,7 +18,8 @@ export const userRelations = relations(User, ({ many }) => ({
   sessions: many(Session),
 }));
 
-export type UserType = typeof User.$inferInsert;
+export type UserInsertType = typeof User.$inferInsert;
+export type UserSelectType = typeof User.$inferSelect;
 
 export const Session = pgTable('session', {
   id: text('id').primaryKey(),
@@ -59,6 +60,7 @@ export const Note = pgTable(
     id: uuid('id').defaultRandom().primaryKey(),
     name: text('name').notNull(),
     content: text('content'),
+    defaultMarkdownContent: text('default_markdown_content'),
     workspaceId: uuid('workspace_id')
       .notNull()
       .references(() => Workspace.id, { onDelete: 'cascade' }),

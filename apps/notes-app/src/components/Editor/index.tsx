@@ -18,6 +18,7 @@ export type EditorProps = {
   document: Y.Doc;
   moduleLoader: (modulePath: string) => Promise<Y.Doc>;
   ref?: Ref<TiptapEditor>;
+  defaultContent?: string | null;
 };
 
 export const Editor = (props: EditorProps) => {
@@ -85,6 +86,10 @@ export const Editor = (props: EditorProps) => {
 
   createEffect(() => {
     if (props.editable !== undefined) editor()?.setEditable(props.editable, false);
+
+    if (props.defaultContent && editor()?.isEmpty) {
+      editor()?.commands.setContent(props.defaultContent);
+    }
   });
 
   onCleanup(() => {

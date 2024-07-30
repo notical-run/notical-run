@@ -1,6 +1,7 @@
 import { Node } from '@tiptap/core';
-import { codeClearDelimiters } from '@/components/Editor/extensions/InlineCode/code-clear-delimtiers';
 import { inlineCodeNodeView } from '@/components/Editor/extensions/InlineCode/view';
+import { MarkdownSerializerState } from 'prosemirror-markdown';
+import { codeClearDelimiters } from '@/components/Editor/extensions/InlineCode/code-clear-delimtiers';
 
 export const InlineCode = Node.create({
   name: 'code',
@@ -22,8 +23,15 @@ export const InlineCode = Node.create({
   addStorage() {
     return {
       markdown: {
-        serialize: (state: any, node: any) => state.write(node.textContent),
-        parse: {},
+        serialize: (state: MarkdownSerializerState, node: any) => state.write(node.textContent),
+        parse: {
+          updateDOM(dom: HTMLElement) {
+            dom.innerHTML = dom.innerHTML.replace(
+              /(?!<pre>)(<code>)((?:(?!<\/code>).)*)(<\/code>)/g,
+              '$1`$2`$3',
+            );
+          },
+        },
       },
     };
   },

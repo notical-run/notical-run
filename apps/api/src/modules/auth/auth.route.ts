@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
-import { hashPassword, lucia, SessionVars, verifyPassword } from '../../auth';
+import { lucia, SessionVars, verifyPassword } from '../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { db } from '../../db';
 import { User } from '../../db/schema';
 import { eq } from 'drizzle-orm';
+import { createNewUser, createSampleWorkspace } from './auth.data';
 
 export const loginSchema = z.object({
   email: z.string().email().max(200),
@@ -34,20 +35,13 @@ export const authRoute = new Hono<{ Variables: SessionVars }>()
   })
   .post('signup', zValidator('json', signupSchema), async c => {
     const userJson = c.req.valid('json');
-    const resultUsers = await db
-      .insert(User)
-      .values({
-        name: userJson.name,
-        email: userJson.email,
-        password: await hashPassword(userJson.password),
-      })
-      .returning({ id: User.id });
 
-    const user = resultUsers[0];
+    const user = await createNewUser(userJson);
     const session = await lucia.createSession(user.id, {});
-
     c.set('session', session);
     c.set('user', user);
+
+    await createSampleWorkspace(user).catch(e => console.error(e));
 
     return c.json({ userId: user.id, sessionId: session.id }, 201);
   })

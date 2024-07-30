@@ -24,6 +24,8 @@ export const codeClearDelimiters = (nodeType: NodeType) =>
 
           tr = tr || newState.tr;
           if (match && (match[1] || match[3])) {
+            // If the code contains the delimiter backticks but contains text in the node outside delimiters,
+            // move the boundaries of the node to only include the delimited text
             const [_, prefixText, code, suffixText] = match;
             if (suffixText) {
               try {
@@ -44,7 +46,8 @@ export const codeClearDelimiters = (nodeType: NodeType) =>
               ].filter(x => !!x),
             );
           } else if (textContent) {
-            // Remove code node
+            // If the code doesn't contain the right delimiters,
+            // remove code node
             tr.replaceWith(pos, pos + node.nodeSize, newState.schema.text(textContent));
           }
 
