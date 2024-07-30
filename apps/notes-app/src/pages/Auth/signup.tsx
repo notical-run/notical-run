@@ -1,10 +1,9 @@
-import { useSessionId } from '../components/Auth/Session';
+import { useSessionId } from '@/components/Auth/Session';
 import { A, useNavigate } from '@solidjs/router';
-import { useSignup } from '../api/queries/auth';
-import { TextInput } from '../components/_base/TextInput';
-import { Button } from '../components/_base/Button';
-import { links } from '../components/Navigation';
-import { Page } from '@/components/Page';
+import { useSignup } from '@/api/queries/auth';
+import { TextInput } from '@/components/_base/TextInput';
+import { Button } from '@/components/_base/Button';
+import { links } from '@/components/Navigation';
 import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import { Show } from 'solid-js';
@@ -40,9 +39,9 @@ const Signup = () => {
   };
 
   return (
-    <Page title="Signup">
-      <Form onSubmit={signupUser} class="block my-1 mx-auto w-full max-w-sm">
-        <h1>Signup</h1>
+    <div>
+      <Form onSubmit={signupUser}>
+        <h1 class="text-xl pb-2">Create a new account</h1>
 
         <Field name="name">
           {(store, props) => (
@@ -94,7 +93,7 @@ const Signup = () => {
           Already have an account? Login
         </A>
       </Form>
-    </Page>
+    </div>
   );
 };
 

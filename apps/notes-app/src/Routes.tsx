@@ -1,28 +1,37 @@
+import { lazy } from 'solid-js';
 import { Navigate, RouteDefinition, Router } from '@solidjs/router';
 import { WorkspaceProvider } from '@/context/workspace';
-import { lazy } from 'solid-js';
+import { PrivateRoute } from '@/components/Auth/Session';
+import { links } from '@/components/Navigation';
 import { LayoutWorkspaces } from '@/pages/Workspaces/layout';
 import { LayoutArchivedWorkspaceNotes, LayoutWorkspaceNotes } from '@/pages/WorkspaceNotes/layout';
 import { LayoutWorkspaceNote } from '@/pages/Note/layout';
-import Login from './pages/login';
-import Signup from './pages/signup';
-import { PrivateRoute } from './components/Auth/Session';
-import { links } from './components/Navigation';
-import Logout from './pages/logout';
+import { LayoutLogin, LayoutSignup } from '@/pages/Auth/layout';
 
 const Workspaces = lazy(() => import('./pages/Workspaces'));
 const WorkspaceNotes = lazy(() => import('./pages/WorkspaceNotes'));
 const ArchivedWorkspaceNotes = lazy(() => import('./pages/WorkspaceNotes/archived'));
 const WorkspaceNote = lazy(() => import('./pages/Note'));
+const Logout = lazy(() => import('./pages/Auth/logout'));
+const Login = lazy(() => import('./pages/Auth/login'));
+const Signup = lazy(() => import('./pages/Auth/signup'));
 
 export const routes: RouteDefinition[] = [
   {
     path: '/login',
-    component: Login,
+    component: () => (
+      <LayoutLogin>
+        <Login />
+      </LayoutLogin>
+    ),
   },
   {
     path: '/signup',
-    component: Signup,
+    component: () => (
+      <LayoutSignup>
+        <Signup />
+      </LayoutSignup>
+    ),
   },
   {
     path: '/logout',
