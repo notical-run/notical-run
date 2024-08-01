@@ -1,4 +1,4 @@
-import { useWorkspaces } from '@/api/queries/workspace';
+import { useUserWorkspaces } from '@/api/queries/workspace';
 import { Button } from '@/components/_base/Button';
 import { Popover } from '@/components/_base/Popover';
 import { links } from '@/components/Navigation';
@@ -12,7 +12,7 @@ import { Authorize } from '@/components/Auth/Session';
 export type WorkspaceSelectorProps = { selected: string };
 
 export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
-  const workspaces = useWorkspaces();
+  const workspaces = useUserWorkspaces();
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
 

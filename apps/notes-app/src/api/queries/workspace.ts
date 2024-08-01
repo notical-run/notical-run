@@ -20,9 +20,9 @@ export const useWorkspace = (workspaceSlug: Accessor<string>) => {
   }));
 };
 
-export type WorkspacesQueryResult = QueryResponseType<ReturnType<typeof useWorkspaces>>;
+export type WorkspacesQueryResult = QueryResponseType<ReturnType<typeof useUserWorkspaces>>;
 
-export const useWorkspaces = () => {
+export const useUserWorkspaces = () => {
   const [sessionId] = useSessionId();
 
   return createQuery(() => ({

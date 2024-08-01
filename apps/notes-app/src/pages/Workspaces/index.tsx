@@ -1,5 +1,5 @@
 import { A } from '@solidjs/router';
-import { useWorkspaces } from '@/api/queries/workspace';
+import { useUserWorkspaces } from '@/api/queries/workspace';
 import { links } from '@/components/Navigation';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
 import { createSignal, For, Match, Switch } from 'solid-js';
@@ -11,7 +11,7 @@ import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { toApiErrorMessage } from '@/utils/api-client';
 
 const Workspaces = () => {
-  const workspacesResult = useWorkspaces();
+  const workspacesResult = useUserWorkspaces();
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
 
