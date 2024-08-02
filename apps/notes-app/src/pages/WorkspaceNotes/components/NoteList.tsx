@@ -24,6 +24,7 @@ export const NoteList = (props: { notes: WorkspaceNotesQueryResult; fallback?: J
                 {note.archivedAt && <FiArchive class="ml-2 text-red-800" />}
               </div>
             </A>
+
             <NoteActionsDropdown workspaceSlug={slug()} noteId={note.name} />
           </List.Item>
         )}

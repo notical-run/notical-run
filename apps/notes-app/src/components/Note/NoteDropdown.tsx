@@ -7,7 +7,7 @@ import { Dialog } from '@/components/_base/Dialog';
 import { Match, Show, Switch } from 'solid-js';
 import { FaBrandsMarkdown } from 'solid-icons/fa';
 import toast from 'solid-toast';
-import { Authorize } from '@/components/Auth/Session';
+import { Authorize, useAuthorizationRules } from '@/components/Auth/Session';
 import { useNote } from '@/api/queries/workspace';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 import { NoteAccessChangeConfirm } from '@/components/Note/NoteAccessChangeConfirm';
@@ -24,6 +24,7 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
     () => props.workspaceSlug,
     () => props.noteId,
   );
+  const authorizationRules = useAuthorizationRules();
 
   const copyAsMarkdown = async () => {
     const markdown = props.editor!.storage.markdown.getMarkdown() ?? '';
@@ -31,12 +32,16 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
     toast.success('Copied markdown to clipboard');
   };
 
+  const canManageWorkspace = authorizationRules.workspace.manage();
+
   return (
     <>
       <Popover placement="bottom-end" offset={0}>
-        <Popover.Trigger class="flex items-center justify-center size-8 mx-0 rounded-full hover:bg-slate-200">
-          <BsThreeDotsVertical />
-        </Popover.Trigger>
+        <Show when={canManageWorkspace || props.editor}>
+          <Popover.Trigger class="flex items-center justify-center size-8 mx-0 rounded-full hover:bg-slate-200">
+            <BsThreeDotsVertical />
+          </Popover.Trigger>
+        </Show>
 
         <Popover.Content>
           <Popover.Content.Body>

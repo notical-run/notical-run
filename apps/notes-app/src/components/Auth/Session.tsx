@@ -3,7 +3,7 @@ import { createSignal, JSX, Match, ParentProps, Show, Switch } from 'solid-js';
 import { getSessionId, setSessionId } from '../../utils/api-client';
 import { links } from '../Navigation';
 import { useCurrentUser } from '@/api/queries/user';
-import { and, or } from '@/utils/solid-helpers';
+import { and } from '@/utils/solid-helpers';
 import { useWorkspaceContext } from '@/context/workspace';
 
 export const useSessionId = () => {
@@ -26,38 +26,41 @@ export const IfAuthenticated = (props: ParentProps<{ fallback?: JSX.Element }>) 
   );
 };
 
+export const useAuthorizationRules = () => {
+  const userQuery = useCurrentUser();
+  const { workspace } = useWorkspaceContext();
+  const [sessionId] = useSessionId();
+
+  return {
+    workspace: {
+      view: () => workspace()?.permissions.canViewNotes,
+      create_notes: () => workspace()?.permissions.canCreateNotes,
+      manage: () => workspace()?.permissions.canManage,
+    },
+    user: {
+      logged_in: () => and(sessionId(), userQuery.data?.id),
+      ready: () => !userQuery.isLoading,
+    },
+  } as const;
+};
+
 export const Authorize = (
   props: ParentProps<{
-    user?: 'logged_in';
-    workspace?: 'view' | 'create_notes' | 'manage';
+    user?: keyof ReturnType<typeof useAuthorizationRules>['user'];
+    workspace?: keyof ReturnType<typeof useAuthorizationRules>['workspace'];
     fallback?: JSX.Element;
   }>,
 ) => {
-  const [sessionId] = useSessionId();
-  const userQuery = useCurrentUser();
-  const { workspace } = useWorkspaceContext();
+  const rules = useAuthorizationRules();
 
-  const isLoggedIn = () => and(props.user ?? false, userQuery.data?.id, userQuery.isSuccess);
-
-  const authorized = () => or(!props.user, isLoggedIn());
+  const isWorkspaceAuthorized = props.workspace && rules.workspace[props.workspace];
+  const userAuth = props.user && rules.user[props.user];
 
   return (
     <Switch>
-      <Match when={and(props.user === 'logged_in', !sessionId())}>{props.fallback}</Match>
-      <Match when={and(props.user === 'logged_in', userQuery.isError)}>{props.fallback}</Match>
-      <Match when={and(props.workspace === 'view', !workspace()?.permissions.canViewNotes)}>
-        {props.fallback}
-      </Match>
-      <Match
-        when={and(props.workspace === 'create_notes', !workspace()?.permissions.canCreateNotes)}
-      >
-        {props.fallback}
-      </Match>
-      <Match when={and(props.workspace === 'manage', !workspace()?.permissions.canManage)}>
-        {props.fallback}
-      </Match>
-
-      <Match when={authorized()}>{props.children}</Match>
+      <Match when={and(props.user, !userAuth?.())}>{props.fallback}</Match>
+      <Match when={and(props.workspace, !isWorkspaceAuthorized?.())}>{props.fallback}</Match>
+      <Match when={true}>{props.children}</Match>
     </Switch>
   );
 };
