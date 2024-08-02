@@ -2,7 +2,7 @@ import { Editor as TiptapEditor } from '@tiptap/core';
 import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
-import { createEffect, createSignal, onCleanup, onMount, Ref } from 'solid-js';
+import { createEffect, createSignal, onCleanup, onMount, Ref, Show } from 'solid-js';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
@@ -12,6 +12,7 @@ import { useDebounced } from '@/utils/use-debounced';
 
 import './editor.css';
 import { InlineStyleBar } from '@/components/Editor/components/InlineStyleBar';
+import { cn } from '@/utils/classname';
 
 export type EditorProps = {
   editable?: boolean;
@@ -85,7 +86,9 @@ export const Editor = (props: EditorProps) => {
   });
 
   createEffect(() => {
-    if (props.editable !== undefined) editor()?.setEditable(props.editable, false);
+    if (props.editable !== undefined) {
+      editor()?.setEditable(props.editable, false);
+    }
 
     if (props.defaultContent && editor()?.isEmpty) {
       editor()?.commands.setContent(props.defaultContent);
@@ -98,7 +101,9 @@ export const Editor = (props: EditorProps) => {
 
   return (
     <div>
-      <InlineStyleBar editor={editor()} ref={el => (inlineMenuElement = el)} />
+      <Show when={props.editable}>
+        <InlineStyleBar editor={editor()} ref={el => (inlineMenuElement = el)} />
+      </Show>
 
       <div ref={el => (element = el)} />
     </div>

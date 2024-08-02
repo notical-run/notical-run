@@ -20,9 +20,16 @@ const Action = (props: JSX.ButtonHTMLAttributes<HTMLButtonElement> & { active?: 
   />
 );
 
-export const InlineStyleBar = (props: { editor?: TiptapEditor; ref?: Ref<HTMLDivElement> }) => {
+export const InlineStyleBar = (props: {
+  class?: string;
+  editor?: TiptapEditor;
+  ref?: Ref<HTMLDivElement>;
+}) => {
   return (
-    <div class="bg-white border border-slate-200 shadow-lg rounded z-10" ref={props.ref}>
+    <div
+      class={cn('bg-white border border-slate-200 shadow-lg rounded z-10', props.class)}
+      ref={props.ref}
+    >
       <Show when={props.editor}>
         <div class="flex justify-start items-stretch">
           <Action onClick={() => props.editor?.chain().focus().toggleBold().run()}>
