@@ -1,6 +1,6 @@
-import { and, count, desc, eq, isNull } from 'drizzle-orm';
+import { and, count, desc, eq, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db';
-import { Note, Workspace, WorkspaceInsertType } from '../../db/schema';
+import { Note, Workspace, WorkspaceInsertType, WorkspaceSelectType } from '../../db/schema';
 
 export const createWorkspace = async (payload: WorkspaceInsertType) => {
   const workspace = await db
@@ -49,4 +49,21 @@ export const getWorkspace = async (workspaceID: string) => {
   });
 
   return workspace;
+};
+
+export const updateWorkspace = async (
+  workspaceId: WorkspaceSelectType['id'],
+  payload: Partial<WorkspaceInsertType>,
+) => {
+  const workspace = await db
+    .update(Workspace)
+    .set({ ...payload, updatedAt: sql`now()` })
+    .where(eq(Workspace.id, workspaceId))
+    .returning({
+      id: Workspace.id,
+      slug: Workspace.slug,
+    })
+    .execute();
+
+  return workspace[0];
 };

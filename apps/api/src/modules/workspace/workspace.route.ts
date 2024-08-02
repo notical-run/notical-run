@@ -3,7 +3,12 @@ import { noteRoute } from './note/note.route';
 import { privateRoute, SessionVars } from '../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { createWorkspace, getUserWorkspaces, getWorkspace } from './workspace.data';
+import {
+  createWorkspace,
+  getUserWorkspaces,
+  getWorkspace,
+  updateWorkspace,
+} from './workspace.data';
 import { WorkspaceSelectType } from '../../db/schema';
 import { workspacePermissions, validateWorkspace } from '../../validators/workspace';
 
@@ -14,6 +19,11 @@ const workspaceSchema = z.object({
     .min(1)
     .max(50)
     .regex(/^[a-z0-9_-]+$/, 'Invalid slug'),
+});
+
+const updateWorkspaceSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  access: z.enum(['private', 'public']).optional(),
 });
 
 export const workspaceRoute = new Hono<{
@@ -56,5 +66,26 @@ export const workspaceRoute = new Hono<{
         canCreateNotes: workspacePermissions.create_notes(workspace!, currentUser.id),
       };
       return c.json({ ...workspace!, permissions });
+    },
+  )
+
+  .patch(
+    '/:workspaceSlug',
+    privateRoute,
+    validateWorkspace({ authorizeFor: 'update' }),
+    zValidator('json', updateWorkspaceSchema),
+    async function createWorkspace$(c) {
+      const workspaceJson = c.req.valid('json');
+      const workspaceId = c.get('workspaceId');
+
+      const workspace = await updateWorkspace(workspaceId!, workspaceJson);
+
+      if (!workspace)
+        return c.json(
+          { error: 'Unable to update workspace', error_code: 'unable_to_update_workspace' },
+          422,
+        );
+
+      return c.json(workspace, 200);
     },
   );

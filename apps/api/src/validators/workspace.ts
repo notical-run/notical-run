@@ -3,7 +3,7 @@ import { validator } from 'hono/validator';
 import { db } from '../db';
 import { Workspace, WorkspaceSelectType } from '../db/schema';
 
-type Actions = 'view' | 'view_notes' | 'create_notes';
+type Actions = 'view' | 'view_notes' | 'create_notes' | 'update';
 
 export const ownsWorkspace = (
   workspace: Pick<WorkspaceSelectType, 'authorId'>,
@@ -24,7 +24,10 @@ export const workspacePermissions = {
   },
 
   create_notes: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
-    Boolean(userId && ownsWorkspace(workspace, userId)),
+    ownsWorkspace(workspace, userId),
+
+  update: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
+    ownsWorkspace(workspace, userId),
 } as const satisfies Record<Actions, (...args: any[]) => boolean>;
 
 export const validateWorkspace = (options: { authorizeFor?: Actions } = {}) =>
@@ -40,28 +43,14 @@ export const validateWorkspace = (options: { authorizeFor?: Actions } = {}) =>
     if (!workspace)
       return c.json({ error: `Workspace not found`, error_code: 'workspace_not_found' }, 404);
 
-    if (options.authorizeFor === 'view') {
-      if (!workspacePermissions.view(workspace!, user?.id))
+    if (options.authorizeFor) {
+      const isAuthorized = workspacePermissions[options.authorizeFor](workspace!, user?.id);
+      if (!isAuthorized) {
         return c.json(
           { error: `You don't have access to this workspace`, error_code: 'cant_access_workspace' },
           403,
         );
-    }
-
-    if (options.authorizeFor === 'view_notes') {
-      if (!workspacePermissions.view_notes(workspace!, user?.id))
-        return c.json(
-          { error: `You don't have access to this workspace`, error_code: 'cant_access_workspace' },
-          403,
-        );
-    }
-
-    if (options.authorizeFor === 'create_notes') {
-      if (!workspacePermissions.create_notes(workspace!, user?.id))
-        return c.json(
-          { error: `You don't have access to this workspace`, error_code: 'cant_access_workspace' },
-          403,
-        );
+      }
     }
 
     c.set('workspaceId', workspace.id);
