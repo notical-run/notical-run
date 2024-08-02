@@ -1,7 +1,7 @@
 import { getQuickJSRuntime } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 import { findNodeById } from '@/utils/editor';
-import { Scope } from 'quickjs-emscripten-core';
+import { QuickJSHandle, Scope } from 'quickjs-emscripten-core';
 import { createSignal } from 'solid-js';
 
 export const createQuickJSContext = async (options: QuickJSContextOptions) => {
@@ -10,6 +10,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   const stateKey = 'state';
   const showKey = 'show';
   const insertKey = 'insert';
+  const nextKey = 'next';
 
   const quickRuntime = await getQuickJSRuntime();
   quickRuntime.setModuleLoader(async (modulePath, ctx) => {
@@ -36,6 +37,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   Object.defineProperty(globalThis, '${debugKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${showKey}', { value: {}, writable: false });
   Object.defineProperty(globalThis, '${insertKey}', { value: {}, writable: false });
+  Object.defineProperty(globalThis, '${nextKey}', { value: {}, writable: false });
 
   const proxyState = new Proxy({ __native__: 'state' }, {
     get(target, key) {
@@ -62,6 +64,8 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
 
   const getInsert = () => quickVM && quickVM.getProp(quickVM.global, insertKey);
 
+  const getNext = () => quickVM && quickVM.getProp(quickVM.global, nextKey);
+
   Scope.withScope(scope => {
     if (!quickVM) return;
 
@@ -69,6 +73,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
     const debug = scope.manage(getDebug()!);
     const show = scope.manage(getShow()!);
     const insert = scope.manage(getInsert()!);
+    const next = scope.manage(getNext()!);
 
     const getSignal = (key: string) => {
       if (!options.stateStore.has(key)) {
@@ -164,6 +169,71 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
       .consume(getBelowHandle => {
         quickVM!.setProp(debug, 'log', getBelowHandle);
       });
+
+    quickVM
+      .newFunction('_nextMarkdown', hookH => {
+        const hook = hookH?.consume(quickVM!.dump);
+
+        if (!hook || typeof hook.pos !== 'number')
+          throw new Error('Invalid target given to getNodes');
+
+        const markdown = options.withEditor(editor => {
+          const nodePosAndSize = findNodeById(editor, hook.id);
+          if (!nodePosAndSize) return;
+
+          const parentNode = editor.state.doc.resolve(nodePosAndSize.pos).parent;
+
+          const nextResPos = editor.state.doc.resolve(nodePosAndSize.pos + parentNode.nodeSize);
+          const nextNode = nextResPos.node(nextResPos.depth);
+          const nodeDoc = editor.schema.topNodeType.create({}, nextNode);
+
+          const mdSerializer = editor.storage.markdown.serializer;
+
+          const md = mdSerializer.serialize(nodeDoc);
+          return quickVM.newString(md);
+        });
+
+        return markdown;
+      })
+      .consume(nextMDHandle => {
+        quickVM!.setProp(next, 'markdown', nextMDHandle);
+      });
+
+    const toQuickJSHandle = (val: any) => {
+      const res = quickVM.evalCode(`(${JSON.stringify(val)})`);
+      return quickVM.unwrapResult(res);
+    };
+
+    const fromQuickJSHandle = (handle: QuickJSHandle) => {
+      if (quickVM.typeof(handle) === 'function') {
+        const fn = handle.dup();
+        handle.dispose();
+        return (...fnArgs: any[]) => {
+          const fnArgsHandles = fnArgs.map(toQuickJSHandle);
+          const res = quickVM.callFunction(fn, quickVM.null, ...fnArgsHandles);
+          return quickVM.unwrapResult(res);
+        };
+      }
+      return quickVM.dump(handle);
+    };
+
+    const expose = (fn: (...args: any[]) => any) =>
+      quickVM.newFunction(fn.name, (...args) => {
+        const argsVal = args.map(fromQuickJSHandle);
+        const val = fn(...argsVal);
+        return toQuickJSHandle(val);
+      });
+
+    quickVM.setProp(quickVM.global, 'setTimeout', expose(setTimeout));
+    quickVM.setProp(quickVM.global, 'setInterval', expose(setInterval));
+    quickVM.setProp(quickVM.global, 'clearInterval', expose(clearInterval));
+    quickVM.setProp(quickVM.global, 'clearTimeout', expose(clearTimeout));
+
+    quickVM.setProp(
+      internals,
+      'formatDateTime',
+      expose((date, ...args: any[]) => Intl.DateTimeFormat(...args).format(new Date(date))),
+    );
   });
 
   return quickVM;

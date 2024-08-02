@@ -61,7 +61,6 @@ export const AnchoredContent = (props: {
   onCleanup(() => editor?.destroy());
 
   createEffect(() => {
-    if (!editorEl) return;
     props.content && editor?.commands.setContent(props.content);
   });
 

@@ -61,11 +61,10 @@ export const fetchNote = (workspaceSlug: string, noteId: string) =>
 export type NoteQueryResult = QueryResponseType<ReturnType<typeof useNote>>;
 
 export const useNote = (workspaceSlug: Accessor<string>, noteId: Accessor<string>) => {
-  const [sessionId] = useSessionId();
   return createQuery(() => ({
     queryKey: queryKeys.note(workspaceSlug(), noteId()),
     queryFn: async () => fetchNote(workspaceSlug(), noteId()),
-    enabled: Boolean(sessionId() && workspaceSlug() && noteId()),
+    enabled: Boolean(workspaceSlug() && noteId()),
   }));
 };
 

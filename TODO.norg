@@ -5,15 +5,14 @@
    - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block
    - ( ) REMOVE here from code blocks? (or fix reactivity)
+** Evaluation
+   - ( ) Delete content programatically
 ** Editor
    - ( ) Slash commands?
    - ( ) Link to another note
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) Pagination
-** Evaluation
-   - ( ) Get content programmatically
-   - ( ) Delete content programatically
 
 * Ready to use
 ** Evaluation
@@ -66,6 +65,7 @@
    - ( ) Allow disabling evaluation for inline blocks
    - ( ) Persistant state
    - ( ) Make "show" content collapsible
+   - ( ) Get content programmatically - nodes json (low-level)
 ** Product
    - ( ) Fork note
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
