@@ -52,13 +52,11 @@ export const routes: RouteDefinition[] = [
   {
     path: '/:workspaceSlug',
     component: () => (
-      <PrivateRoute>
-        <WorkspaceProvider>
-          <LayoutWorkspaceNotes>
-            <WorkspaceNotes />
-          </LayoutWorkspaceNotes>
-        </WorkspaceProvider>
-      </PrivateRoute>
+      <WorkspaceProvider>
+        <LayoutWorkspaceNotes>
+          <WorkspaceNotes />
+        </LayoutWorkspaceNotes>
+      </WorkspaceProvider>
     ),
   },
   {

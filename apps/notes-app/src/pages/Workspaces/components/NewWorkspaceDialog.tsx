@@ -11,6 +11,8 @@ import { toApiErrorMessage } from '@/utils/api-client';
 import { createEffect, Show } from 'solid-js';
 import slugify from 'slugify';
 import { HelpInfo } from '@/components/_base/Tooltip/HelpInfo';
+import { SwitchInput } from '@/components/_base/SwitchInput';
+import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 
 const workspaceSchema = z.object({
   name: z.string().min(1, 'Required'),
@@ -23,6 +25,7 @@ const workspaceSchema = z.object({
       /^[a-z0-9_-]+$/,
       'ID can only contain lowercase alphanumeric characters, hyphens (-) and underscores (_)',
     ),
+  private: z.boolean(),
 });
 
 type WorkspaceSchemaType = z.infer<typeof workspaceSchema>;
@@ -32,7 +35,7 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
 
   const workspaceCreator = useCreateWorkspace();
   const [workspaceForm, { Form, Field }] = createForm<WorkspaceSchemaType>({
-    initialValues: { name: '', slug: '' },
+    initialValues: { name: '', slug: '', private: true },
     validate: zodForm(workspaceSchema),
     validateOn: 'blur',
     revalidateOn: 'input',
@@ -102,6 +105,35 @@ export const NewWorkspaceDialog = (props: DialogRootProps) => {
                     </div>
                   }
                   placeholder="personal-notes-workspace"
+                />
+              )}
+            </Field>
+
+            <Field name="private" type="boolean">
+              {(store, props) => (
+                <SwitchInput
+                  {...props}
+                  error={store.error}
+                  label={
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        {store.value ? (
+                          <AiOutlineLock class="text-yellow-700" />
+                        ) : (
+                          <AiOutlineUnlock class="text-green-600" />
+                        )}
+                        Private workspace
+                      </div>
+                      <HelpInfo>
+                        Private workspace cannot be viewed by any other user.
+                        <strong class="block">
+                          (Public notes inside the workspace can still be accessed by other users)
+                        </strong>
+                      </HelpInfo>
+                    </div>
+                  }
+                  checked={store.value || false}
+                  class="mt-2"
                 />
               )}
             </Field>

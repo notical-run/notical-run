@@ -8,6 +8,8 @@ import { RiArrowsArrowDownSLine } from 'solid-icons/ri';
 import { FaSolidPlus } from 'solid-icons/fa';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
 import { Authorize } from '@/components/Auth/Session';
+import { cn } from '@/utils/classname';
+import { AiOutlineLock } from 'solid-icons/ai';
 
 export type WorkspaceSelectorProps = { selected: string };
 
@@ -20,8 +22,8 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
     <>
       <Popover.Root>
         <div class="flex items-center gap-2">
-          <Authorize user="logged_in" workspace="view" fallback={<>@{props.selected}</>}>
-            <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
+          <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
+          <Authorize user="logged_in" workspace="manage">
             <Popover.Trigger class="flex items-center justify-center size-5 rounded-full hover:bg-slate-300">
               <RiArrowsArrowDownSLine size={14} />
             </Popover.Trigger>
@@ -38,7 +40,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
               <For
                 each={workspaces.data}
                 fallback={
-                  <div class="text-center text-slate-500 text-sm p-2">
+                  <div class="text-center text-slate-400 text-sm p-2">
                     You don't have any workspaces
                   </div>
                 }
@@ -47,15 +49,20 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
                   <Popover.Close
                     as={A}
                     href={links.workspaceNotes(workspace.slug)}
-                    classList={{
-                      'text-slate-900 w-full py-2 px-3': true,
-                      'hover:bg-slate-100': props.selected !== workspace.slug,
-                      '!text-slate-400': props.selected === workspace.slug,
-                      'flex justify-between items-center gap-5': true,
-                    }}
+                    class={cn(
+                      'text-slate-700 w-full py-2 px-3',
+                      'flex items-center justify-between gap-2',
+                      {
+                        'hover:bg-slate-100': props.selected !== workspace.slug,
+                        '!text-slate-400': props.selected === workspace.slug,
+                      },
+                    )}
                     aria-disabled={props.selected === workspace.slug}
                   >
                     <span>@{workspace.slug}</span>
+                    {workspace.access === 'private' && (
+                      <AiOutlineLock size={14} class="text-yellow-700" />
+                    )}
                   </Popover.Close>
                 )}
               </For>

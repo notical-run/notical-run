@@ -12,13 +12,14 @@ import {
 import { WorkspaceSelectType } from '../../db/schema';
 import { workspacePermissions, validateWorkspace } from '../../validators/workspace';
 
-const workspaceSchema = z.object({
+const createWorkspaceSchema = z.object({
   name: z.string().min(1).max(200),
   slug: z
     .string()
     .min(1)
     .max(50)
     .regex(/^[a-z0-9_-]+$/, 'Invalid slug'),
+  access: z.enum(['private', 'public']).optional(),
 });
 
 const updateWorkspaceSchema = z.object({
@@ -31,21 +32,26 @@ export const workspaceRoute = new Hono<{
 }>()
   .route(':workspaceSlug/notes', noteRoute)
 
-  .post('/', privateRoute, zValidator('json', workspaceSchema), async function createWorkspace$(c) {
-    const workspaceJson = c.req.valid('json');
-    const user = c.get('user')!;
-    const workspace = await createWorkspace({
-      ...workspaceJson,
-      authorId: user.id,
-    });
+  .post(
+    '/',
+    privateRoute,
+    zValidator('json', createWorkspaceSchema),
+    async function createWorkspace$(c) {
+      const workspaceJson = c.req.valid('json');
+      const user = c.get('user')!;
+      const workspace = await createWorkspace({
+        ...workspaceJson,
+        authorId: user.id,
+      });
 
-    if (!workspace)
-      return c.json(
-        { error: 'Workspace already exists', error_code: 'workspace_aleady_exists' },
-        422,
-      );
-    return c.json(workspace, 201);
-  })
+      if (!workspace)
+        return c.json(
+          { error: 'Workspace already exists', error_code: 'workspace_aleady_exists' },
+          422,
+        );
+      return c.json(workspace, 201);
+    },
+  )
 
   .get('/', privateRoute, async function listWorkspaces$(c) {
     const currentUser = c.get('user')!;
@@ -55,15 +61,15 @@ export const workspaceRoute = new Hono<{
 
   .get(
     '/:workspaceSlug',
-    privateRoute,
     validateWorkspace({ authorizeFor: 'view' }),
     async function getWorkspace$(c) {
       const currentUser = c.get('user')!;
       const workspaceId = c.get('workspaceId')!;
       const workspace = await getWorkspace(workspaceId);
       const permissions = {
-        canViewNotes: workspacePermissions.view_notes(workspace!, currentUser.id),
-        canCreateNotes: workspacePermissions.create_notes(workspace!, currentUser.id),
+        canViewNotes: workspacePermissions.view_notes(workspace!, currentUser?.id),
+        canCreateNotes: workspacePermissions.create_notes(workspace!, currentUser?.id),
+        canManage: workspacePermissions.manage(workspace!, currentUser?.id),
       };
       return c.json({ ...workspace!, permissions });
     },

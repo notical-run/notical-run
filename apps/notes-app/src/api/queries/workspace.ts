@@ -8,15 +8,12 @@ import { QueryResponseType } from '@/utils/solid-helpers';
 export type WorkspaceQueryResult = QueryResponseType<ReturnType<typeof useWorkspace>>;
 
 export const useWorkspace = (workspaceSlug: Accessor<string>) => {
-  const [sessionId] = useSessionId();
-
   return createQuery(() => ({
     queryKey: queryKeys.workspace(workspaceSlug()),
     queryFn: async () =>
       apiClient.api.workspaces[':workspaceSlug']
         .$get({ param: { workspaceSlug: workspaceSlug() } })
         .then(responseJson),
-    enabled: Boolean(sessionId()),
   }));
 };
 
@@ -38,8 +35,6 @@ export const useWorkspaceNotes = (
   workspaceSlug: Accessor<string>,
   params?: { archived?: boolean },
 ) => {
-  const [sessionId] = useSessionId();
-
   return createQuery(() => ({
     queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: async () =>
@@ -49,7 +44,7 @@ export const useWorkspaceNotes = (
           query: { archived: `${params?.archived ?? false}` },
         })
         .then(responseJson),
-    enabled: Boolean(sessionId() && workspaceSlug()),
+    enabled: Boolean(workspaceSlug()),
   }));
 };
 
@@ -90,8 +85,10 @@ export const useCreateWorkspace = () => {
   const queryClient = useQueryClient();
 
   return createMutation(() => ({
-    mutationFn: async (body: { name: string; slug: string }) =>
-      apiClient.api.workspaces.$post({ json: body }).then(responseJson),
+    mutationFn: async (body: { name: string; slug: string; private: boolean }) =>
+      apiClient.api.workspaces
+        .$post({ json: { ...body, access: body.private ? 'private' : 'public' } })
+        .then(responseJson),
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.workspaces(),

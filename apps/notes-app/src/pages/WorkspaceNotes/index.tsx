@@ -8,6 +8,7 @@ import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { NoteList } from '@/pages/WorkspaceNotes/components/NoteList';
 import { List } from '@/components/_base/ListItems';
+import { Authorize } from '@/components/Auth/Session';
 
 const WorkspaceNotes = () => {
   const { slug } = useWorkspaceContext();
@@ -31,9 +32,11 @@ const WorkspaceNotes = () => {
             <div class="flex justify-between items-end pb-2">
               <h1 class="text-slate-400 font-bold">Notes</h1>
 
-              <Button size="sm" onClick={() => setDialogOpen(true)}>
-                <FaSolidPlus size={10} /> New note
-              </Button>
+              <Authorize user="logged_in" workspace="create_notes">
+                <Button size="sm" onClick={() => setDialogOpen(true)}>
+                  <FaSolidPlus size={10} /> New note
+                </Button>
+              </Authorize>
             </div>
 
             <NoteList

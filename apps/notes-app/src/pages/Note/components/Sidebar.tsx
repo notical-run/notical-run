@@ -1,4 +1,5 @@
 import { useWorkspaceNotes } from '@/api/queries/workspace';
+import { Authorize } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { Page } from '@/components/Page';
 import { useLayoutContext } from '@/components/Page/layout';
@@ -45,12 +46,14 @@ export const NoteSidebar = () => {
         </div>
       </Show>
 
-      <Page.Body.SideMenuLink
-        icon={<FaSolidPlus size={10} />}
-        onClick={() => setNewNoteDialogOpen(true)}
-      >
-        New note
-      </Page.Body.SideMenuLink>
+      <Authorize user="logged_in" workspace="manage">
+        <Page.Body.SideMenuLink
+          icon={<FaSolidPlus size={10} />}
+          onClick={() => setNewNoteDialogOpen(true)}
+        >
+          New note
+        </Page.Body.SideMenuLink>
+      </Authorize>
 
       <NewNoteDialog open={newNoteDialogOpen()} onOpenChange={setNewNoteDialogOpen} />
     </>

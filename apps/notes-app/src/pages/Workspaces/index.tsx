@@ -9,6 +9,7 @@ import { List } from '@/components/_base/ListItems';
 import { FiPlus } from 'solid-icons/fi';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { toApiErrorMessage } from '@/utils/api-client';
+import { AiOutlineLock } from 'solid-icons/ai';
 
 const Workspaces = () => {
   const workspacesResult = useUserWorkspaces();
@@ -53,7 +54,12 @@ const Workspaces = () => {
                   <List.Item aria-label={`Workspace ${workspace.slug}`}>
                     <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
                       <div class="pb-1">
-                        <div class="text-xs text-slate-600">{workspace.name}</div>
+                        <div class="text-xs text-slate-600 flex items-center gap-2">
+                          {workspace.access === 'private' && (
+                            <AiOutlineLock size={14} class="text-yellow-700" />
+                          )}
+                          {workspace.name}
+                        </div>
                         <span class="text-slate-900 font-bold">@{workspace.slug}</span>
                       </div>
                       <div class="text-slate-600 text-sm">{workspace.notesCount} notes</div>

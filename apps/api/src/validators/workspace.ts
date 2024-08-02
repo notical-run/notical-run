@@ -3,7 +3,7 @@ import { validator } from 'hono/validator';
 import { db } from '../db';
 import { Workspace, WorkspaceSelectType } from '../db/schema';
 
-type Actions = 'view' | 'view_notes' | 'create_notes' | 'update';
+type Actions = 'view' | 'view_notes' | 'create_notes' | 'update' | 'manage';
 
 export const ownsWorkspace = (
   workspace: Pick<WorkspaceSelectType, 'authorId'>,
@@ -27,6 +27,9 @@ export const workspacePermissions = {
     ownsWorkspace(workspace, userId),
 
   update: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
+    ownsWorkspace(workspace, userId),
+
+  manage: (workspace: Pick<WorkspaceSelectType, 'authorId'>, userId?: string) =>
     ownsWorkspace(workspace, userId),
 } as const satisfies Record<Actions, (...args: any[]) => boolean>;
 

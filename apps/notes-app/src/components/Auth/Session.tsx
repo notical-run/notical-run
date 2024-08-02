@@ -29,7 +29,7 @@ export const IfAuthenticated = (props: ParentProps<{ fallback?: JSX.Element }>) 
 export const Authorize = (
   props: ParentProps<{
     user?: 'logged_in';
-    workspace?: 'view';
+    workspace?: 'view' | 'create_notes' | 'manage';
     fallback?: JSX.Element;
   }>,
 ) => {
@@ -37,10 +37,9 @@ export const Authorize = (
   const userQuery = useCurrentUser();
   const { workspace } = useWorkspaceContext();
 
-  const isLoggedIn = () =>
-    or(!props.user, and(props.user ?? false, userQuery.data?.id, userQuery.isSuccess));
+  const isLoggedIn = () => and(props.user ?? false, userQuery.data?.id, userQuery.isSuccess);
 
-  const authorized = () => and(isLoggedIn());
+  const authorized = () => or(!props.user, isLoggedIn());
 
   return (
     <Switch>
@@ -55,6 +54,15 @@ export const Authorize = (
       >
         {props.fallback}
       </Match>
+      <Match
+        when={and(props.workspace === 'create_notes', !workspace()?.permissions.canCreateNotes)}
+      >
+        {props.fallback}
+      </Match>
+      <Match when={and(props.workspace === 'manage', !workspace()?.permissions.canManage)}>
+        {props.fallback}
+      </Match>
+
       <Match when={authorized()}>{props.children}</Match>
     </Switch>
   );

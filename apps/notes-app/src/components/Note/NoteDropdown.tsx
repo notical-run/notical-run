@@ -52,7 +52,7 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
                 </Popover.Close>
               </Show>
 
-              <Authorize user="logged_in" workspace="view">
+              <Authorize user="logged_in" workspace="manage">
                 <Show when={noteQuery.data?.id}>
                   <NoteAccessChangeConfirm
                     workspaceSlug={props.workspaceSlug}
@@ -80,7 +80,7 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
                 </Show>
               </Authorize>
 
-              <Authorize user="logged_in" workspace="view">
+              <Authorize user="logged_in" workspace="manage">
                 <Switch>
                   <Match when={noteQuery.data?.archivedAt}>
                     <NoteArchiveConfirm
