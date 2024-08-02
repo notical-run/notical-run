@@ -44,9 +44,9 @@ export const Workspace = pgTable('workspaces', {
     .notNull()
     .references(() => User.id, { onDelete: 'cascade' }),
   deletedAt: timestamp('deleted_at'),
-  // access: AccessType('access')
-  //   .notNull()
-  //   .$default(() => 'private'),
+  access: AccessType('access')
+    .notNull()
+    .$default(() => 'private'),
   ...timestampColumns(),
 });
 export const workspaceRelations = relations(Workspace, ({ one, many }) => ({

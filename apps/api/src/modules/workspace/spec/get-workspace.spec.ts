@@ -20,6 +20,22 @@ request('GET /workspaces/:workspaceSlug', () => {
         expect(await response.json()).toMatchObject({ id: wp1.id });
       });
     });
+
+    context('when workspace is public', () => {
+      it('returns workspace', async () => {
+        const user = await createUser({ email: 'author@email.com' });
+        const wp1 = await createWorkspace({ slug: 'wp-1', authorId: user.id, access: 'public' });
+        const otherUser = await createUser({ email: 'viewer@email.com' });
+
+        const response = await route.request('/api/workspaces/wp-1', {
+          method: 'GET',
+          headers: await headers({ authenticatedUserId: otherUser.id }),
+        });
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toMatchObject({ id: wp1.id });
+      });
+    });
   });
 
   response.status('403', () => {

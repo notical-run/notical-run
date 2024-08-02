@@ -24,6 +24,7 @@ export const getUserWorkspaces = async (userId: string) => {
       slug: Workspace.slug,
       createdAt: Workspace.createdAt,
       notesCount: count(Note.id).as('noteCount'),
+      access: Workspace.access,
     })
     .from(Workspace)
     .where(eq(Workspace.authorId, userId))
@@ -43,6 +44,7 @@ export const getWorkspace = async (workspaceID: string) => {
       slug: true,
       name: true,
       authorId: true,
+      access: true,
     },
   });
 

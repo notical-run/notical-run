@@ -34,9 +34,9 @@ export const getNote = async (noteId: NoteSelectType['id']) => {
   return note;
 };
 
-type Filters = { archived?: boolean };
+export type NoteFilters = { archived?: boolean; access?: NoteSelectType['access'] };
 
-const noteFiltersToCondition = (filters: Filters) => {
+const noteFiltersToCondition = (filters: NoteFilters) => {
   const cond = [];
 
   if (filters.archived) {
@@ -45,13 +45,17 @@ const noteFiltersToCondition = (filters: Filters) => {
     cond.push(isNull(Note.archivedAt));
   }
 
+  if (filters.access) {
+    cond.push(eq(Note.access, filters.access));
+  }
+
   if (cond.length === 0) return undefined;
   return and(...cond);
 };
 
 export const getWorkspaceNotes = async (
   workspaceId: WorkspaceSelectType['id'],
-  filters: Filters = {},
+  filters: NoteFilters = {},
 ) => {
   const cond = noteFiltersToCondition(filters);
 

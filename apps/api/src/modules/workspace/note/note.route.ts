@@ -3,7 +3,7 @@ import { privateRoute, SessionVars } from '../../../auth';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { createNewNote, getNote, getWorkspaceNotes, updateNote } from './note.data';
-import { validateWorkspace } from '../../../validators/workspace';
+import { ownsWorkspace, validateWorkspace } from '../../../validators/workspace';
 import { notePermissions, validateNote } from '../../../validators/note';
 import { NoteSelectType, WorkspaceSelectType } from '../../../db/schema';
 import { sql } from 'drizzle-orm';
@@ -29,6 +29,7 @@ const noteFiltersSchema = z.object({
     .optional()
     .transform(s => JSON.parse(s ?? 'null'))
     .catch(undefined),
+  access: z.enum(['private', 'public']).optional(),
 });
 
 export const noteRoute = new Hono<{
@@ -40,16 +41,21 @@ export const noteRoute = new Hono<{
 }>()
   .get(
     '/',
-    privateRoute,
     validateWorkspace({ authorizeFor: 'view_notes' }),
     zValidator('query', noteFiltersSchema),
     async function listNotes$(c) {
       const filters = c.req.valid('query');
       const workspaceId = c.get('workspaceId');
+      const workspace = c.get('workspace');
+      const user = c.get('user');
 
-      const workspace = await getWorkspaceNotes(workspaceId, filters);
+      if (!ownsWorkspace(workspace, user?.id)) {
+        filters.access = 'public';
+      }
 
-      return c.json(workspace!.notes);
+      const workspaceWithNotes = await getWorkspaceNotes(workspaceId, filters);
+
+      return c.json(workspaceWithNotes!.notes);
     },
   )
 
