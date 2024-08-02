@@ -1,5 +1,6 @@
 * Focus
 ** Bugs
+   - ( ) Fix issue with inline node deleting backticks should convert to text
    - ( ) Fix infinite update loop for update listener for hooks
    - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block
@@ -7,7 +8,6 @@
 ** Editor
    - ( ) Slash commands?
    - ( ) Link to another note
-   - ( ) Fix pasting markdown into the editor
 ** Product
    - ( ) Public workspaces (can list public notes in the workspace)
    - ( ) Pagination
