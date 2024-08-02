@@ -115,6 +115,10 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
         options.withEditor(editor => {
           editor.commands.insertContentAt(hook.pos + hook.nodeSize + 1, text);
         });
+
+        const nativeObject = quickVM.newObject();
+        quickVM.setProp(nativeObject, '__native__', quickVM.newString('anchor'));
+        return nativeObject;
       })
       .consume(insertMarkdownBelowHandle => {
         quickVM!.setProp(insert, 'below', insertMarkdownBelowHandle);
@@ -135,6 +139,10 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
           tr.setNodeAttribute(nodePosAndSize.pos, 'anchoredContent', text);
           editor.view.dispatch(tr.setMeta('addToHistory', false));
         });
+
+        const nativeObject = quickVM.newObject();
+        quickVM.setProp(nativeObject, '__native__', quickVM.newString('anchor'));
+        return nativeObject;
       })
       .consume(showMarkdownBelowHandle => {
         quickVM!.setProp(show, 'below', showMarkdownBelowHandle);
