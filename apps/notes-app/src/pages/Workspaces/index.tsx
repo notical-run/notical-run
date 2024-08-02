@@ -14,7 +14,7 @@ import { AiOutlineLock } from 'solid-icons/ai';
 const Workspaces = () => {
   const workspacesResult = useUserWorkspaces();
 
-  const [dialogOpen, setDialogOpen] = createSignal(false);
+  const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = createSignal(false);
 
   return (
     <div>
@@ -22,7 +22,7 @@ const Workspaces = () => {
         <div class="flex items-end justify-between pb-2">
           <h1 class="text-slate-400 font-bold">My Workspaces</h1>
 
-          <Button size="sm" onClick={() => setDialogOpen(true)}>
+          <Button size="sm" onClick={() => setNewWorkspaceDialogOpen(true)}>
             <FaSolidPlus size={10} /> New workspace
           </Button>
         </div>
@@ -41,7 +41,7 @@ const Workspaces = () => {
               title="You don't have any workspaces"
               subtitle="Workspaces allow you to group notes together"
             >
-              <Button size="lg" onClick={() => setDialogOpen(true)} class="mt-4 w-full">
+              <Button size="lg" onClick={() => setNewWorkspaceDialogOpen(true)} class="mt-4 w-full">
                 <FaSolidPlus size={10} /> Create a new workspace
               </Button>
             </List.Empty>
@@ -54,11 +54,13 @@ const Workspaces = () => {
                   <List.Item aria-label={`Workspace ${workspace.slug}`}>
                     <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
                       <div class="pb-1">
-                        <div class="text-xs text-slate-600 flex items-center gap-2">
-                          {workspace.access === 'private' && (
-                            <AiOutlineLock size={14} class="text-yellow-700" />
-                          )}
-                          {workspace.name}
+                        <div class="text-xs text-slate-600">
+                          <div class="flex items-center gap-2">
+                            {workspace.access === 'private' && (
+                              <AiOutlineLock size={14} class="text-yellow-700" />
+                            )}
+                            {workspace.name}
+                          </div>
                         </div>
                         <span class="text-slate-900 font-bold">@{workspace.slug}</span>
                       </div>
@@ -71,7 +73,7 @@ const Workspaces = () => {
               <List.Item class="border-dashed shadow-none">
                 <button
                   role="button"
-                  onClick={() => setDialogOpen(true)}
+                  onClick={() => setNewWorkspaceDialogOpen(true)}
                   class="w-full h-full px-4 py-4 flex flex-col gap-2 items-center justify-center text-slate-600"
                 >
                   <FiPlus size={20} />
@@ -83,7 +85,10 @@ const Workspaces = () => {
         </Switch>
       </div>
 
-      <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
+      <NewWorkspaceDialog
+        open={newWorkspaceDialogOpen()}
+        onOpenChange={setNewWorkspaceDialogOpen}
+      />
     </div>
   );
 };

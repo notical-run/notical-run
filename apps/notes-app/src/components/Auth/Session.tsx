@@ -43,15 +43,9 @@ export const Authorize = (
 
   return (
     <Switch>
-      <Match when={!sessionId()}>{props.fallback}</Match>
+      <Match when={and(props.user === 'logged_in', !sessionId())}>{props.fallback}</Match>
       <Match when={and(props.user === 'logged_in', userQuery.isError)}>{props.fallback}</Match>
-      <Match
-        when={and(
-          props.workspace === 'view',
-          !workspace()?.id,
-          !workspace()?.permissions.canViewNotes,
-        )}
-      >
+      <Match when={and(props.workspace === 'view', !workspace()?.permissions.canViewNotes)}>
         {props.fallback}
       </Match>
       <Match

@@ -21,7 +21,7 @@ export const LayoutWorkspaceNote = (props: ParentProps) => {
         ]}
       />
       <Page.Body>
-        <Authorize user="logged_in" workspace="view">
+        <Authorize workspace="view">
           <Page.Body.SideMenu>
             <NoteSidebar />
           </Page.Body.SideMenu>

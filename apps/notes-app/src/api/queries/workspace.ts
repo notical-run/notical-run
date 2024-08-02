@@ -153,3 +153,22 @@ export const useUnarchiveNote = (workspaceSlug: string, noteId: string) => {
     enabled: Boolean(workspaceSlug && noteId),
   }));
 };
+
+export const useUpdateWorkspace = (workspaceSlug: string) => {
+  const queryClient = useQueryClient();
+
+  return createMutation(() => ({
+    mutationFn: async (body: { name: string; private: boolean }) =>
+      apiClient.api.workspaces[':workspaceSlug']
+        .$patch({
+          json: { ...body, access: body.private ? 'private' : 'public' },
+          param: { workspaceSlug },
+        })
+        .then(responseJson),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspace(workspaceSlug) });
+    },
+    enabled: Boolean(workspaceSlug),
+  }));
+};

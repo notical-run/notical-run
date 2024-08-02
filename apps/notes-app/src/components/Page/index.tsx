@@ -7,6 +7,7 @@ import { AiOutlineArrowLeft, AiOutlineMenu } from 'solid-icons/ai';
 import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
 import { Tooltip } from '@/components/_base/Tooltip';
 import { Dynamic } from 'solid-js/web';
+import { FaSolidAngleLeft } from 'solid-icons/fa';
 
 const PageRoot = (props: ParentProps & { title?: string }) => {
   createEffect(() => {
@@ -87,7 +88,7 @@ const PageSideMenuLink = (
           href={props.href!}
           onClick={props.onClick}
           class={cn(
-            'flex items-center justify-center gap-2 w-full px-2 py-3 text-slate-600 hover:text-slate-400',
+            'flex items-center justify-center gap-2 w-full px-2 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50',
             { 'px-3 justify-start': sidebarOpen() },
             props.class,
           )}
@@ -120,7 +121,7 @@ const PageSideMenu = (props: ParentProps) => {
             onClick={toggleSidebar}
             class="w-full py-3 flex items-center justify-center border-b text-sm hover:bg-slate-100"
           >
-            {sidebarOpen() ? <AiOutlineArrowLeft /> : <AiOutlineMenu />}
+            {sidebarOpen() ? <FaSolidAngleLeft /> : <AiOutlineMenu />}
           </button>
         </Show>
 
