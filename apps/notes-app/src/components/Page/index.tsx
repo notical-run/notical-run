@@ -66,8 +66,12 @@ const PageBody = (props: ParentProps) => (
   <div class="flex flex-row justify-stretch flex-1 overflow-hidden">{props.children}</div>
 );
 
-const PageMain = (props: ParentProps) => {
-  return <main class="p-4 flex-1 overflow-y-auto animate-fade-in">{props.children}</main>;
+const PageMain = (props: ParentProps<{ class?: string }>) => {
+  return (
+    <main class={cn('p-4 flex-1 overflow-y-auto animate-fade-in', props.class)}>
+      {props.children}
+    </main>
+  );
 };
 
 const PageSideMenuLink = (
