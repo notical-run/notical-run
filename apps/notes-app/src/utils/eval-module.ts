@@ -23,7 +23,7 @@ export const evalModule = async (code: string, engine: EvalEngine, options: Eval
       pos: nodePosAndSize?.[0] ?? options.pos,
       nodeSize: nodePosAndSize?.[1] ?? options.nodeSize,
       id: options.id,
-      __native__: '',
+      __native__: 'anchor',
     });
 
     const moduleCode = `

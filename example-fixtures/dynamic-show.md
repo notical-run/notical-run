@@ -9,4 +9,4 @@ export const decr = () => state.num--;
 globalThis.getItemsList = () => `## Total: ${state.num}\n\n ${Array.from({ length: state.num }, (_, i) => `- Item ${i}`).join('\n')}`;
 ```
 
-`show.below(here(), globalThis.getItemsList())`
+`show.markdown(here(), globalThis.getItemsList())`

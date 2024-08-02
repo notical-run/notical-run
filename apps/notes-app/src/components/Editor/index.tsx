@@ -7,7 +7,6 @@ import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
 import { EvalEngine } from '@/engine/types';
-import { twMerge } from 'tailwind-merge';
 import { useDebounced } from '@/utils/use-debounced';
 
 import './editor.css';
@@ -35,7 +34,7 @@ export const Editor = (props: EditorProps) => {
   }, 100);
 
   onMount(async () => {
-    const editorClass = twMerge(
+    const editorClass = cn(
       'prose prose-base focus:outline-none p-4 max-w-full',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
       'prose-h1:text-3xl',

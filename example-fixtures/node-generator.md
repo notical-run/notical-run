@@ -7,7 +7,7 @@ export const incrementNum = () => state.num++;
 
 export const addMoreContent = () => {
   state.index = (state.index ?? 0) + 1
-  insert.below(state.hook, `\n\`state.num * ${state.index ?? 0}\``)
+  insert.markdown(state.hook, `\n\`state.num * ${state.index ?? 0}\``)
 }
 ```
 
