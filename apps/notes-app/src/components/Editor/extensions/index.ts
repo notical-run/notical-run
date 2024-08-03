@@ -14,6 +14,7 @@ import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Extension } from '@tiptap/core';
 import BubbleMenu from '@tiptap/extension-bubble-menu';
+import { SlashCommandsExtension } from '@/components/Editor/extensions/SlashCommands';
 
 export const getExtensions = ({
   document: yDoc,
@@ -49,6 +50,7 @@ export const getExtensions = ({
       HTMLAttributes: { class: 'text-violet-900 underline' },
     }),
     disableTrailingNode || TrailingNode,
+
     inlineMenuElement &&
       BubbleMenu.configure({
         element: inlineMenuElement,
@@ -58,6 +60,7 @@ export const getExtensions = ({
           return isTextSelected;
         },
       }),
+    SlashCommandsExtension,
 
     GlobalNodeId,
     InlineCode,
