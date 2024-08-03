@@ -11,6 +11,7 @@ import { NoteActionsDropdown } from '@/components/Note/NoteDropdown';
 import { Alert } from '@/components/_base/Alert';
 import { FiArchive } from 'solid-icons/fi';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
+import toast from 'solid-toast';
 
 const WorkspaceNote = () => {
   const { slug } = useWorkspaceContext();
@@ -26,6 +27,12 @@ const WorkspaceNote = () => {
       day: 'numeric',
     });
     return formatter.format(new Date(date));
+  };
+
+  const copyNoteId = async () => {
+    const noteId = `@${slug()}/${noteQuery.data?.name}`;
+    await navigator.clipboard.writeText(noteId);
+    toast.success(`Copied ${noteId} to clipboard`);
   };
 
   return (
@@ -53,7 +60,16 @@ const WorkspaceNote = () => {
               ) : (
                 <AiOutlineLock class="text-yellow-700" />
               )}
-              @{slug()}/{noteQuery.data?.name} by {noteQuery.data?.author?.name}
+
+              <button
+                class="text-slate-900 hover:bg-slate-100"
+                title="Copy note id"
+                onClick={copyNoteId}
+              >
+                @{slug()}/{noteQuery.data?.name}
+              </button>
+              <span>by {noteQuery.data?.author?.name}</span>
+
               <NoteActionsDropdown
                 workspaceSlug={slug()}
                 noteId={noteQuery.data!.name!}
