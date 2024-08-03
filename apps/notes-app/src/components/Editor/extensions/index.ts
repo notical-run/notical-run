@@ -45,7 +45,7 @@ export const getExtensions = ({
     Link.configure({
       protocols: ['http', 'https', 'mailto'],
       openOnClick: true,
-      linkOnPaste: true,
+      linkOnPaste: false,
       HTMLAttributes: { class: 'text-violet-900 underline' },
     }),
     disableTrailingNode || TrailingNode,

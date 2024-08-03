@@ -20,6 +20,7 @@ export const inlineCodeNodeView = createSolidNodeView<InlineCodeAttrs>(
       <span>
         <NodeContent
           as="code"
+          data-eval="true"
           class={cn(
             `bg-slate-800 text-violet-300`,
             'before:content-[""] after:content-[""]',

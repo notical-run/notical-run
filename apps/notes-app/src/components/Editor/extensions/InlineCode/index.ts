@@ -1,7 +1,8 @@
-import { Node } from '@tiptap/core';
+import { InputRule, mergeAttributes, Node, nodeInputRule } from '@tiptap/core';
 import { inlineCodeNodeView } from '@/components/Editor/extensions/InlineCode/view';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { codeClearDelimiters } from '@/components/Editor/extensions/InlineCode/code-clear-delimtiers';
+import { Selection } from '@tiptap/pm/state';
 
 export const InlineCode = Node.create({
   name: 'code',
@@ -40,8 +41,8 @@ export const InlineCode = Node.create({
     return [{ tag: 'code' }];
   },
 
-  renderHTML() {
-    return ['code', 0];
+  renderHTML({ HTMLAttributes }) {
+    return ['code', HTMLAttributes, 0];
   },
 
   addNodeView() {
@@ -50,15 +51,19 @@ export const InlineCode = Node.create({
 
   addInputRules() {
     return [
-      {
-        find: /`([^`]+)`$/g,
-        handler: ({ state, range, match }) => {
-          if (!match[1]) return;
-          if (state.doc.resolve(range.from).node().type === this.type) return;
-          const newNode = this.type.create(null, state.schema.text(`\`${match[1]}\``));
-          state.tr.replaceWith(range.from, range.to, newNode);
+      new InputRule({
+        find: text => {
+          const match = /(?:^|\s)`([^`]+)`/g.exec(text);
+          if (!match?.[1] || match?.index === undefined) return null;
+          return { index: match.index, text: match[0], match };
         },
-      },
+        handler: ({ state, range, match }) => {
+          const resolvedPos = state.doc.resolve(range.from);
+          if (resolvedPos.node().type === this.type) return;
+          const newNode = this.type.create(null, state.schema.text(match[0]));
+          state.tr.replaceRangeWith(range.from, range.to, newNode);
+        },
+      }),
     ];
   },
 
@@ -68,6 +73,22 @@ export const InlineCode = Node.create({
 
   addKeyboardShortcuts() {
     return {
+      Enter: ({ editor }) => {
+        const { state } = editor;
+        const { $from } = state.selection;
+        if ($from.parent.type !== this.type) return false;
+
+        const endPos = state.doc.resolve($from.end($from.depth - 1));
+
+        // Insert newline after node
+        const tr = editor.state.tr;
+        tr.setSelection(Selection.near(endPos));
+        // tr.insert(endPos.pos, editor.schema.nodes.paragraph.create({}));
+        editor.view.dispatch(tr);
+
+        return false;
+      },
+
       ArrowRight: ({ editor }) => {
         const { state } = editor;
         const { $from } = state.selection;

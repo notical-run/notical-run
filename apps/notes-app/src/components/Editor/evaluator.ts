@@ -40,7 +40,7 @@ export const evaluateAllNodes = async (
     if (evalutingNodes.size === 0) resolver(null);
   };
 
-  console.log('>>>> on update...', editor.state.doc.toJSON());
+  console.debug('>>>> evaluating...', editor.state.doc.toJSON());
   engine.onContentUpdate();
 
   const walkNode = async (node: Node, pos: number) => {
