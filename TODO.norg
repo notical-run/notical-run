@@ -5,7 +5,6 @@
    - ( ) Deleting code block when empty should delete code block (sometimes leaves view)
    - ( ) Inline code node sometimes gets converted to code block
 ** Evaluation
-   - ( ) Delete content programatically
    - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
    - ( ) Don't show export if not function
 ** Editor
@@ -13,6 +12,7 @@
    - ( ) Link to another note
 ** Product
    - ( ) Pagination
+   - ( ) landing page
 
 * Ready to use
 ** Evaluation
@@ -28,7 +28,6 @@
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
-   - ( ) landing page
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
    - ( ) Make nav bar responsive for small screens
@@ -51,10 +50,11 @@
 * Later
 ** Bugs
    - ( ) Up key not working from inside code blocks
-   - ( ) Occasional memory leak?
+   - ( ) memory leak?
    - ( ) Detect cyclic dependencies of signals
    - ( ) No curor on todo when text is empty
 ** Evaluation
+   - ( ) Delete content programatically
    - ( ) Pause evaluation update loop (for debugging)
    - ( ) Button next to import stmnt to open imported note
    - ( ) Allow disabling evaluation for a code blocks

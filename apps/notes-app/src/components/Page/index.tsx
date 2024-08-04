@@ -2,7 +2,7 @@ import { Authorize } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { cn } from '@/utils/classname';
 import { A } from '@solidjs/router';
-import { createEffect, For, JSX, ParentProps, Show } from 'solid-js';
+import { ComponentProps, createEffect, For, JSX, ParentProps, Show, splitProps } from 'solid-js';
 import { AiOutlineMenu } from 'solid-icons/ai';
 import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
 import { Tooltip } from '@/components/_base/Tooltip';
@@ -75,22 +75,31 @@ const PageMain = (props: ParentProps<{ class?: string }>) => {
   );
 };
 
+type PageSideMenuLinkCommonProps = { icon: JSX.Element };
+type PageSideMenuLinkAnchorProps = { href: string } & ComponentProps<typeof A>;
+type PageSideMenuLinkButtonProps = {
+  href?: undefined;
+  onClick: () => void;
+} & JSX.ButtonHTMLAttributes<HTMLButtonElement>;
+
 const PageSideMenuLink = (
-  props: ParentProps<{ icon: JSX.Element; href?: string; onClick?: () => void; class?: string }>,
+  props_: ParentProps<
+    PageSideMenuLinkCommonProps & (PageSideMenuLinkAnchorProps | PageSideMenuLinkButtonProps)
+  >,
 ) => {
+  const [props, linkProps] = splitProps(props_, ['icon', 'children']);
   const { sidebarOpen } = useLayoutContext();
 
   return (
     <Tooltip placement="right">
       <Tooltip.Trigger as="div" class="w-full">
         <Dynamic
-          component={props.href ? A : p => <button {...p} />}
-          href={props.href!}
-          onClick={props.onClick}
+          component={linkProps.href ? A : p => <button {...p} />}
+          {...(linkProps as any)}
           class={cn(
             'flex items-center justify-center gap-2 w-full px-2 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50',
             { 'px-3 justify-start': sidebarOpen() },
-            props.class,
+            linkProps.class,
           )}
         >
           {props.icon}
@@ -98,9 +107,9 @@ const PageSideMenuLink = (
         </Dynamic>
       </Tooltip.Trigger>
 
-      <Tooltip.Content class={cn('mt-0 ml-2', { hidden: sidebarOpen() })}>
-        {props.children}
-      </Tooltip.Content>
+      <Show when={!sidebarOpen()}>
+        <Tooltip.Content class="mt-0 ml-2">{props.children}</Tooltip.Content>
+      </Show>
     </Tooltip>
   );
 };
