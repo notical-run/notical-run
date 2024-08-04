@@ -1,12 +1,12 @@
 import { slashCommands } from '@/components/Editor/extensions/SlashCommands/commands';
 import { SlashCommand, SlashMenu } from '@/components/Editor/extensions/SlashCommands/view';
 import { Extension } from '@tiptap/core';
-import Suggestion, { SuggestionProps } from '@tiptap/suggestion';
+import Suggestion, { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion';
 import { createRoot, createSignal } from 'solid-js';
 import tippy, { Instance as TippyInstance } from 'tippy.js';
 
 export const SlashCommandsExtension = Extension.create({
-  name: 'commands',
+  name: 'slashCommands',
 
   addOptions() {
     return { suggestion: {} };
@@ -39,77 +39,97 @@ export const SlashCommandsExtension = Extension.create({
         },
 
         render: () => {
-          return createRoot(disposeFn => {
-            let $element: HTMLElement;
-            let popup: TippyInstance[];
-            const [itemsAccessor, setItems] = createSignal<any[]>([]);
-            const [highlightedIndex, setHighlightedIndex] = createSignal<number>(0);
+          const createMenuRenderer = (props: SuggestionProps) =>
+            createRoot(dispose => {
+              const [menuItems, setMenuItems] = createSignal<any[]>(props.items);
+              const [highlightedIndex, setHighlightedIndex] = createSignal<number>(0);
 
-            const onSelect =
-              (props: Pick<SuggestionProps<never, never>, 'editor' | 'range'>) =>
-              (item: SlashCommand) => {
-                item.command({ editor: props.editor, range: props.range });
-              };
+              const onSelect =
+                (props: Pick<SuggestionProps<never, never>, 'editor' | 'range'>) =>
+                (item: SlashCommand) => {
+                  item.command({ editor: props.editor, range: props.range });
+                };
 
-            return {
-              onStart: props => {
-                setItems(props.items);
+              const ref = (
+                <SlashMenu
+                  items={menuItems()}
+                  onSelect={onSelect(props)}
+                  highlightedIndex={highlightedIndex()}
+                  setHighlightedIndex={setHighlightedIndex}
+                />
+              ) as HTMLElement;
 
-                $element = (
-                  <SlashMenu
-                    items={itemsAccessor()}
-                    onSelect={onSelect(props)}
-                    highlightedIndex={highlightedIndex()}
-                    setHighlightedIndex={setHighlightedIndex}
-                  />
-                ) as HTMLElement;
+              const onKeyDown = (props: SuggestionKeyDownProps): boolean => {
+                const items = menuItems();
+                const e = props.event;
 
-                popup = tippy('body', {
-                  getReferenceClientRect: () => props.clientRect!()!,
-                  appendTo: () => document.body,
-                  content: $element,
-                  showOnCreate: true,
-                  interactive: true,
-                  trigger: 'manual',
-                  placement: 'bottom-start',
-                });
-              },
-
-              onUpdate(props) {
-                setItems(props.items);
-              },
-
-              onKeyDown: props => {
-                if (props.event.key === 'Escape') {
-                  popup[0].hide();
-                  return true;
-                }
-
-                const items = itemsAccessor();
-
-                if (props.event.key === 'ArrowDown') {
+                if (e.key === 'ArrowDown' || (e.ctrlKey && e.key === 'j')) {
                   setHighlightedIndex(index => (index + 1) % items.length);
                   return true;
                 }
-                if (props.event.key === 'ArrowUp') {
+
+                if (e.key === 'ArrowUp' || (e.ctrlKey && e.key === 'k')) {
                   setHighlightedIndex(index => (index <= 0 ? items.length - 1 : index - 1));
                   return true;
                 }
-                if (props.event.key === 'Enter') {
+
+                if (e.key === 'Enter') {
                   const item: SlashCommand | undefined = items[highlightedIndex()];
                   item && onSelect({ editor: this.editor, ...props })(item);
                   return true;
                 }
 
                 return false;
-              },
+              };
 
-              onExit() {
-                disposeFn();
-                popup[0].destroy();
-              },
-            };
-          });
+              return {
+                ref,
+                menuItems,
+                setMenuItems,
+                highlightedIndex,
+                setHighlightedIndex,
+                onSelect,
+                onKeyDown,
+                dispose,
+              };
+            });
+
+          let menuRenderer: ReturnType<typeof createMenuRenderer>;
+          let popup: TippyInstance[];
+
+          return {
+            onStart: props => {
+              menuRenderer = createMenuRenderer(props);
+
+              popup = tippy('body', {
+                getReferenceClientRect: () => props.clientRect!()!,
+                appendTo: () => document.body,
+                content: menuRenderer.ref,
+                showOnCreate: true,
+                interactive: true,
+                trigger: 'manual',
+                placement: 'bottom-start',
+              });
+            },
+
+            onUpdate(props) {
+              menuRenderer.setMenuItems(props.items);
+            },
+
+            onKeyDown: props => {
+              if (props.event.key === 'Escape') {
+                popup[0].hide();
+                return true;
+              }
+
+              return menuRenderer.onKeyDown(props);
+            },
+
+            onExit() {
+              menuRenderer.dispose();
+              popup[0].destroy();
+            },
+          };
         },
       }),
     ];
