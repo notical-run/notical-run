@@ -2,11 +2,12 @@
 ** Bugs
    - ( ) Fix infinite update loop for update listener for hooks
    - ( ) Errors for code blocks and inline code on page load are incorrect
-   - ( ) Deleting code block when empty should delete code block
-   - ( ) REMOVE here from code blocks? (or fix reactivity)
+   - ( ) Deleting code block when empty should delete code block (sometimes leaves view)
    - ( ) Inline code node sometimes gets converted to code block
 ** Evaluation
    - ( ) Delete content programatically
+   - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
+   - ( ) Don't show export if not function
 ** Editor
    - ( ) Link to another note
 ** Product
@@ -15,9 +16,7 @@
 * Ready to use
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
-   - ( ) Allow running stuff on click for show decoration
-   - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
-   - ( ) Don't show export if not function
+   - ( ) Run evaluation inside "show" content
    - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
@@ -33,10 +32,9 @@
    - ( ) landing page
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
-   - ( ) Consider lazy loading components (layout will need to be moved)
    - ( ) Make nav bar responsive for small screens
-   - ( ) Dark theme
    - ( ) User info on topbar
+   - ( ) Dark theme
    - ( ) Share button (disabled for private notes with hint to make public)
    - ( ) More e2e tests
 ** Capabilities

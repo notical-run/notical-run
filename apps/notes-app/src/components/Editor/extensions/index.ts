@@ -29,7 +29,7 @@ export const getExtensions = ({
     StarterKit.configure({ codeBlock: false, code: false, history: false }),
     Placeholder.configure({
       placeholder: ({ node }) => {
-        if (node.type.name === 'paragraph') return 'Start typing...';
+        if (node.type.name === 'paragraph') return 'Start writing or type `/` for commands...';
         return '';
       },
       emptyEditorClass: 'is-editor-empty',
