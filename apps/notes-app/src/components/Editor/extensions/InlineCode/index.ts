@@ -1,4 +1,4 @@
-import { InputRule, mergeAttributes, Node, nodeInputRule } from '@tiptap/core';
+import { InputRule, Node } from '@tiptap/core';
 import { inlineCodeNodeView } from '@/components/Editor/extensions/InlineCode/view';
 import { MarkdownSerializerState } from 'prosemirror-markdown';
 import { codeClearDelimiters } from '@/components/Editor/extensions/InlineCode/code-clear-delimtiers';
@@ -50,18 +50,27 @@ export const InlineCode = Node.create({
   },
 
   addInputRules() {
+    const regex = /(?:^|\s)(`(?!\s+`)((?:[^`]+))`(?!\s+`))$/;
+    // const regex = /(?:^|\s)(`([^`]+)`)$/g
     return [
       new InputRule({
-        find: text => {
-          const match = /(?:^|\s)`([^`]+)`/g.exec(text);
-          if (!match?.[1] || match?.index === undefined) return null;
-          return { index: match.index, text: match[0], match };
-        },
+        find: regex,
         handler: ({ state, range, match }) => {
-          const resolvedPos = state.doc.resolve(range.from);
-          if (resolvedPos.node().type === this.type) return;
-          const newNode = this.type.create(null, state.schema.text(match[0]));
-          state.tr.replaceRangeWith(range.from, range.to, newNode);
+          // If inside typing code, ignore
+          const selectPos = state.selection.$from;
+          if (selectPos.node(selectPos.depth).type === this.type) return;
+
+          const offset = match[0].lastIndexOf(match[1]);
+          const startPos = range.from + offset;
+          const endPos = range.from + offset + match[1].length;
+          if (startPos < 0) return;
+
+          // If match is already code
+          const startResolvedPos = state.doc.resolve(startPos);
+          if (startResolvedPos.node(startResolvedPos.depth).type === this.type) return;
+
+          const newNode = this.type.create(null, state.schema.text(match[1]));
+          state.tr.replaceRangeWith(startPos, endPos, newNode).scrollIntoView();
         },
       }),
     ];

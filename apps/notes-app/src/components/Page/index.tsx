@@ -3,7 +3,7 @@ import { links } from '@/components/Navigation';
 import { cn } from '@/utils/classname';
 import { A } from '@solidjs/router';
 import { createEffect, For, JSX, ParentProps, Show } from 'solid-js';
-import { AiOutlineArrowLeft, AiOutlineMenu } from 'solid-icons/ai';
+import { AiOutlineMenu } from 'solid-icons/ai';
 import { LayoutProvider, useLayoutContext } from '@/components/Page/layout';
 import { Tooltip } from '@/components/_base/Tooltip';
 import { Dynamic } from 'solid-js/web';

@@ -51,11 +51,8 @@ export const codeClearDelimiters = (nodeType: NodeType) =>
         } else if (textContent) {
           // If the code doesn't contain the right delimiters,
           // remove code node
-          tr.replaceWith(
-            resolvedPos.pos,
-            resolvedPos.pos + node.nodeSize,
-            newState.schema.text(textContent),
-          );
+          tr.replaceWith(pos, pos + node.nodeSize, newState.schema.text(textContent));
+          cursorPos = pos;
         } else if (!textContent) {
           // If a code node is empty, remove it
           // !textContent in if is redundant but specified for clarity
