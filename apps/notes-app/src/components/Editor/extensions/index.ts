@@ -56,6 +56,7 @@ export const getExtensions = ({
         element: inlineMenuElement,
         shouldShow: ({ editor, state }) => {
           if (!editor.isActive('paragraph')) return false;
+          if (editor.isActive('code')) return false;
           const isTextSelected = state.selection.from !== state.selection.to;
           return isTextSelected;
         },
