@@ -81,7 +81,12 @@ const ExportsView = (props: Pick<CodeBlockAttrs, 'exports' | 'collapsed'>) => {
         >
           <For each={Object.entries(Result.isOk(props.exports!) ? props.exports.value : {})}>
             {([key, value]) => (
-              <Button variant="accent" size="sm" onClick={() => (value as any)()}>
+              <Button
+                variant="accent"
+                size="sm"
+                onClick={() => (value as any)()}
+                onPointerDown={e => e.preventDefault()}
+              >
                 {key}
               </Button>
             )}

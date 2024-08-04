@@ -19,7 +19,6 @@
    - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
-   - ( ) Issue with inline/exports buttons accidentally selecting code
    - ( ) Fix issue with inline node deleting backticks should convert to text
 ** Editor
    - ( ) Update entire link instead of just the selected text?

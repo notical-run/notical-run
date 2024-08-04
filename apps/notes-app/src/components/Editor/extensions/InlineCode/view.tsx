@@ -3,7 +3,7 @@ import { cn } from '@/utils/classname';
 import { Result } from '@/utils/result';
 import { Editor } from '@tiptap/core';
 import { createEffect, createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
-import { FaSolidCirclePlay } from 'solid-icons/fa';
+import { FaSolidCirclePlay, FaSolidPlay } from 'solid-icons/fa';
 import { getExtensions } from '@/components/Editor/extensions';
 import { AiOutlineCloseCircle } from 'solid-icons/ai';
 
@@ -115,18 +115,33 @@ const EvalResult = (props: { result: InlineCodeAttrs['result'] }) => {
       </Match>
 
       <Match when={typeof evalResult() === 'function'}>
-        <button
-          class={cn('px-1 inline-flex items-center translate-y-[5px] rounded', {
-            'mx-1 bg-violet-600 hover:bg-violet-500 text-white': (evalResult() as any).displayName,
-            'text-violet-600 hover:text-violet-500': !(evalResult() as any).displayName,
-          })}
-          onClick={(_e: MouseEvent) => (evalResult() as any)?.()}
-        >
-          <FaSolidCirclePlay class="text-xl" />
-          <Show when={(evalResult() as any).displayName}>
-            <span class="text-xs pl-1">{(evalResult() as any).displayName}</span>
-          </Show>
-        </button>
+        <Switch>
+          <Match when={(evalResult() as any).displayName}>
+            <button
+              class={cn(
+                'select-none mx-1 inline-flex items-center gap-2 rounded px-2 py-[2px] text-xs',
+                'bg-violet-600 hover:bg-violet-500 text-white',
+              )}
+              onClick={_e => (evalResult() as any)?.()}
+              onPointerDown={e => e.preventDefault()}
+            >
+              <span>{(evalResult() as any).displayName}</span>
+            </button>
+          </Match>
+
+          <Match when={true}>
+            <button
+              class={cn(
+                'select-none inline-block items-center rounded text-xl px-1 translate-y-[5px]',
+                'text-violet-600 hover:text-violet-500',
+              )}
+              onClick={_e => (evalResult() as any)?.()}
+              onPointerDown={e => e.preventDefault()}
+            >
+              <FaSolidCirclePlay />
+            </button>
+          </Match>
+        </Switch>
       </Match>
 
       <Match when={Result.isOk(props.result!) && evalResultString()}>
