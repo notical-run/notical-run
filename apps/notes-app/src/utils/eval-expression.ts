@@ -27,9 +27,11 @@ export const evalExpression = async (
       }
 
       if (quickVM.typeof(result.value) === 'function') {
-        return Result.ok(() => {
-          quickVM.callFunction(result.value, quickVM.global);
-        });
+        const fnHandle = result.value;
+        const fnName = quickVM.getProp(fnHandle, 'displayName').consume(quickVM.dump);
+        const fn = () => quickVM.callFunction(result.value, quickVM.global);
+        fn.displayName = fnName ?? '';
+        return Result.ok(fn);
       }
 
       return Result.ok(result.value.consume(quickVM.dump));

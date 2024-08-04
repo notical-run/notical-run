@@ -116,10 +116,16 @@ const EvalResult = (props: { result: InlineCodeAttrs['result'] }) => {
 
       <Match when={typeof evalResult() === 'function'}>
         <button
-          class="text-violet-600 text-xl hover:text-violet-500 size-5 rounded-full pl-1 pt-1 pr-6 select-none"
+          class={cn('px-1 inline-flex items-center translate-y-[5px] rounded', {
+            'mx-1 bg-violet-600 hover:bg-violet-500 text-white': (evalResult() as any).displayName,
+            'text-violet-600 hover:text-violet-500': !(evalResult() as any).displayName,
+          })}
           onClick={(_e: MouseEvent) => (evalResult() as any)?.()}
         >
-          <FaSolidCirclePlay />
+          <FaSolidCirclePlay class="text-xl" />
+          <Show when={(evalResult() as any).displayName}>
+            <span class="text-xs pl-1">{(evalResult() as any).displayName}</span>
+          </Show>
         </button>
       </Match>
 

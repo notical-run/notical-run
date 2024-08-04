@@ -26,9 +26,13 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
 
   quickVM
     .unwrapResult(
-      await quickVM.evalCodeAsync(
-        `{ Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internals' }, writable: false }); }`,
-      ),
+      await quickVM.evalCodeAsync(`{
+Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internals' }, writable: false });
+Object.defineProperty(globalThis, 'button', { value: (name, fn) => {
+  fn.displayName = name;
+  return fn;
+} })
+}`),
     )
     .dispose();
 
