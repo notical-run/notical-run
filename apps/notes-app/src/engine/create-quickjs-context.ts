@@ -41,6 +41,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
 globalThis.__native__ = 'globalThis';
+globalThis.global = globalThis;
 
 const globalThisProxy = new Proxy(globalThis, {
   get(target, prop, receiver) {

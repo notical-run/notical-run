@@ -36,6 +36,7 @@ ${code}`;
 
     const moduleResult = await quickVM.evalCodeAsync(moduleCode, `${options.id}.js`, {
       type: 'module',
+      strict: false,
     });
     if (moduleResult.error) {
       const err = moduleResult.error.consume(quickVM.dump);

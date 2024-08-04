@@ -109,7 +109,6 @@
    - ( ) Truncate the inline result decoration
    - ( ) Improve markdown editing experience
    - ( ) Debounce evaluation checks
-   - ( ) Use `[native globalThis]` for `globalThis` inline show
    - ( ) Debug view for showing current state
 
 

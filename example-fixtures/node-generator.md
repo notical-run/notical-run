@@ -1,17 +1,18 @@
 ## Node generation for testing
 
 ```
-export default () => state.index = 0;
+index = 0;
+num = 0;
 
-export const incrementNum = () => state.num++;
+export const incrementNum = () => num++;
 
 export const addMoreContent = () => {
-  state.index = (state.index ?? 0) + 1
-  insert.markdown(state.hook, `\n\`state.num * ${state.index ?? 0}\``)
+  index++
+  insert.markdown(anchor, `\n\`num * ${index ?? 0}\``)
 }
 ```
 
-`[state.num, state.index]`
+`[num, index]`
 
-`state.hook = here()`
+`anchor = here()`
 
