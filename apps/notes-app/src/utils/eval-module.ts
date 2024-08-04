@@ -52,14 +52,20 @@ ${code}`;
     const exportKeys: string[] = quickVM.unwrapResult(keysResult).consume(quickVM.dump);
 
     const toExport = (key: string) => {
-      const func = () =>
+      const isFunction = quickVM
+        .getProp(exportsHandle, key)
+        .consume(f => quickVM.typeof(f) === 'function');
+
+      if (!isFunction) return null;
+      return () =>
         quickVM.getProp(exportsHandle, key).consume(funcH => {
           quickVM!.unwrapResult(quickVM!.callFunction(funcH, quickVM.global)).consume(() => {});
         });
-      return func;
     };
 
-    const exports = Object.fromEntries(exportKeys.map(key => [key, toExport(key)]));
+    const exports = Object.fromEntries(
+      exportKeys.map(key => [key, toExport(key)]).filter(([_, f]) => f),
+    );
     return Result.ok(exports);
   } catch (e) {
     console.error(e);
