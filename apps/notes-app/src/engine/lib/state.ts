@@ -43,7 +43,7 @@ export const registerStateLib = async (
 
     toQuickJSHandle(quickVM, (key: string) => {
       const [getState] = getSignal(key);
-      return getState() ?? null;
+      return getState();
     }).consume(f => quickVM!.setProp(internals, 'getState', f));
   });
 };

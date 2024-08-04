@@ -17,6 +17,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   });
   quickRuntime.setMaxStackSize(10_000);
   quickRuntime.setMemoryLimit(1_000_000);
+  // TODO: Execution timeout with interrupts?
 
   const quickVM = quickRuntime.newContext({
     ownedLifetimes: [quickRuntime],
@@ -26,7 +27,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   quickVM
     .unwrapResult(
       await quickVM.evalCodeAsync(
-        `{ Object.defineProperty(globalThis, '_internals', { value: {}, writable: false }); }`,
+        `{ Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internals' }, writable: false }); }`,
       ),
     )
     .dispose();
@@ -34,6 +35,32 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   await registerStateLib(quickVM, options);
   await registerContentLib(quickVM, options);
   await registerStdApiLib(quickVM, options);
+
+  // State via globalThis
+  quickVM
+    .unwrapResult(
+      await quickVM.evalCodeAsync(`{
+globalThis.__native__ = 'globalThis';
+
+const globalThisProxy = new Proxy(globalThis, {
+  get(target, prop, receiver) {
+    return Reflect.get(state, prop, receiver);
+  },
+  set(target, prop, value, receiver) {
+    return Reflect.set(state, prop, value, receiver);
+  }
+});
+
+Object.getOwnPropertyNames(globalThis).forEach(prop => {
+  if (prop !== 'global') {
+    Object.defineProperty(globalThisProxy, prop, Object.getOwnPropertyDescriptor(globalThis, prop));
+  }
+});
+
+globalThis.__proto__ = globalThisProxy;
+}`),
+    )
+    .dispose();
 
   return quickVM;
 };
