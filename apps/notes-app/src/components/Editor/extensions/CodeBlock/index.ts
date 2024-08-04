@@ -23,4 +23,18 @@ export const CodeBlock = CodeBlockLowlight.extend({
   addNodeView() {
     return codeBlockNodeView;
   },
+
+  addKeyboardShortcuts() {
+    return {
+      ...this.parent?.(),
+      'Mod-a': ({ editor }) => {
+        const { selection } = editor.state;
+        const parent = selection.$from.parent;
+        if (parent.type !== this.type) return false;
+
+        const startPos = selection.$from.start(selection.$from.depth);
+        return editor.commands.setTextSelection({ from: startPos, to: startPos + parent.nodeSize });
+      },
+    };
+  },
 });

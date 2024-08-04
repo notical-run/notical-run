@@ -9,6 +9,7 @@
    - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
    - ( ) Don't show export if not function
 ** Editor
+   - ( ) Ctrl+S should do nothing
    - ( ) Link to another note
 ** Product
    - ( ) Pagination
@@ -24,8 +25,6 @@
    - ( ) Fix issue with inline node deleting backticks should convert to text
 ** Editor
    - ( ) Update entire link instead of just the selected text?
-   - ( ) Ctrl+A inside code block should just select the code inside
-   - ( ) Ctrl+S should do nothing
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
