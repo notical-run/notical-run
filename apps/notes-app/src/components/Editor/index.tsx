@@ -33,7 +33,13 @@ export const Editor = (props: EditorProps) => {
     await evaluateAllNodes(editor, engine, {});
   }, 100);
 
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === 's') e.preventDefault();
+  };
+
   onMount(async () => {
+    window.addEventListener('keydown', onKeyDown);
+
     const editorClass = cn(
       'prose prose-base focus:outline-none p-4 max-w-full',
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
@@ -96,6 +102,7 @@ export const Editor = (props: EditorProps) => {
 
   onCleanup(() => {
     editor()?.destroy();
+    window.removeEventListener('keydown', onKeyDown);
   });
 
   return (

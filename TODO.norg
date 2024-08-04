@@ -6,9 +6,7 @@
    - ( ) Inline code node sometimes gets converted to code block
 ** Evaluation
    - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
-   - ( ) Don't show export if not function
 ** Editor
-   - ( ) Ctrl+S should do nothing
    - ( ) Link to another note
 ** Product
    - ( ) Pagination
