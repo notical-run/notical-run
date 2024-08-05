@@ -7,7 +7,7 @@ import { ParentProps, For } from 'solid-js';
 
 export const PageHeader = (props: ParentProps<PageHeaderProps>) => {
   return (
-    <div class="flex justify-between gap-2 px-4 py-2 border-b border-b-slate-150 shadow-sm">
+    <div class="flex justify-between gap-2 px-3 py-2 border-b border-b-slate-150 shadow-sm">
       <div class="flex items-center">
         <A href="/" class="text-xl pr-2" title="Dashboard">
           <img src="/images/logo.png" class="size-6" alt="notical.run" />

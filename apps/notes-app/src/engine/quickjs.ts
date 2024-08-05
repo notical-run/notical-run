@@ -54,18 +54,23 @@ export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJ
       return toQuickJSHandle(quickVM, val(...argsVal));
     });
   }
+  // TODO: Promises
   const res = quickVM.evalCode(`(${JSON.stringify(val)})`);
   return quickVM.unwrapResult(res);
 };
 
 export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: QuickJSHandle): T => {
   if (quickVM.typeof(handle) === 'function') {
-    const fn = handle.consume(f => f.dup());
-    return ((...fnArgs: any[]) => {
+    const fnHandle = handle.consume(f => f.dup());
+    const fnName = quickVM.getProp(fnHandle, 'displayName').consume(quickVM.dump);
+    const func = ((...fnArgs: any[]) => {
       const fnArgsHandles = fnArgs.map(toQuickJSHandle);
-      const res = quickVM.callFunction(fn, quickVM.null, ...fnArgsHandles);
+      const res = quickVM.callFunction(fnHandle, quickVM.null, ...fnArgsHandles);
       return quickVM.unwrapResult(res);
     }) as T;
+    (func as any).displayName = fnName;
+    return func;
   }
+  // TODO: Resolve promises
   return handle.consume(quickVM.dump);
 };

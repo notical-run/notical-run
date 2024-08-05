@@ -1,4 +1,4 @@
-## World clock
+# World clock
 
 `worldclock = here()`
 
@@ -10,9 +10,8 @@ const toTimezones = md => md.match(/^-\s+.*$/gm).map(s => s.replace(/^-\s+/, '')
 
 const getCurrentTime = timeZone => {
   const date = new Date();
-  const currentTimeText = next.markdown(currentTime).trim().replace(/(^```\w+\s*)|(```$)/g, '');
-  const [hours, minutes, seconds] = currentTimeText.split(':').map(s => parseInt(s))
-  if (currentTimeText) {
+  if (currentTime) {
+    const [hours, minutes, seconds] = currentTime.split(':').map(s => parseInt(s))
     date.setHours(hours ?? 0);
     date.setMinutes(minutes ?? 0);
     date.setSeconds(minutes ?? 0);
@@ -33,15 +32,17 @@ const refreshClock = () => {
   const tzContent = toTimezones(next.markdown(timezones))
     .map(tz => `- ${tz}: **${getCurrentTime(tz)}**`)
     .join('\n')
-  show.markdown(worldclock, `## ${getCurrentTime(tz)}\n\n${tzContent}`);
+  show.markdown(worldclock, `# ${getCurrentTime(tz)}\n\n${tzContent}`);
 }
-```
 
-### Enter the current time below
-
-`currentTime = here()`
-
-```text
+export const setTime = () => {
+  global.currentTime = prompt('Set current time');
+  refreshClock();
+}
+export const useCurrentTime = () => {
+  global.currentTime = undefined;
+  refreshClock();
+}
 ```
 
 ### Add/Remove timezones

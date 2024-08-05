@@ -3,6 +3,7 @@ import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
 import { findNodeById } from '@/utils/editor';
+import { fromQuickJSHandle } from '@/engine/quickjs';
 
 export const evalExpression = async (
   code: string,
@@ -22,19 +23,10 @@ export const evalExpression = async (
 
   const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> => {
     try {
-      if (result.error) {
-        throw result.error.consume(quickVM.dump);
-      }
+      if (result.error) throw result.error.consume(quickVM.dump);
 
-      if (quickVM.typeof(result.value) === 'function') {
-        const fnHandle = result.value;
-        const fnName = quickVM.getProp(fnHandle, 'displayName').consume(quickVM.dump);
-        const fn = () => quickVM.callFunction(result.value, quickVM.global);
-        fn.displayName = fnName ?? '';
-        return Result.ok(fn);
-      }
-
-      return Result.ok(result.value.consume(quickVM.dump));
+      const val = fromQuickJSHandle(quickVM, result.value);
+      return Result.ok(val);
     } catch (error) {
       console.error(error);
       return Result.err(error as Error);
@@ -56,6 +48,7 @@ export const evalExpression = async (
       const evalResult = await quickVM.evalCodeAsync(
         `{
 const here = () => {
+  // FIXME: Commented out because this is triggering too many updates. Find out why
   // _internals.listenToUpdate();
   return ${hereRef};
 };

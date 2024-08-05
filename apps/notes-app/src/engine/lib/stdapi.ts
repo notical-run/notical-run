@@ -42,6 +42,7 @@ export const registerStdApiLib = async (
       quickVM.setProp(quickVM.global, 'clearTimeout', f),
     );
 
+    // TODO: Find cleaner way to expose Intl?
     toQuickJSHandle(quickVM, (date: string, ...args: any[]) =>
       Intl.DateTimeFormat(...args).format(new Date(date)),
     ).consume(f => quickVM.setProp(internals, 'formatDateTime', f));

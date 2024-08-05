@@ -17,6 +17,9 @@
 * Ready to use
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
+   - ( ) Get content from imported notes (via next.markdown)
+   - ( ) Get content from imported notes (via insert.markdown)
+   - ( ) Get content from imported notes (via show.markdown)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
    - ( ) Fix issue with inline node deleting backticks should convert to text
@@ -28,6 +31,7 @@
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
    - ( ) Make nav bar responsive for small screens
+   - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
    - ( ) Share button (disabled for private notes with hint to make public)
    - ( ) More e2e tests

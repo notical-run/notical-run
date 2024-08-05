@@ -53,6 +53,19 @@ request('GET /workspaces/:workspaceSlug', () => {
         expect(await response.json()).toMatchObject({ error_code: 'cant_access_workspace' });
       });
     });
+
+    context('when user is not authenticated', () => {
+      context('when workspace is private', () => {
+        it('fails with an error message', async () => {
+          await createWorkspace({ slug: 'wp-1', access: 'private' });
+
+          const response = await route.request('/api/workspaces/wp-1', { method: 'GET' });
+
+          expect(response.status).toBe(403);
+          expect(await response.json()).toMatchObject({ error_code: 'cant_access_workspace' });
+        });
+      });
+    });
   });
 
   response.status('404', () => {
@@ -67,17 +80,6 @@ request('GET /workspaces/:workspaceSlug', () => {
 
         expect(response.status).toBe(404);
         expect(await response.json()).toMatchObject({ error_code: 'workspace_not_found' });
-      });
-    });
-  });
-
-  response.status('401', () => {
-    context('when user is not authenticated', () => {
-      it('fails with an error message', async () => {
-        const response = await route.request('/api/workspaces/wp-1', { method: 'GET' });
-
-        expect(response.status).toBe(401);
-        expect(await response.json()).toMatchObject({ error_code: 'unauthenticated' });
       });
     });
   });

@@ -1,4 +1,5 @@
 import { registerContentLib } from '@/engine/lib/content';
+import { registerGlobalProxy } from '@/engine/lib/global-proxy';
 import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
 import { registerUILib } from '@/engine/lib/ui';
@@ -29,10 +30,6 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
 Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internals' }, writable: false });
-Object.defineProperty(globalThis, 'button', { value: (name, fn) => {
-  fn.displayName = name;
-  return fn;
-} })
 }`),
     )
     .dispose();
@@ -41,33 +38,7 @@ Object.defineProperty(globalThis, 'button', { value: (name, fn) => {
   await registerContentLib(quickVM, options);
   await registerStdApiLib(quickVM, options);
   await registerUILib(quickVM, options);
-
-  // State via globalThis
-  quickVM
-    .unwrapResult(
-      await quickVM.evalCodeAsync(`{
-globalThis.__native__ = 'globalThis';
-globalThis.global = globalThis;
-
-const globalThisProxy = new Proxy(globalThis, {
-  get(target, prop, receiver) {
-    return Reflect.get(state, prop, receiver);
-  },
-  set(target, prop, value, receiver) {
-    return Reflect.set(state, prop, value, receiver);
-  }
-});
-
-Object.getOwnPropertyNames(globalThis).forEach(prop => {
-  if (prop !== 'global') {
-    Object.defineProperty(globalThisProxy, prop, Object.getOwnPropertyDescriptor(globalThis, prop));
-  }
-});
-
-globalThis.__proto__ = globalThisProxy;
-}`),
-    )
-    .dispose();
+  await registerGlobalProxy(quickVM, options);
 
   return quickVM;
 };

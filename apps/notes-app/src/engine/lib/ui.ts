@@ -6,6 +6,21 @@ export const registerUILib = async (
   quickVM: QuickJSAsyncContext,
   options: QuickJSContextOptions,
 ) => {
+  // button() helper for labelled inline buttons
+  quickVM
+    .unwrapResult(
+      await quickVM.evalCodeAsync(`{
+Object.defineProperty(globalThis, 'button', {
+  value: (name, fn) => {
+    fn.displayName = name;
+    return fn;
+  }
+})
+      }`),
+    )
+    .dispose();
+
+  // Alert/Notify
   toQuickJSHandle(quickVM, async (message: string) => {
     await new Promise(resolve => {
       options.apiHelpers.alert({ message, onClose: () => resolve(undefined) });
@@ -15,6 +30,7 @@ export const registerUILib = async (
     quickVM!.setProp(quickVM.global, 'notify', f.dup());
   });
 
+  // Confirm dialog
   toQuickJSHandle(quickVM, async (message: string) => {
     return new Promise(resolve => {
       options.apiHelpers.confirm({
@@ -25,6 +41,7 @@ export const registerUILib = async (
     });
   }).consume(f => quickVM!.setProp(quickVM.global, 'confirm', f));
 
+  // Prompt dialog
   toQuickJSHandle(quickVM, async (message: string, defaultValue?: string) => {
     return new Promise(resolve => {
       options.apiHelpers.prompt({
