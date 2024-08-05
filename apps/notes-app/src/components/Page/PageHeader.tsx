@@ -1,3 +1,4 @@
+import { Button } from '@/components/_base/Button';
 import { Authorize } from '@/components/Auth/Session';
 import { links } from '@/components/Navigation';
 import { PageHeaderProps } from '@/components/Page';
@@ -27,14 +28,14 @@ export const PageHeader = (props: ParentProps<PageHeaderProps>) => {
         <Authorize
           user="session"
           fallback={
-            <A href={links.login()} class="text-xs text-violet-600">
+            <Button as={A} href={links.login()} size="sm" variant="accent-link">
               Login
-            </A>
+            </Button>
           }
         >
-          <A href={links.logout()} class="text-xs text-violet-600">
+          <Button as={A} href={links.logout()} size="sm" variant="accent-link">
             Logout
-          </A>
+          </Button>
         </Authorize>
       </div>
     </div>

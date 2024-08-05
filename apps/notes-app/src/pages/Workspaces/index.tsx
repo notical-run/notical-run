@@ -19,14 +19,6 @@ const Workspaces = () => {
   return (
     <div>
       <div>
-        <div class="flex items-end justify-between pb-2">
-          <h1 class="text-slate-400 font-bold">My Workspaces</h1>
-
-          <Button size="sm" onClick={() => setNewWorkspaceDialogOpen(true)}>
-            <FaSolidPlus size={10} /> New workspace
-          </Button>
-        </div>
-
         <Switch>
           <Match when={workspacesResult.isLoading}>
             <LoadingView subtitle="Loading workspaces" />
@@ -48,6 +40,14 @@ const Workspaces = () => {
           </Match>
 
           <Match when={workspacesResult.isSuccess}>
+            <div class="flex items-end justify-between pb-2">
+              <h1 class="text-slate-500 font-bold">My Workspaces</h1>
+
+              <Button size="sm" onClick={() => setNewWorkspaceDialogOpen(true)}>
+                <FaSolidPlus size={10} /> New workspace
+              </Button>
+            </div>
+
             <List grid class="animate-fade-in" aria-label="My workspaces">
               <For each={workspacesResult.data ?? []}>
                 {workspace => (
@@ -59,7 +59,7 @@ const Workspaces = () => {
                             {workspace.access === 'private' && (
                               <AiOutlineLock size={14} class="text-yellow-700" />
                             )}
-                            {workspace.name}
+                            <span class="truncate">{workspace.name}</span>
                           </div>
                         </div>
                         <span class="text-slate-900 font-bold">@{workspace.slug}</span>
@@ -71,14 +71,14 @@ const Workspaces = () => {
               </For>
 
               <List.Item class="border-dashed shadow-none">
-                <button
-                  role="button"
+                <Button
+                  variant="plain"
                   onClick={() => setNewWorkspaceDialogOpen(true)}
                   class="w-full h-full px-4 py-4 flex flex-col gap-2 items-center justify-center text-slate-600"
                 >
                   <FiPlus size={20} />
                   <div class="text-sm">New workspace</div>
-                </button>
+                </Button>
               </List.Item>
             </List>
           </Match>

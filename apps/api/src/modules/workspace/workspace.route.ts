@@ -13,7 +13,7 @@ import { WorkspaceSelectType } from '../../db/schema';
 import { workspacePermissions, validateWorkspace } from '../../validators/workspace';
 
 const createWorkspaceSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().min(1).max(120),
   slug: z
     .string()
     .min(1)
@@ -23,7 +23,7 @@ const createWorkspaceSchema = z.object({
 });
 
 const updateWorkspaceSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
+  name: z.string().min(1).max(120).optional(),
   access: z.enum(['private', 'public']).optional(),
 });
 

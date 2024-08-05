@@ -11,7 +11,7 @@ import { List } from '@/components/_base/ListItems';
 import { Authorize } from '@/components/Auth/Session';
 
 const WorkspaceNotes = () => {
-  const { slug } = useWorkspaceContext();
+  const { slug, workspace } = useWorkspaceContext();
   const notesQuery = useWorkspaceNotes(slug);
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
@@ -29,8 +29,9 @@ const WorkspaceNotes = () => {
           </Match>
 
           <Match when={notesQuery.isSuccess}>
+            <div class="truncate text-xs text-slate-400 w-full max-w-60">{workspace()?.name}</div>
             <div class="flex justify-between items-end pb-2">
-              <h1 class="text-slate-400 font-bold">Notes</h1>
+              <h1 class="text-slate-500 font-bold">Notes</h1>
 
               <Authorize user="logged_in" workspace="create_notes">
                 <Button size="sm" onClick={() => setDialogOpen(true)}>

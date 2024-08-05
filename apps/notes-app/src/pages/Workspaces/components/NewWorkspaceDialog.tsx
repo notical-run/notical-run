@@ -15,7 +15,7 @@ import { SwitchInput } from '@/components/_base/SwitchInput';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 
 const workspaceSchema = z.object({
-  name: z.string().min(1, 'Required'),
+  name: z.string().min(1, 'Required').max(120, 'Maximum length is 120 characters'),
   slug: z
     .string()
     .min(1, 'Required')

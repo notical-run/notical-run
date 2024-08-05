@@ -8,10 +8,10 @@ import { NoteList } from '@/pages/WorkspaceNotes/components/NoteList';
 import { List } from '@/components/_base/ListItems';
 import { A } from '@solidjs/router';
 import { links } from '@/components/Navigation';
-import { AiOutlineArrowLeft } from 'solid-icons/ai';
+import { FaSolidAngleLeft } from 'solid-icons/fa';
 
 const ArchivedWorkspaceNotes = () => {
-  const { slug } = useWorkspaceContext();
+  const { slug, workspace } = useWorkspaceContext();
   const notesQuery = useWorkspaceNotes(slug, { archived: true });
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
@@ -30,14 +30,18 @@ const ArchivedWorkspaceNotes = () => {
 
           <Match when={notesQuery.isSuccess && notesQuery.data}>
             <div class="pb-2">
-              <A
-                href={links.workspaceNotes(slug())}
-                class="text-xs flex items-center gap-2 text-slate-600 hover:text-slate-400"
-              >
-                <AiOutlineArrowLeft />
-                Back to notes
-              </A>
-              <h1 class="text-slate-400 font-bold pt-1">Archived notes</h1>
+              <div class="flex gap-2 items-center">
+                <A
+                  href={links.workspaceNotes(slug())}
+                  class="text-xs flex items-center gap-2 text-slate-800 hover:bg-slate-200 px-2 py-1 rounded"
+                >
+                  <FaSolidAngleLeft />
+                  Back
+                </A>
+
+                <div class="truncate text-xs text-slate-400 max-w-60">{workspace()?.name}</div>
+              </div>
+              <h1 class="text-slate-500 font-bold pt-2">Archived notes</h1>
             </div>
 
             <NoteList

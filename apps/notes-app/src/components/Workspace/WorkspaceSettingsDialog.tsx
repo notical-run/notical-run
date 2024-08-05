@@ -14,7 +14,7 @@ import { FiSettings } from 'solid-icons/fi';
 import { useWorkspaceContext } from '@/context/workspace';
 
 const workspaceSchema = z.object({
-  name: z.string().min(1, 'Required'),
+  name: z.string().min(1, 'Required').max(120, 'Maximum length is 120 characters'),
   private: z.boolean(),
 });
 
