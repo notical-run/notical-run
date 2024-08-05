@@ -40,6 +40,7 @@ export const useAuthorizationRules = () => {
     user: {
       logged_in: () => and(sessionId(), userQuery.data?.id),
       ready: () => !userQuery.isLoading,
+      session: () => Boolean(sessionId()),
     },
   } as const;
 };

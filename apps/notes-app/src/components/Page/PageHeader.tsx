@@ -25,7 +25,7 @@ export const PageHeader = (props: ParentProps<PageHeaderProps>) => {
 
       <div class="flex items-center">
         <Authorize
-          user="logged_in"
+          user="session"
           fallback={
             <A href={links.login()} class="text-xs text-violet-600">
               Login
