@@ -22,9 +22,8 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
     quickVM.dispose();
   };
 
-  return {
+  return Object.assign(engine, {
     quickVM,
     destroy,
-    ...engine,
-  };
+  });
 };

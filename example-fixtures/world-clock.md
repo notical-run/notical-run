@@ -2,7 +2,6 @@
 
 `worldclock = here()`
 
-
 ```
 globalThis.timer && clearInterval(globalThis.timer);
 globalThis.timer = setInterval(() => refreshClock(), 1000);
@@ -18,32 +17,39 @@ const getCurrentTime = timeZone => {
     date.setMinutes(minutes ?? 0);
     date.setSeconds(minutes ?? 0);
   }
-  return _internals.formatDateTime(date, 'en-US', {
-    timeZone,
-    hour12: true,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
+  try {
+    return _internals.formatDateTime(date, 'en-US', {
+      timeZone,
+      hour12: true,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+  } catch(e) {}
+  return '~~INVALID TIMEZONE~~'
 }
 
-export const refreshClock = () => {
+const refreshClock = () => {
   const tzContent = toTimezones(next.markdown(timezones))
     .map(tz => `- ${tz}: **${getCurrentTime(tz)}**`)
     .join('\n')
-  show.markdown(worldclock, tzContent);
+  show.markdown(worldclock, `## ${getCurrentTime(tz)}\n\n${tzContent}`);
 }
 ```
 
+### Enter the current time below
 
 `currentTime = here()`
+
 ```text
 ```
 
+### Add/Remove timezones
 
 `timezones = here()`
-- UTC
-- Asia/Kolkata
-- America/Chicago
-- Europe/London
 
+- UTC
+- America/Chicago
+- +08:00
+- Asia/Kolkata
+- Europe/London

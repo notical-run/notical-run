@@ -2,7 +2,7 @@ import { Editor as TiptapEditor } from '@tiptap/core';
 import 'highlight.js/styles/tokyo-night-dark.css';
 import { getExtensions } from './extensions';
 import { evaluateAllNodes } from './evaluator';
-import { createEffect, createSignal, onCleanup, onMount, Ref, Show } from 'solid-js';
+import { createEffect, createSignal, Match, onCleanup, onMount, Ref, Show, Switch } from 'solid-js';
 import * as Y from 'yjs';
 import { evaluateImport } from './headless-note';
 import { createEvalEngine } from '@/engine';
@@ -12,6 +12,9 @@ import { useDebounced } from '@/utils/use-debounced';
 import './editor.css';
 import { InlineStyleBar } from '@/components/Editor/components/InlineStyleBar';
 import { cn } from '@/utils/classname';
+import { PromptModal } from '@/components/Editor/components/PromptModal';
+import { ConfirmModal } from '@/components/Editor/components/ConfirmModal';
+import { AlertToast } from '@/components/Editor/components/AlertToast';
 
 export type EditorProps = {
   editable?: boolean;
@@ -21,8 +24,16 @@ export type EditorProps = {
   defaultContent?: string | null;
 };
 
+type ModalKind =
+  | { kind: 'none'; message?: never }
+  | { kind: 'prompt'; message: string; onValue: (value: string | null) => void }
+  | { kind: 'confirm'; message: string; onConfirm: () => void; onCancel: () => void }
+  | { kind: 'alert'; message: string; onClose: () => void };
+
 export const Editor = (props: EditorProps) => {
   const [editor, setEditor] = createSignal<TiptapEditor>();
+  const [currentModal, setCurrentModal] = createSignal<ModalKind>({ kind: 'none' });
+
   let element: HTMLElement;
   let inlineMenuElement: HTMLElement;
 
@@ -60,6 +71,11 @@ export const Editor = (props: EditorProps) => {
         cleanupInstances.push(module.onCleanup);
         return module.moduleCode;
       },
+      apiHelpers: {
+        alert: opts => setCurrentModal({ kind: 'alert', ...opts }),
+        confirm: opts => setCurrentModal({ kind: 'confirm', ...opts }),
+        prompt: opts => setCurrentModal({ kind: 'prompt', ...opts }),
+      },
     });
 
     const tiptapEditor = new TiptapEditor({
@@ -91,10 +107,12 @@ export const Editor = (props: EditorProps) => {
   });
 
   createEffect(() => {
+    // Update editable
     if (props.editable !== undefined) {
       editor()?.setEditable(props.editable, false);
     }
 
+    // Use default markdown if editor is empty
     if (props.defaultContent && editor()?.isEmpty) {
       editor()?.commands.setContent(props.defaultContent);
     }
@@ -112,6 +130,48 @@ export const Editor = (props: EditorProps) => {
       </Show>
 
       <div ref={el => (element = el)} />
+
+      <Switch>
+        <Match when={currentModal()?.kind === 'prompt'}>
+          <PromptModal
+            title={currentModal()?.message || 'Prompt'}
+            onSubmit={value => {
+              try {
+                (currentModal() as any)?.onValue(value);
+              } catch (e) {} // eslint-disable-line no-empty
+              setCurrentModal({ kind: 'none' });
+            }}
+          />
+        </Match>
+        <Match when={currentModal()?.kind === 'confirm'}>
+          <ConfirmModal
+            title={currentModal()?.message || 'Confirm'}
+            onConfirm={() => {
+              try {
+                (currentModal() as any)?.onConfirm();
+              } catch (e) {} // eslint-disable-line no-empty
+              setCurrentModal({ kind: 'none' });
+            }}
+            onCancel={() => {
+              try {
+                (currentModal() as any)?.onCancel();
+              } catch (e) {} // eslint-disable-line no-empty
+              setCurrentModal({ kind: 'none' });
+            }}
+          />
+        </Match>
+        <Match when={currentModal()?.kind === 'alert'}>
+          <AlertToast
+            title={currentModal()?.message || 'Alert'}
+            onClose={() => {
+              try {
+                (currentModal() as any)?.onClose();
+              } catch (e) {} // eslint-disable-line no-empty
+              setCurrentModal({ kind: 'none' });
+            }}
+          />
+        </Match>
+      </Switch>
     </div>
   );
 };

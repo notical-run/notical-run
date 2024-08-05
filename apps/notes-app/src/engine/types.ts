@@ -19,6 +19,11 @@ export type ModuleLoader = (modulePath: string) => Promise<string>;
 export type EvalEngineOptions = {
   withEditor: <R>(fn: (editor: Editor) => R) => R;
   moduleLoader: ModuleLoader;
+  apiHelpers: {
+    alert: (opts: { message: string; onClose: () => void }) => void;
+    prompt: (opts: { message: string; onValue: (value: string | null) => void }) => void;
+    confirm: (opts: { message: string; onConfirm: () => void; onCancel: () => void }) => void;
+  };
 };
 
 export type EvalNodeOptions = {

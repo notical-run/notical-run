@@ -1,22 +1,22 @@
 * Focus
 ** Bugs
-   - ( ) Fix infinite update loop for update listener for hooks
+   - ( ) Fix next.markdown when anchor code is inline
    - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block (sometimes leaves view)
    - ( ) Inline code node sometimes gets converted to code block
+   - ( ) Fix infinite update loop for update listener for hooks
 ** Evaluation
-   - ( ) Prompt/Alert/Confirm apis with custom UI (message can be markdown)
+   - ( ) Run evaluation inside "show" content
 ** Editor
    - ( ) Link to another note
 ** Product
    - ( ) Pagination
    - ( ) landing page
+   - ( ) User info on topbar
 
 * Ready to use
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
-   - ( ) Run evaluation inside "show" content
-   - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
    - ( ) Fix issue with inline node deleting backticks should convert to text
@@ -28,7 +28,6 @@
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
    - ( ) Make nav bar responsive for small screens
-   - ( ) User info on topbar
    - ( ) Dark theme
    - ( ) Share button (disabled for private notes with hint to make public)
    - ( ) More e2e tests
@@ -47,6 +46,7 @@
 * Later
 ** Bugs
    - ( ) Up key not working from inside code blocks
+   - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
    - ( ) memory leak?
    - ( ) Detect cyclic dependencies of signals
    - ( ) No curor on todo when text is empty

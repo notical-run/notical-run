@@ -1,6 +1,7 @@
 import { registerContentLib } from '@/engine/lib/content';
 import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
+import { registerUILib } from '@/engine/lib/ui';
 import { getQuickJSRuntime } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 
@@ -39,6 +40,7 @@ Object.defineProperty(globalThis, 'button', { value: (name, fn) => {
   await registerStateLib(quickVM, options);
   await registerContentLib(quickVM, options);
   await registerStdApiLib(quickVM, options);
+  await registerUILib(quickVM, options);
 
   // State via globalThis
   quickVM
