@@ -1,18 +1,21 @@
-import { SlashCommand } from '@/components/Editor/extensions/SlashCommands/view';
+import { SuggestionsItem } from '@/components/Editor/suggestions/view';
 import { ChainedCommands } from '@tiptap/core';
 import { FaSolidCode, FaSolidHeading } from 'solid-icons/fa';
 
 const slashCommand =
   (
-    fn: (chain: ChainedCommands, opts: Parameters<SlashCommand['command']>[0]) => ChainedCommands,
-  ): SlashCommand['command'] =>
+    fn: (
+      chain: ChainedCommands,
+      opts: Parameters<SuggestionsItem['command']>[0],
+    ) => ChainedCommands,
+  ): SuggestionsItem['command'] =>
   opts => {
     const { editor, range } = opts;
     const chain = editor.chain().focus().deleteRange(range);
     fn(chain, opts).run();
   };
 
-export const slashCommands: SlashCommand[] = [
+export const slashCommands: SuggestionsItem[] = [
   {
     id: 'code_block',
     icon: () => <FaSolidCode />,

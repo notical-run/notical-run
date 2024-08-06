@@ -2,33 +2,36 @@ import { cn } from '@/utils/classname';
 import { Editor, Range } from '@tiptap/core';
 import { For, JSX, Match, Switch } from 'solid-js';
 
-export type SlashCommand = {
+export type SuggestionsItem = {
   id: string;
   icon?: () => JSX.Element;
   label: string;
   command: (opts: { editor: Editor; range: Range }) => void;
 };
 
-export type SlashMenuProps = {
-  items: SlashCommand[];
-  onSelect: (item: SlashCommand) => void;
+export type SuggestionsMenuProps = {
+  items: SuggestionsItem[] | { error: string };
+  onSelect: (item: SuggestionsItem) => void;
   highlightedIndex: number;
   setHighlightedIndex: (n: number) => void;
 };
 
-export const SlashMenu = (props: SlashMenuProps) => {
+export const SuggestionsMenu = (props: SuggestionsMenuProps) => {
+  const error = (): string => (props.items as any).error;
+  const items = (): SuggestionsItem[] => props.items as any;
+
   return (
-    <div>
+    <div class="text-sm">
       <Switch>
-        <Match when={(props.items as any).error}>
-          <div class="bg-slate-800 px-2 py-2 rounded text-red-400">
-            {(props.items as any).error}
+        <Match when={error()}>
+          <div class="shadow bg-white border border-slate-200 px-2 py-2 rounded text-red-500">
+            {error()}
           </div>
         </Match>
 
-        <Match when={props.items.length > 0}>
+        <Match when={items().length > 0}>
           <div class="bg-white shadow-md border border-slate-200" role="listbox">
-            <For each={props.items}>
+            <For each={items()}>
               {(item, index) => (
                 <button
                   class={cn(

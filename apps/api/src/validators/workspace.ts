@@ -44,13 +44,22 @@ export const validateWorkspace = (options: { authorizeFor?: Actions } = {}) =>
     });
 
     if (!workspace)
-      return c.json({ error: `Workspace not found`, error_code: 'workspace_not_found' }, 404);
+      return c.json(
+        {
+          error: `Workspace "${param.workspaceSlug}" not found`,
+          error_code: 'workspace_not_found',
+        },
+        404,
+      );
 
     if (options.authorizeFor) {
       const isAuthorized = workspacePermissions[options.authorizeFor](workspace!, user?.id);
       if (!isAuthorized) {
         return c.json(
-          { error: `You don't have access to this workspace`, error_code: 'cant_access_workspace' },
+          {
+            error: `You don't have access to workspace "${param.workspaceSlug}"`,
+            error_code: 'cant_access_workspace',
+          },
           403,
         );
       }
