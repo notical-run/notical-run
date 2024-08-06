@@ -88,38 +88,61 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
       });
     });
 
-    context('when workspace is public', () => {
-      it('returns public notes belonging to the workspace', async () => {
+    context('with filter nameSearch', () => {
+      it('returns notes from the workspace matching search term by name', async () => {
         const user = await createUser({ email: 'author@email.com' });
-        const workspace = await createWorkspace({
-          slug: 'wp-1',
-          authorId: user.id,
-          access: 'public',
-        });
-        const n1 = await createNote({
-          name: 'note-1',
-          workspaceId: workspace.id,
-          access: 'public',
-        });
-        const n2 = await createNote({
-          name: 'note-2',
-          workspaceId: workspace.id,
-          access: 'public',
-        });
-        await createNote({
-          name: 'note-3',
-          workspaceId: workspace.id,
-          access: 'private',
-        });
-        const otherUser = await createUser({ email: 'viewer@email.com' });
+        const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+        const workspace2 = await createWorkspace({ slug: 'wp-2', authorId: user.id });
+        await createNote({ name: 'note-1', workspaceId: workspace2.id });
+        await createNote({ workspaceId: workspace.id, archivedAt: new Date() });
+        const n1 = await createNote({ name: 'barfooroo', workspaceId: workspace.id });
+        const n2 = await createNote({ name: 'bazfooloo', workspaceId: workspace.id });
+        await createNote({ workspaceId: workspace.id, archivedAt: new Date() });
 
-        const response = await route.request('/api/workspaces/wp-1/notes', {
+        const response = await route.request('/api/workspaces/wp-1/notes?nameSearch=foo', {
           method: 'GET',
-          headers: await headers({ authenticatedUserId: otherUser.id }),
+          headers: await headers({ authenticatedUserId: user.id }),
         });
 
         expect(response.status).toBe(200);
         expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+      });
+    });
+
+    context('when user doesnt have access to the workspace', () => {
+      context('when workspace is public', () => {
+        it('returns public notes belonging to the workspace', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({
+            slug: 'wp-1',
+            authorId: user.id,
+            access: 'public',
+          });
+          const n1 = await createNote({
+            name: 'note-1',
+            workspaceId: workspace.id,
+            access: 'public',
+          });
+          const n2 = await createNote({
+            name: 'note-2',
+            workspaceId: workspace.id,
+            access: 'public',
+          });
+          await createNote({
+            name: 'note-3',
+            workspaceId: workspace.id,
+            access: 'private',
+          });
+          const otherUser = await createUser({ email: 'viewer@email.com' });
+
+          const response = await route.request('/api/workspaces/wp-1/notes', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: otherUser.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
       });
     });
   });

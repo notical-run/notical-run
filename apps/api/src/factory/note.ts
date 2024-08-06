@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { Note, NoteInsertType, Workspace } from '../db/schema';
 import { createWorkspace } from './workspace';
+import { generateRandomInteger } from 'oslo/crypto';
 
 export const noteFactory = async (note?: Partial<NoteInsertType>): Promise<NoteInsertType> => {
   const tempWorkspace = note?.workspaceId
@@ -9,7 +10,7 @@ export const noteFactory = async (note?: Partial<NoteInsertType>): Promise<NoteI
     : await createWorkspace();
 
   return {
-    name: 'note-1',
+    name: 'note-default-' + generateRandomInteger(100),
     content: '',
     ...note,
     workspaceId: note?.workspaceId ?? tempWorkspace?.id ?? '',

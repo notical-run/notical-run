@@ -21,9 +21,9 @@ export const LinkSearchExtension = SuggestionsExtension.extend({
         items: async ({ query }) => {
           const matches = query.trim().split('/');
           if (matches.length < 2) return [];
-          const [workspaceSlug, noteSearch] = matches;
+          const [workspaceSlug, nameSearch] = matches;
 
-          const notes = await fetchWorkspaceNotes(workspaceSlug);
+          const notes = await fetchWorkspaceNotes(workspaceSlug, { nameSearch });
           return notes.map(note => ({
             id: note.id,
             label: `@${note.workspace.slug}/${note.name}`,

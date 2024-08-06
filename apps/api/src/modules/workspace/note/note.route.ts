@@ -30,6 +30,7 @@ const noteFiltersSchema = z.object({
     .transform(s => JSON.parse(s ?? 'null'))
     .catch(undefined),
   access: z.enum(['private', 'public']).optional(),
+  nameSearch: z.string().max(200).optional(),
 });
 
 export const noteRoute = new Hono<{

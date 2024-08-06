@@ -31,18 +31,17 @@ export const useUserWorkspaces = () => {
 
 export type WorkspaceNotesQueryResult = QueryResponseType<ReturnType<typeof useWorkspaceNotes>>;
 
-export const fetchWorkspaceNotes = (workspaceSlug: string, params?: { archived?: boolean }) =>
+type Filters = { archived?: boolean; nameSearch?: string };
+
+export const fetchWorkspaceNotes = (workspaceSlug: string, params?: Filters) =>
   apiClient.api.workspaces[':workspaceSlug'].notes
     .$get({
       param: { workspaceSlug: workspaceSlug },
-      query: { archived: `${params?.archived ?? false}` },
+      query: { archived: `${params?.archived ?? false}`, nameSearch: params?.nameSearch },
     })
     .then(responseJson);
 
-export const useWorkspaceNotes = (
-  workspaceSlug: Accessor<string>,
-  params?: { archived?: boolean },
-) => {
+export const useWorkspaceNotes = (workspaceSlug: Accessor<string>, params?: Filters) => {
   return createQuery(() => ({
     queryKey: queryKeys.workspaceNotes(workspaceSlug()),
     queryFn: () => fetchWorkspaceNotes(workspaceSlug(), params),

@@ -1,4 +1,4 @@
-import { and, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, isNotNull, isNull, sql } from 'drizzle-orm';
 import { db } from '../../../db';
 import {
   Workspace,
@@ -34,7 +34,11 @@ export const getNote = async (noteId: NoteSelectType['id']) => {
   return note;
 };
 
-export type NoteFilters = { archived?: boolean; access?: NoteSelectType['access'] };
+export type NoteFilters = {
+  archived?: boolean;
+  access?: NoteSelectType['access'];
+  nameSearch?: string;
+};
 
 const noteFiltersToCondition = (filters: NoteFilters) => {
   const cond = [];
@@ -47,6 +51,11 @@ const noteFiltersToCondition = (filters: NoteFilters) => {
 
   if (filters.access) {
     cond.push(eq(Note.access, filters.access));
+  }
+
+  if (filters.nameSearch) {
+    const searchText = filters.nameSearch.replace(/[%_]/g, '');
+    cond.push(ilike(Note.name, `%${searchText}%`));
   }
 
   if (cond.length === 0) return undefined;
