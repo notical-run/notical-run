@@ -15,6 +15,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Extension } from '@tiptap/core';
 import BubbleMenu from '@tiptap/extension-bubble-menu';
 import { SlashCommandsExtension } from '@/components/Editor/extensions/SlashCommands';
+import { NoteLink } from '@/components/Editor/extensions/Links';
 
 export const getExtensions = ({
   document: yDoc,
@@ -62,6 +63,7 @@ export const getExtensions = ({
         },
       }),
     SlashCommandsExtension,
+    NoteLink,
 
     GlobalNodeId,
     InlineCode,

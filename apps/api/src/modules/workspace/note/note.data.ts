@@ -81,6 +81,12 @@ export const getWorkspaceNotes = async (
               name: true,
             },
           },
+          workspace: {
+            columns: {
+              id: true,
+              slug: true,
+            },
+          },
         },
       },
     },
