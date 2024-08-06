@@ -3,7 +3,7 @@ import { cn } from '@/utils/classname';
 import { Result } from '@/utils/result';
 import { Editor } from '@tiptap/core';
 import { createEffect, createMemo, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
-import { FaSolidCirclePlay, FaSolidPlay } from 'solid-icons/fa';
+import { FaSolidCirclePlay } from 'solid-icons/fa';
 import { getExtensions } from '@/components/Editor/extensions';
 import { AiOutlineCloseCircle } from 'solid-icons/ai';
 

@@ -85,7 +85,7 @@ const ExportsView = (props: Pick<CodeBlockAttrs, 'exports' | 'collapsed'>) => {
                 variant="accent"
                 size="sm"
                 onClick={() => (value as any)()}
-                onPointerDown={e => e.preventDefault()}
+                onPointerDown={(e: any) => e.preventDefault()}
               >
                 {key}
               </Button>

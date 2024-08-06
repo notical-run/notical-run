@@ -8,23 +8,24 @@
 ** Evaluation
    - ( ) Run evaluation inside "show" content
 ** Editor
-   - ( ) Link to another note
+   - ( ) Table
 ** Product
-   - ( ) User info on topbar
    - ( ) Pagination
    - ( ) landing page
+   - ( ) User info on topbar
+   - ( ) More e2e tests
 
 * Ready to use
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Get content from imported notes (via next.markdown)
-   - ( ) Get content from imported notes (via insert.markdown)
-   - ( ) Get content from imported notes (via show.markdown)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
    - ( ) Fix issue with inline node deleting backticks should convert to text
 ** Editor
-   - ( ) Update entire link instead of just the selected text?
+   - ( ) Update entire link instead of just the selected text (inline floating menu)
+   - ( ) Show floating menu if cursor is inside link
+   - ( ) Don't show floating menu inside inline code nodes?
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
@@ -34,7 +35,6 @@
    - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
    - ( ) Share button (disabled for private notes with hint to make public)
-   - ( ) More e2e tests
 ** Capabilities
    - ( ) Permission based capabilities (Ask user if a feature can be used)
    - ( ) Create a new note programatically
@@ -55,6 +55,8 @@
    - ( ) Detect cyclic dependencies of signals
    - ( ) No curor on todo when text is empty
 ** Evaluation
+   - ( ) Update shown content in imported notes (via show.markdown) (save note content)
+   - ( ) Update inserted content in imported notes (via insert.markdown) (save note content)
    - ( ) Delete content programatically
    - ( ) Pause evaluation update loop (for debugging)
    - ( ) Button next to import stmnt to open imported note
@@ -77,12 +79,11 @@
    - ( ) With error "note already exists", if note is archived mention that it is archived
    - ( ) Versioning?
    - ( ) KEep track of note imports/references
-** Markdown or not
-   - ( ) Decide if this should stay compatible with markdown
-   - ( ) Alternative way to insert/show content
 ** Editor
-   - ( ) Collapsable inline code marks
+   - ( ) Allow note search for imports inside code blocks?
    - ( ) Checkbox with 3 states (done, in progress, unchecked)
+   - ( ) Collapsable inline code marks
+   - ( ) Use solid-router for navigating to note links inside editor
    - ( ) Latex equation support (mathjax or katex)
    - ( ) Youtube embed
    - ( ) plantuml diagram support

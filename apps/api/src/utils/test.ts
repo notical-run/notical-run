@@ -4,13 +4,17 @@ import { createSession } from '../factory/user';
 
 export const context = describe;
 
-export const request = (message: string, fn: () => any) => {
+const createRequest = (desc: typeof describe.only) => (message: string, fn: () => any) => {
   beforeEach(async () => {
     await cleanupData();
   });
 
-  describe(message, fn);
+  desc(message, fn);
 };
+
+export const request = Object.assign(createRequest(describe), {
+  only: createRequest(describe.only),
+});
 
 export const response = { status: describe };
 

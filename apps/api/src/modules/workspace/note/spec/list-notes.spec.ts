@@ -94,10 +94,10 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
         const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
         const workspace2 = await createWorkspace({ slug: 'wp-2', authorId: user.id });
         await createNote({ name: 'note-1', workspaceId: workspace2.id });
-        await createNote({ workspaceId: workspace.id, archivedAt: new Date() });
+        await createNote({ workspaceId: workspace.id });
         const n1 = await createNote({ name: 'barfooroo', workspaceId: workspace.id });
         const n2 = await createNote({ name: 'bazfooloo', workspaceId: workspace.id });
-        await createNote({ workspaceId: workspace.id, archivedAt: new Date() });
+        await createNote({ workspaceId: workspace.id });
 
         const response = await route.request('/api/workspaces/wp-1/notes?nameSearch=foo', {
           method: 'GET',
@@ -106,6 +106,70 @@ request('GET /workspaces/:workspaceSlug/notes', () => {
 
         expect(response.status).toBe(200);
         expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+      });
+    });
+
+    context('with filter access', () => {
+      context('when access is private', () => {
+        it('returns private notes from workspace', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          await createNote({ workspaceId: workspace.id, access: 'public' });
+          const n1 = await createNote({ workspaceId: workspace.id, access: 'private' });
+          const n2 = await createNote({ workspaceId: workspace.id, access: 'private' });
+          await createNote({ workspaceId: workspace.id, access: 'public' });
+
+          const response = await route.request('/api/workspaces/wp-1/notes?access=private', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
+      });
+
+      context('when access is public', () => {
+        it('returns private notes from workspace', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({ slug: 'wp-1', authorId: user.id });
+          await createNote({ workspaceId: workspace.id, access: 'private' });
+          const n1 = await createNote({ workspaceId: workspace.id, access: 'public' });
+          const n2 = await createNote({ workspaceId: workspace.id, access: 'public' });
+          await createNote({ workspaceId: workspace.id, access: 'private' });
+
+          const response = await route.request('/api/workspaces/wp-1/notes?access=public', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: user.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
+      });
+
+      context('when user doesnt have access to a public workspace', () => {
+        it('ignores the access filter and only returns public notes', async () => {
+          const user = await createUser({ email: 'author@email.com' });
+          const workspace = await createWorkspace({
+            slug: 'wp-1',
+            authorId: user.id,
+            access: 'public',
+          });
+          const n1 = await createNote({ workspaceId: workspace.id, access: 'public' });
+          await createNote({ workspaceId: workspace.id, access: 'private' });
+          await createNote({ workspaceId: workspace.id, access: 'private' });
+          const n2 = await createNote({ workspaceId: workspace.id, access: 'public' });
+
+          const viewer = await createUser({ email: 'viewer@email.com' });
+          const response = await route.request('/api/workspaces/wp-1/notes?access=private', {
+            method: 'GET',
+            headers: await headers({ authenticatedUserId: viewer.id }),
+          });
+
+          expect(response.status).toBe(200);
+          expect(await response.json()).toMatchObject([{ id: n2.id }, { id: n1.id }]);
+        });
       });
     });
 

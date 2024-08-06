@@ -3,7 +3,7 @@ import { SuggestionsItem } from '@/components/Editor/suggestions/view';
 import { toApiErrorMessage } from '@/utils/api-client';
 import { Editor, Extension } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
-import Suggestion, { SuggestionOptions, SuggestionProps } from '@tiptap/suggestion';
+import Suggestion, { SuggestionOptions } from '@tiptap/suggestion';
 import tippy, { Props as TippyProps, Instance as TippyInstance } from 'tippy.js';
 
 type SuggestionMenuOptions = Partial<
