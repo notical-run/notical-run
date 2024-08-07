@@ -1,0 +1,17 @@
+{
+  "name": "@notical/landing-page",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tailwindcss -i ./style.css -o ./src/dist/style.css",
+    "dev:css": "bun run build --watch",
+    "serve": "serve -p 5000 ./src/",
+    "dev": "concurrently 'bun dev:css' 'bun serve'"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "serve": "^14.2.3",
+    "tailwindcss": "^3.4.4"
+  }
+}

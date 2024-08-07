@@ -9,6 +9,7 @@
     "app": "bun --filter '@notical/app'",
     "api": "bun --filter '@notical/api'",
     "e2e": "bun --filter '@notical/e2e'",
+    "landing": "bun --filter '@notical/landing-page'",
     "check": "bun --filter '*' check && bun check:lint",
     "check:lint": "eslint './apps/**/*'",
     "format": "prettier --write './apps/*/{src,tests}/**/*.{ts,html,css}'"
