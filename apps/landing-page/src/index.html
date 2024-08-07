@@ -20,13 +20,13 @@
   </head>
 
   <body>
-    <header class="fixed z-20 flex w-full items-center justify-between py-3 px-10 max-sm:px-6">
+    <header class="fixed z-20 flex w-full items-center justify-between py-3 px-10 max-sm:px-6 backdrop-blur-sm bg-gradient-to-b from-white to-transparent">
       <div>
         <!-- <img src="/images/full-logo.svg" class="w-28" /> -->
       </div>
 
       <div>
-        <a href="https://app.notical.run/login" class="text-slate-700 text-sm hover:text-slate-500">
+        <a href="https://app.notical.run/login" class="text-slate-700 text-sm hover:text-slate-500 font-bold">
           Log in
         </a>
       </div>
@@ -36,13 +36,13 @@
       <div class="flex flex-col items-center justify-center w-full h-full px-6">
         <h1 class="flex pb-4 max-sm:text-left text-left max-sm:w-full">
           <!-- <span class="font-bold text-slate-800 text-6xl max-sm:text-4xl"> Programmable notes -->
-          <img src="/images/full-logo.svg" class="w-96 max-sm:w-60" />
+          <img src="/images/full-logo.svg" class="w-96 max-sm:w-60" draggable="false" />
         </h1>
         <p class="text-slate-600 text-lg">DIY your perfect note-taking experience with <span class="font-bold text-slate-900">programmable&nbsp;notes</span></p>
 
         <div class="text-center py-6 w-full">
           <a href="https://app.notical.run/login"
-            class="bg-slate-800 text-white text-lg py-2 px-5 rounded-md max-sm:block transition-opacity hover:opacity-80"
+            class="text-white text-lg py-3 px-6 rounded-md max-sm:block transition-all bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-950 hover:via-indigo-900 hover:to-indigo-950 hover:opacity-90"
           >
             Get started
           </a>
@@ -50,16 +50,17 @@
       </div>
     </main>
 
-    <div class="px-6">
+    <div class="px-6 pb-10">
       <div class="max-w-[1400px] m-auto h-[50vw] max-h-[700px] -mt-[100px] p-2 rounded-lg bg-gradient-to-r from-indigo-500 via-70% via-sky-600 to-emerald-500">
         <div class="w-full h-full bg-slate-200 rounded-lg overflow-hidden"></div>
       </div>
     </div>
 
-    <section class="px-4 py-10 max-w-[1000px] m-auto animate-fade-in">
+    <section class="px-6 py-10 max-w-[1000px] m-auto animate-fade-in">
       <h1 class="font-bold text-slate-800 pb-4 text-3xl">
         Examples
       </h1>
+
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div class="bg-slate-100 p-4 rounded-md">
           <h2 class="font-bold text-slate-800 text-xl">
@@ -89,7 +90,7 @@
     </section>
 
     <footer class="w-full">
-      <div class="px-4 max-w-[1000px] m-auto">
+      <div class="px-6 max-w-[1000px] m-auto">
         Wow
       </div>
     </footer>
