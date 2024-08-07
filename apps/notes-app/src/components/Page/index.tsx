@@ -1,5 +1,5 @@
 import { cn } from '@/utils/classname';
-import { createEffect, JSX, ParentProps } from 'solid-js';
+import { createEffect, ParentProps } from 'solid-js';
 import { LayoutProvider } from '@/components/Page/layout';
 import { PageHeader } from '@/components/Page/PageHeader';
 import { PageSideMenu, PageSideMenuLink } from '@/components/Page/PageSideMenu';
@@ -15,10 +15,6 @@ const PageRoot = (props: ParentProps & { title?: string }) => {
       <div class="flex flex-col h-screen overflow-hidden">{props.children}</div>
     </LayoutProvider>
   );
-};
-
-export type PageHeaderProps = {
-  breadcrumbs?: { content: JSX.Element }[];
 };
 
 const PageBody = (props: ParentProps) => (
