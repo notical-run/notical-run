@@ -1,6 +1,6 @@
 import { SuggestionsItem } from '@/components/Editor/suggestions/view';
 import { ChainedCommands } from '@tiptap/core';
-import { FaSolidCode, FaSolidHeading } from 'solid-icons/fa';
+import { FaSolidCode, FaSolidHeading, FaSolidTable } from 'solid-icons/fa';
 
 const slashCommand =
   (
@@ -21,6 +21,13 @@ export const slashCommands: SuggestionsItem[] = [
     icon: () => <FaSolidCode />,
     label: 'Code block',
     command: slashCommand(chain => chain.setCodeBlock()),
+  },
+
+  {
+    id: 'table',
+    icon: () => <FaSolidTable />,
+    label: 'Table',
+    command: slashCommand(chain => chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true })),
   },
 
   {

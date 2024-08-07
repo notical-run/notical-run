@@ -53,6 +53,9 @@ export const Editor = (props: EditorProps) => {
 
     const editorClass = cn(
       'prose prose-base focus:outline-none p-4 max-w-full',
+      'prose-blockquote:text-slate-500',
+
+      // Headings
       'prose-headings:mt-0 prose-headings:mb-4 prose-headings:font-bold prose-headings:text-slate-900',
       'prose-h1:text-3xl',
       'prose-h2:text-2xl',
@@ -60,7 +63,14 @@ export const Editor = (props: EditorProps) => {
       'prose-h4:text-lg',
       'prose-h5:text-md prose-h5:text-slate-600',
       'prose-h6:text-sm prose-h6:text-slate-600',
-      'prose-blockquote:text-slate-500',
+
+      // Table
+      'prose-table:border prose-table:border-slate-20 prose-table:m-0',
+      '[&_th:not(:last-child)]:border-r prose-th:border-slate-200 prose-th:bg-slate-100',
+      '[&_tr:not(:last-child)]:border-b prose-tr:border-slate-200',
+      'prose-td:px-3 prose-td:border-r prose-td:border-slate-200',
+      '[&_table_p]:my-1',
+      '[&_th_p]:my-0.5',
     );
 
     engine = await createEvalEngine({
