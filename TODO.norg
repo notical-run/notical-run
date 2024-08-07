@@ -8,7 +8,6 @@
 ** Evaluation
    - ( ) Run evaluation inside "show" content
 ** Editor
-   - ( ) Table
 ** Product
    - ( ) Pagination
    - ( ) landing page
@@ -26,6 +25,7 @@
    - ( ) Update entire link instead of just the selected text (inline floating menu)
    - ( ) Show floating menu if cursor is inside link
    - ( ) Don't show floating menu inside inline code nodes?
+   - ( ) Table add/remove row/col buttons
 ** Product
    - ( ) github oauth
    - ( ) Examples workspace @examples/*

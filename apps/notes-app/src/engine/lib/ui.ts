@@ -11,11 +11,21 @@ export const registerUILib = async (
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
 Object.defineProperty(globalThis, 'button', {
-  value: (name, fn) => {
-    fn.displayName = name;
-    return fn;
-  }
-})
+  writable: false,
+  value: (name, fn) => Object.assign(fn, { displayName: name }),
+});
+
+Object.defineProperty(globalThis, 'table', {
+  writable: false,
+  value: (rows_, headings_) => {
+    const headings = headings_ || Object.keys(rows_[0]);
+    const row = vals => \`| \${vals.join(' | ')} |\`;
+    const heading = row(headings);
+    const headingSep = row(headings.map(_ => ' --- '));
+    const rows = rows_.map(r => row(headings.map(h => r[h])));
+    return [heading, headingSep, ...rows].join('\\n');
+  },
+});
       }`),
     )
     .dispose();
