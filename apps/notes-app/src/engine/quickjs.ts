@@ -64,7 +64,7 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
     const fnHandle = handle.consume(f => f.dup());
     const fnName = quickVM.getProp(fnHandle, 'displayName').consume(quickVM.dump);
     const func = ((...fnArgs: any[]) => {
-      const fnArgsHandles = fnArgs.map(toQuickJSHandle);
+      const fnArgsHandles = fnArgs.map(arg => toQuickJSHandle(quickVM, arg));
       const res = quickVM.callFunction(fnHandle, quickVM.null, ...fnArgsHandles);
       return quickVM.unwrapResult(res);
     }) as T;
