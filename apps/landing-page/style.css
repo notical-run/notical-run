@@ -9,11 +9,49 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
 .animate-fade-in {
   animation: fade-in 0.2s ease-in-out forwards;
 }
-
 @keyframes fade-in {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+.target-highlight:target {
+  animation: anim-highlight 600ms ease-in-out forwards !important;
+}
+@keyframes anim-highlight {
+  0% { filter: blur(3px); background-color: #eee; }
+  100% { filter: none; background-color: transparent; }
+}
+
+.example-card {
+  @apply
+    block rounded-md overflow-hidden
+    border border-indigo-50
+    duration-200 transition-shadow shadow-md shadow-slate-100 hover:shadow-slate-300
+  ;
+}
+.example-card:not([href=""]) {
+  @apply hover:shadow-slate-300;
+}
+.example-card[href=""] {
+  @apply pointer-events-none shadow-none opacity-60 contrast-[1.1];
+}
+
+.hover-feedback {
+  @apply transition-all filter hover:brightness-125 hover:drop-shadow-lg;
+}
+
+.button-cta {
+  @apply
+    py-3 px-6 rounded-md transition-all
+    filter hover:brightness-125 hover:drop-shadow-lg
+    text-indigo-50 bg-gradient-to-br from-indigo-600 via-70% via-violet-800 to-violet-900
+  ;
 }

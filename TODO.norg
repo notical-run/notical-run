@@ -6,18 +6,22 @@
    - ( ) Inline code node sometimes gets converted to code block
    - ( ) Fix infinite update loop for update listener for hooks
 ** Evaluation
+   - ( ) Get content from imported notes (via next.markdown)
    - ( ) Run evaluation inside "show" content
+   - ( ) Keybindings
+   - ( ) Get selected text
+   - ( ) Insert text at selection
+   - ( ) Delete selected text
 ** Editor
 ** Product
    - ( ) Pagination
-   - ( ) landing page
+   - (-) landing page
    - ( ) User info on topbar
    - ( ) More e2e tests
 
 * Ready to use
 ** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
-   - ( ) Get content from imported notes (via next.markdown)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
    - ( ) Fix issue with inline node deleting backticks should convert to text
@@ -27,6 +31,7 @@
    - ( ) Don't show floating menu inside inline code nodes?
    - ( ) Table add/remove row/col buttons
 ** Product
+   - ( ) Post signup onboarding modal
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
    - ( ) Documentation workspace @docs/*
@@ -115,18 +120,18 @@
 
 
 * Supported features/ideas
-  - (-) Note based calculator
-  - ( ) Task management
-  - ( ) Journaling
-  - ( ) Unit conversions
-  - ( ) Currency conversions
-  - ( ) Simplified drawing/diagram tool
-  - ( ) Datetime picker
-  - ( ) Fetch and present external data
-  - ( ) Draft and send custom emails (mail client)?
-  - ( ) Email reminders for tasks?
-  - ( ) Read section of page
-  - ( ) Make requests to openai (how to manage secrets?)
+  - Note based calculator
+  - Task management
+  - Journaling
+  - Unit conversions
+  - Currency conversions
+  - Simplified drawing/diagram tool
+  - Datetime picker
+  - Fetch and present external data
+  - Draft and send custom emails (mail client)?
+  - Email reminders for tasks?
+  - Read section of page
+  - Make requests to openai (how to manage secrets?)
 
 * Maybe
   - ( ) Block-ey UI with drag and drop
