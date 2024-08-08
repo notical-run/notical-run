@@ -14,20 +14,8 @@ export type EvalImportOptions = {
 export const evaluateImport = async ({ doc, engine }: EvalImportOptions) => {
   const element = document.createElement('div');
   const allModules: string[] = [];
-  let resolver = (_: string) => {};
-  const waitForModuleCode = new Promise<string>(resolve => (resolver = resolve));
-
-  const reeval = async () => {
-    // TODO: Rethink withEditor for engine inside imports
-    await evaluateAllNodes(editor, engine, {
-      evalBlock: (node: Node) => {
-        allModules.push(node.textContent);
-      },
-    });
-
-    resolver(allModules.join('\n\n'));
-    editor?.destroy();
-  };
+  let resolver: (_: string) => void;
+  const waitForModuleCode = new Promise<string>(res => (resolver = res));
 
   const editor = new TiptapEditor({
     element: element,
@@ -38,12 +26,18 @@ export const evaluateImport = async ({ doc, engine }: EvalImportOptions) => {
     onDestroy() {},
   });
 
-  const onCleanup = () => {
-    editor?.destroy();
+  const reeval = async () => {
+    await evaluateAllNodes(editor, engine, {
+      evalBlock: (node: Node) => {
+        allModules.push(node.textContent);
+      },
+    });
+
+    resolver(allModules.join('\n\n'));
   };
 
   return {
-    onCleanup,
+    editor,
     moduleCode: waitForModuleCode,
   };
 };

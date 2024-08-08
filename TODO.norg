@@ -6,7 +6,6 @@
    - ( ) Inline code node sometimes gets converted to code block
    - ( ) Fix infinite update loop for update listener for hooks
 ** Evaluation
-   - ( ) Get content from imported notes (via next.markdown)
    - ( ) Run evaluation inside "show" content
    - ( ) Keybindings
    - ( ) Get selected text

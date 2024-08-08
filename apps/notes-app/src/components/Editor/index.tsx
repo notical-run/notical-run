@@ -36,9 +36,7 @@ export const Editor = (props: EditorProps) => {
 
   let element: HTMLElement;
   let inlineMenuElement: HTMLElement;
-
   let engine: EvalEngine;
-  const cleanupInstances: (() => void)[] = [];
 
   const evaluate = useDebounced(async (editor: TiptapEditor) => {
     await evaluateAllNodes(editor, engine, {});
@@ -78,7 +76,7 @@ export const Editor = (props: EditorProps) => {
       moduleLoader: async modulePath => {
         const moduleDoc = await props.moduleLoader(modulePath);
         const module = await evaluateImport({ doc: moduleDoc, engine });
-        cleanupInstances.push(module.onCleanup);
+        engine.importedEditorInstances.set(modulePath, module.editor);
         return module.moduleCode;
       },
       apiHelpers: {
@@ -102,7 +100,6 @@ export const Editor = (props: EditorProps) => {
       onCreate: ({ editor }) => evaluate(editor),
       onUpdate: ({ editor }) => evaluate(editor),
       onDestroy() {
-        cleanupInstances.forEach(f => f());
         engine?.destroy();
       },
     });

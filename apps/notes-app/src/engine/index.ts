@@ -9,6 +9,7 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
   const engine: QuickJSContextOptions = {
     nodeCache: new Map(),
     stateStore: new Map(),
+    importedEditorInstances: new Map(),
     contentUpdateSignal: contentUpdateSignal,
     onContentUpdate: () => contentUpdateSignal[1](b => !b),
     addCleanup: (f: () => void) => cleanupFunctions.push(f),
@@ -18,6 +19,7 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
   const quickVM = await createQuickJSContext(engine);
 
   const destroy = () => {
+    engine.importedEditorInstances.forEach(editor => editor.destroy());
     cleanupFunctions.forEach(f => f?.());
     quickVM.dispose();
   };

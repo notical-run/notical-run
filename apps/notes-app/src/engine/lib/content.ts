@@ -70,20 +70,25 @@ const showMarkdownContent = (options: QuickJSContextOptions, hook: any, text: st
 };
 
 const getMarkdownContent = (options: QuickJSContextOptions, hook: any): string => {
-  if (!hook || typeof hook.pos !== 'number') throw new Error('Invalid target given to getNodes');
+  if (!hook || typeof hook.pos !== 'number')
+    throw new Error('Invalid target given to next.markdown');
 
-  return options.withEditor(editor => {
-    const nodePosAndSize = findNodeById(editor, hook.id);
-    if (!nodePosAndSize) return;
+  return options.withEditor(primaryEditor => {
+    for (const editor of [primaryEditor, ...options.importedEditorInstances.values()]) {
+      if (!editor) continue;
+      const nodePosAndSize = findNodeById(editor, hook.id);
+      if (!nodePosAndSize) continue;
 
-    const parentNode = editor.state.doc.resolve(nodePosAndSize.pos).parent;
+      const parentNode = editor.state.doc.resolve(nodePosAndSize.pos).parent;
 
-    const nextResPos = editor.state.doc.resolve(nodePosAndSize.pos + parentNode.nodeSize);
-    const nextNode = nextResPos.node(nextResPos.depth);
-    const nodeDoc = editor.schema.topNodeType.create({}, nextNode);
+      const nextResPos = editor.state.doc.resolve(nodePosAndSize.pos + parentNode.nodeSize);
+      const nextNode = nextResPos.node(nextResPos.depth);
+      const nodeDoc = editor.schema.topNodeType.create({}, nextNode);
 
-    const mdSerializer = editor.storage.markdown.serializer;
+      const mdSerializer = editor.storage.markdown.serializer;
 
-    return mdSerializer.serialize(nodeDoc);
+      return mdSerializer.serialize(nodeDoc);
+    }
+    return undefined;
   });
 };

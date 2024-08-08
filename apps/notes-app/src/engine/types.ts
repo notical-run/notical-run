@@ -6,6 +6,7 @@ export type EvalEngine = EvalEngineOptions & {
   quickVM: QuickJSAsyncContext;
   nodeCache: Map<string, { code: string; cleanup: () => void }>;
   stateStore: Map<string, Signal<any>>;
+  importedEditorInstances: Map<string, Editor>;
   contentUpdateSignal: Signal<boolean>;
   onContentUpdate: () => void;
   destroy: () => void;
