@@ -5,6 +5,9 @@ import { base64 } from 'oslo/encoding';
 import { z } from 'zod';
 import { delay } from '../../utils/test';
 import { HTTPException } from 'hono/http-exception';
+import { rateLimiter } from 'hono-rate-limiter';
+import { hash } from '@node-rs/argon2';
+import { privateRoute } from '../../auth';
 
 const proxyRequestSchema = z.object({
   url: z.string(),
@@ -13,27 +16,57 @@ const proxyRequestSchema = z.object({
   body: z.string().optional().nullable(),
 });
 
+const withTimeout = <T>(timeout: number, f: (b: AbortController) => Promise<T>): Promise<T> => {
+  const abortCtrl = new AbortController();
+  return Promise.race([
+    delay(timeout).then(() => {
+      abortCtrl.abort('timeout');
+      return Promise.reject(
+        new HTTPException(408, {
+          message: 'Request took too long',
+        }),
+      );
+    }),
+    f(abortCtrl),
+  ]);
+};
+
 // TODO: Rate limit
-// TODO: Cancel fetch on timeout
+// TODO: Require authentication
 export const proxyRoute = new Hono().post(
   '/',
+
+  privateRoute,
+
+  rateLimiter({
+    windowMs: 60 * 1000, // 1 minute
+    limit: 100, // Limit each IP to 100 requests per `window`
+    keyGenerator: async c => {
+      const auth = c.req.header('Authorization');
+      return `proxy-${await hash(auth ?? 'anonymous')}`;
+    },
+  }),
+
   bodyLimit({
     maxSize: 2 * 1024,
     onError: c => c.json({ error: 'Content too large' }, 413),
   }),
+
   zValidator('json', proxyRequestSchema),
+
   async ctx => {
     const proxyReq = ctx.req.valid('json');
-    const [response, bodyArrayBuffer] = await Promise.race([
-      delay(10_000).then(() =>
-        Promise.reject(new HTTPException(408, { message: 'Request took too long' })),
-      ),
+    const [response, bodyArrayBuffer] = await withTimeout(10_000, abortCtrl =>
       fetch(proxyReq.url, {
         method: proxyReq.method,
         headers: proxyReq.headers,
         body: proxyReq.body && base64.decode(proxyReq.body),
-      }).then(async res => [res, await res.arrayBuffer()] as const),
-    ]);
+        signal: abortCtrl.signal,
+      }).then(async res => {
+        // TODO: Exception if content too large
+        return [res, await res.arrayBuffer()] as const;
+      }),
+    );
 
     const body = new Uint8Array(bodyArrayBuffer);
 

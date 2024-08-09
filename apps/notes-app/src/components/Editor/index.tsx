@@ -16,6 +16,7 @@ import { PromptModal } from '@/components/Editor/components/PromptModal';
 import { ConfirmModal } from '@/components/Editor/components/ConfirmModal';
 import { AlertToast } from '@/components/Editor/components/AlertToast';
 import { apiClient } from '@/utils/api-client';
+import toast from 'solid-toast';
 
 export type EditorProps = {
   editable?: boolean;
@@ -97,6 +98,16 @@ export const Editor = (props: EditorProps) => {
               body: b64encoded,
             },
           });
+          if ((resp.status as any) === 401) {
+            const msg = 'You need to be logged in to make http requests';
+            toast.error(msg);
+            throw new Error(msg);
+          }
+          if (!resp.ok) {
+            const body: any = await resp.json();
+            toast.error(body.error ?? 'Something went wrong');
+            throw new Error(body.error ?? 'Something went wrong');
+          }
           const respData = await resp.json();
           const body = atob(respData.body);
           return new Response(body, {
