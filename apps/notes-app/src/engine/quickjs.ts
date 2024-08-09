@@ -33,7 +33,6 @@ export const getInternalsHandle = (quickVM: QuickJSAsyncContext) =>
   quickVM.getProp(quickVM.global, INTERNALS_KEY);
 
 export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJSHandle => {
-  // TODO: Handle Promise values
   if (val === null) return quickVM.null;
   if (val === undefined) return quickVM.undefined;
   if (val instanceof Lifetime) return val;
@@ -41,6 +40,15 @@ export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJ
   if (typeof val === 'string') return quickVM.newString(val);
   if (typeof val === 'number') return quickVM.newNumber(val);
   if (typeof val === 'boolean') return val ? quickVM.true : quickVM.false;
+  if (val instanceof Promise) {
+    const promH = quickVM.newPromise();
+    val
+      .then(v => promH.resolve(toQuickJSHandle(quickVM, v)))
+      .catch(e => promH.reject(toQuickJSHandle(quickVM, e)));
+    promH.settled.then(quickVM.runtime.executePendingJobs);
+    return promH.handle;
+  }
+
   if (typeof val === 'function') {
     // Async functions
     if (val instanceof (async () => {}).constructor) {
@@ -54,7 +62,7 @@ export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJ
       return toQuickJSHandle(quickVM, val(...argsVal));
     });
   }
-  // TODO: Promises
+
   const res = quickVM.evalCode(`(${JSON.stringify(val)})`);
   return quickVM.unwrapResult(res);
 };

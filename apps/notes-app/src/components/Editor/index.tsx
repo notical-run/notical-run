@@ -15,6 +15,7 @@ import { cn } from '@/utils/classname';
 import { PromptModal } from '@/components/Editor/components/PromptModal';
 import { ConfirmModal } from '@/components/Editor/components/ConfirmModal';
 import { AlertToast } from '@/components/Editor/components/AlertToast';
+import { apiClient } from '@/utils/api-client';
 
 export type EditorProps = {
   editable?: boolean;
@@ -83,6 +84,26 @@ export const Editor = (props: EditorProps) => {
         alert: opts => setCurrentModal({ kind: 'alert', ...opts }),
         confirm: opts => setCurrentModal({ kind: 'confirm', ...opts }),
         prompt: opts => setCurrentModal({ kind: 'prompt', ...opts }),
+        fetch: async request => {
+          const arraybuf = await request.arrayBuffer();
+          const data = new Uint8Array(arraybuf);
+          const decoder = new TextDecoder('utf8');
+          const b64encoded = btoa(decoder.decode(data));
+          const resp = await apiClient.api.proxy.$post({
+            json: {
+              url: request.url,
+              method: request.method.toLowerCase() as any,
+              headers: request.headers && Object.fromEntries(request.headers.entries()),
+              body: b64encoded,
+            },
+          });
+          const respData = await resp.json();
+          const body = atob(respData.body);
+          return new Response(body, {
+            status: respData.status,
+            headers: respData.headers,
+          });
+        },
       },
     });
 

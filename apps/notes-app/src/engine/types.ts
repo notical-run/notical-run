@@ -24,6 +24,7 @@ export type EvalEngineOptions = {
     alert: (opts: { message: string; onClose: () => void }) => void;
     prompt: (opts: { message: string; onValue: (value: string | null) => void }) => void;
     confirm: (opts: { message: string; onConfirm: () => void; onCancel: () => void }) => void;
+    fetch: (request: Request) => Promise<Response>;
   };
 };
 

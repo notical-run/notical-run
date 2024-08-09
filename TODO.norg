@@ -1,20 +1,19 @@
 * Focus
 ** Bugs
+   - ( ) _imp_ Code block inside show content freezes
    - ( ) Fix next.markdown when anchor code is inline
    - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block (sometimes leaves view)
    - ( ) Inline code node sometimes gets converted to code block
    - ( ) Fix infinite update loop for update listener for hooks
 ** Evaluation
-   - ( ) Run evaluation inside "show" content
-   - ( ) Keybindings
    - ( ) Get selected text
    - ( ) Insert text at selection
    - ( ) Delete selected text
+   - ( ) Keybindings
 ** Editor
 ** Product
    - ( ) Pagination
-   - (-) landing page
    - ( ) User info on topbar
    - ( ) More e2e tests
 
@@ -35,6 +34,7 @@
    - ( ) Examples workspace @examples/*
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
+   - (-) landing page
    - ( ) Make nav bar responsive for small screens
    - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
@@ -59,6 +59,7 @@
    - ( ) Detect cyclic dependencies of signals
    - ( ) No curor on todo when text is empty
 ** Evaluation
+   - ( ) Run evaluation inside "show" content
    - ( ) Update shown content in imported notes (via show.markdown) (save note content)
    - ( ) Update inserted content in imported notes (via insert.markdown) (save note content)
    - ( ) Delete content programatically

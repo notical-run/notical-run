@@ -1,5 +1,6 @@
 import { registerContentLib } from '@/engine/lib/content';
 import { registerGlobalProxy } from '@/engine/lib/global-proxy';
+import { registerHTTPLIb } from '@/engine/lib/http';
 import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
 import { registerUILib } from '@/engine/lib/ui';
@@ -39,6 +40,7 @@ Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internal
   await registerStdApiLib(quickVM, options);
   await registerUILib(quickVM, options);
   await registerGlobalProxy(quickVM, options);
+  await registerHTTPLIb(quickVM, options);
 
   return quickVM;
 };
