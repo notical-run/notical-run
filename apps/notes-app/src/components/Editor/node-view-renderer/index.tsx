@@ -1,5 +1,6 @@
 import { NodeViewRenderer, NodeViewRendererProps } from '@tiptap/core';
 import { Attrs } from '@tiptap/pm/model';
+import { NodeView } from '@tiptap/pm/view';
 import { createRoot, JSX } from 'solid-js';
 import { createStore, reconcile, SetStoreFunction } from 'solid-js/store';
 import { Dynamic } from 'solid-js/web';
@@ -14,20 +15,26 @@ type GetNodeView<A extends Attrs> = (
 
 export const createSolidNodeView = <A extends Attrs>(
   getNodeView: GetNodeView<A>,
+  options?: Partial<NodeView>,
 ): NodeViewRenderer => {
   return renderProps => {
     const { node, getPos, editor } = renderProps;
 
     let contentDOM: HTMLElement;
     let dom: HTMLElement;
-    let dispose = () => {};
     let onAttributeUpdate: SetStoreFunction<A>;
+    let dispose = () => {};
 
     createRoot(disposeFn => {
       dispose = disposeFn;
 
-      const NodeContent = (props: { as: any } & Record<string, any>) => (
-        <Dynamic component={props.as} ref={(el: HTMLElement) => (contentDOM = el)} {...props} />
+      const NodeContent = (props: any) => (
+        <Dynamic
+          component={props.as}
+          {...props}
+          ref={(el: HTMLElement) => (contentDOM = el)}
+          as={null}
+        />
       );
 
       const [attrs, setStore] = createStore<A>(node.attrs as A);
@@ -51,7 +58,9 @@ export const createSolidNodeView = <A extends Attrs>(
         onAttributeUpdate(reconcile(updatedNode.attrs as A));
         return true;
       },
+      ignoreMutation: () => true,
       destroy: () => dispose(),
+      ...options,
     };
   };
 };
