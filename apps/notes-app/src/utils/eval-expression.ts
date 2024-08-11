@@ -43,7 +43,7 @@ export const evalExpression = async (
         pos: nodePosAndSize?.pos ?? options.pos,
         nodeSize: nodePosAndSize?.node.nodeSize ?? options.nodeSize,
         id: options.id,
-        __native__: 'anchor',
+        __native__: '',
       });
       const evalResult = await quickVM.evalCodeAsync(
         `{

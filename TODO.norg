@@ -6,19 +6,15 @@
    - ( ) Deleting code block when empty should delete code block (sometimes leaves view)
    - ( ) Inline code node sometimes gets converted to code block
    - ( ) Fix infinite update loop for update listener for hooks
+** Product
+   - ( ) More e2e tests
+
+* Ready to use
 ** Evaluation
    - ( ) Get selected text
    - ( ) Insert text at selection
    - ( ) Delete selected text
    - ( ) Keybindings
-** Editor
-** Product
-   - ( ) Pagination
-   - ( ) User info on topbar
-   - ( ) More e2e tests
-
-* Ready to use
-** Evaluation
    - ( ) Update codeblock on signal? (or use default as effectful)
 ** Bugs
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
@@ -29,6 +25,8 @@
    - ( ) Don't show floating menu inside inline code nodes?
    - ( ) Table add/remove row/col buttons
 ** Product
+   - ( ) Pagination
+   - ( ) User info on topbar
    - ( ) Post signup onboarding modal
    - ( ) github oauth
    - ( ) Examples workspace @examples/*

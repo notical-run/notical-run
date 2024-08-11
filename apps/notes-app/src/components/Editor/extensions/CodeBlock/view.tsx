@@ -35,6 +35,7 @@ export const codeBlockNodeView = createSolidNodeView<CodeBlockAttrs>(
         </button>
 
         <pre
+          {...HTMLAttributes}
           class={cn('hljs', 'rounded-none rounded-b', HTMLAttributes.class, {
             hidden: attrs.collapsed,
           })}

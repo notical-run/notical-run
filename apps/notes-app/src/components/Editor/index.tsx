@@ -15,8 +15,7 @@ import { cn } from '@/utils/classname';
 import { PromptModal } from '@/components/Editor/components/PromptModal';
 import { ConfirmModal } from '@/components/Editor/components/ConfirmModal';
 import { AlertToast } from '@/components/Editor/components/AlertToast';
-import { apiClient } from '@/utils/api-client';
-import toast from 'solid-toast';
+import { fetchViaProxyApi } from '@/api/queries/proxy-api';
 
 export type EditorProps = {
   editable?: boolean;
@@ -74,7 +73,7 @@ export const Editor = (props: EditorProps) => {
     );
 
     engine = await createEvalEngine({
-      withEditor: fn => fn(editor()!),
+      withEditor: fn => fn(tiptapEditor),
       moduleLoader: async modulePath => {
         const moduleDoc = await props.moduleLoader(modulePath);
         const module = await evaluateImport({ doc: moduleDoc, engine });
@@ -85,36 +84,7 @@ export const Editor = (props: EditorProps) => {
         alert: opts => setCurrentModal({ kind: 'alert', ...opts }),
         confirm: opts => setCurrentModal({ kind: 'confirm', ...opts }),
         prompt: opts => setCurrentModal({ kind: 'prompt', ...opts }),
-        fetch: async request => {
-          const arraybuf = await request.arrayBuffer();
-          const data = new Uint8Array(arraybuf);
-          const decoder = new TextDecoder('utf8');
-          const b64encoded = btoa(decoder.decode(data));
-          const resp = await apiClient.api.proxy.$post({
-            json: {
-              url: request.url,
-              method: request.method.toLowerCase() as any,
-              headers: request.headers && Object.fromEntries(request.headers.entries()),
-              body: b64encoded,
-            },
-          });
-          if ((resp.status as any) === 401) {
-            const msg = 'You need to be logged in to make http requests';
-            toast.error(msg);
-            throw new Error(msg);
-          }
-          if (!resp.ok) {
-            const body: any = await resp.json();
-            toast.error(body.error ?? 'Something went wrong');
-            throw new Error(body.error ?? 'Something went wrong');
-          }
-          const respData = await resp.json();
-          const body = atob(respData.body);
-          return new Response(body, {
-            status: respData.status,
-            headers: respData.headers,
-          });
-        },
+        fetch: fetchViaProxyApi,
       },
     });
 
@@ -131,9 +101,7 @@ export const Editor = (props: EditorProps) => {
       editable: props.editable,
       onCreate: ({ editor }) => evaluate(editor),
       onUpdate: ({ editor }) => evaluate(editor),
-      onDestroy() {
-        engine?.destroy();
-      },
+      onDestroy: () => engine?.destroy(),
     });
 
     // Update ref

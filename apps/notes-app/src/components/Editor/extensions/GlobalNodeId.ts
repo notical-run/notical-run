@@ -26,7 +26,7 @@ export const GlobalNodeId = Node.create({
   addProseMirrorPlugins() {
     return [
       new Plugin({
-        appendTransaction(_transactions, oldState, newState) {
+        appendTransaction: (_transactions, oldState, newState) => {
           if (newState.doc === oldState.doc) return;
           // Track ids in use to overwrite duplicate ids
           const inUseUuids = new Set();
@@ -34,15 +34,19 @@ export const GlobalNodeId = Node.create({
           const { tr } = newState;
           newState.doc.descendants((node, pos, _parent) => {
             const isIDDuplicated = inUseUuids.has(node.attrs.nodeId);
+
             if (nodeTypes.has(node.type.name) && (isIDDuplicated || !node.attrs.nodeId)) {
               const uuid = crypto.randomUUID();
               tr.setNodeAttribute(pos, 'nodeId', `${uuid}`);
+              return false;
             } else if (node.isText) {
+              // NOTE: Not in use currently
               const nodeMark = node.marks.find(m => markTypes.has(m.type.name));
               if (nodeMark && (isIDDuplicated || !nodeMark.attrs.nodeId)) {
                 const uuid = crypto.randomUUID();
                 inUseUuids.add(uuid);
                 setMarkAttributes(node, nodeMark, { nodeId: `${uuid}` });
+                return false;
               }
             }
 

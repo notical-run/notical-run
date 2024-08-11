@@ -25,23 +25,28 @@ export const getExtensions = ({
   document: yDoc,
   inlineMenuElement,
   disableTrailingNode,
+  disableNodeIds,
+  readonly,
 }: {
   document?: Y.Doc;
   inlineMenuElement?: HTMLElement;
   disableTrailingNode?: boolean;
+  disableNodeIds?: boolean;
+  readonly?: boolean;
 }) =>
   [
     StarterKit.configure({ codeBlock: false, code: false, history: false }),
-    Placeholder.configure({
-      placeholder: ({ node }) => {
-        if (node.type.name === 'paragraph') return 'Start writing or type `/` for commands...';
-        return '';
-      },
-      emptyEditorClass: 'is-editor-empty',
-      emptyNodeClass: 'is-node-empty',
-    }),
+    readonly ||
+      Placeholder.configure({
+        placeholder: ({ node }) => {
+          if (node.type.name === 'paragraph') return 'Start writing or type `/` for commands...';
+          return '';
+        },
+        emptyEditorClass: 'is-editor-empty',
+        emptyNodeClass: 'is-node-empty',
+      }),
     Markdown.configure({
-      html: false,
+      html: true,
       tightLists: true,
       linkify: true,
       breaks: true,
@@ -54,22 +59,22 @@ export const getExtensions = ({
       linkOnPaste: false,
       HTMLAttributes: { class: 'text-violet-900 underline' },
     }),
-    disableTrailingNode || TrailingNode,
+    readonly || disableTrailingNode || TrailingNode,
 
-    inlineMenuElement &&
-      BubbleMenu.configure({
-        element: inlineMenuElement,
-        shouldShow: ({ editor, state }) => {
-          if (!editor.isActive('paragraph')) return false;
-          if (editor.isActive('code')) return false;
-          const isTextSelected = state.selection.from !== state.selection.to;
-          return isTextSelected;
-        },
-      }),
-    SlashCommandsExtension,
+    readonly ||
+      (inlineMenuElement &&
+        BubbleMenu.configure({
+          element: inlineMenuElement,
+          shouldShow: ({ editor, state }) => {
+            if (!editor.isActive('paragraph')) return false;
+            if (editor.isActive('code')) return false;
+            return state.selection.from !== state.selection.to;
+          },
+        })),
+    readonly || SlashCommandsExtension,
     NoteLink,
 
-    GlobalNodeId,
+    disableNodeIds || GlobalNodeId,
     InlineCode,
     CodeBlock.configure({
       lowlight: createLowlight({ javascript }),
@@ -89,7 +94,7 @@ export const getExtensions = ({
       },
     }),
 
-    Table.configure({ resizable: false }),
+    Table.configure({ resizable: true }),
     TableRow,
     TableHeader,
     TableCell,

@@ -13,7 +13,7 @@ export type InlineCodeAttrs = {
 };
 
 export const inlineCodeNodeView = createSolidNodeView<InlineCodeAttrs>(
-  ({ NodeContent, HTMLAttributes, attrs, editor, updateAttributes }) => {
+  ({ NodeContent, HTMLAttributes, attrs, updateAttributes }) => {
     const clearAnchor = () => updateAttributes({ anchoredContent: null });
 
     return (
@@ -31,11 +31,7 @@ export const inlineCodeNodeView = createSolidNodeView<InlineCodeAttrs>(
         <span contenteditable={false}>
           <EvalResult result={attrs.result} />
           <Show when={attrs.anchoredContent}>
-            <AnchoredContent
-              editor={editor}
-              content={attrs.anchoredContent}
-              clearAnchor={clearAnchor}
-            />
+            <AnchoredContent content={attrs.anchoredContent} clearAnchor={clearAnchor} />
           </Show>
         </span>
       </span>
@@ -44,25 +40,25 @@ export const inlineCodeNodeView = createSolidNodeView<InlineCodeAttrs>(
 );
 
 export const AnchoredContent = (props: {
-  editor: Editor;
   content: InlineCodeAttrs['anchoredContent'];
   clearAnchor: () => void;
 }) => {
   let editorEl: HTMLDivElement | undefined;
-  let editor: Editor | undefined;
+  let anchoredEditor: Editor | undefined;
 
   onMount(() => {
-    editor = new Editor({
+    anchoredEditor = new Editor({
       element: editorEl,
-      extensions: getExtensions({ disableTrailingNode: true }),
+      extensions: getExtensions({ readonly: true, disableNodeIds: true }),
       content: props.content,
+      editable: false,
     });
   });
 
-  onCleanup(() => editor?.destroy());
+  onCleanup(() => anchoredEditor?.destroy());
 
   createEffect(() => {
-    props.content && editor?.commands.setContent(props.content, false);
+    anchoredEditor?.commands.setContent(props.content!, false);
   });
 
   return (
