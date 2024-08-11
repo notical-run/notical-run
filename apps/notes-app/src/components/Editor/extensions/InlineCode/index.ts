@@ -98,6 +98,22 @@ export const InlineCode = Node.create({
         return false;
       },
 
+      ArrowUp: ({ editor }) => {
+        const { selection } = editor.state;
+        if (selection.$from.parent.type !== this.type) return false;
+        if (!selection.empty) return false;
+
+        // Insert paragraph before if at the start of doc
+        if (selection.$from.index(0) === 0 && selection.$from.pos <= 2) {
+          const tr = editor.state.tr;
+          tr.insert(0, editor.schema.nodes.paragraph.create());
+          editor.view.dispatch(tr);
+          return true;
+        }
+
+        return false;
+      },
+
       ArrowRight: ({ editor }) => {
         const { state } = editor;
         const { $from } = state.selection;

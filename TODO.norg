@@ -59,6 +59,7 @@
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
 ** Evaluation
    - ( ) Remove content update listener signal
+   - ( ) Offline support + sw workers
    - ( ) Run evaluation inside "show" content
    - ( ) Update shown content in imported notes (via show.markdown) (save note content)
    - ( ) Update inserted content in imported notes (via insert.markdown) (save note content)

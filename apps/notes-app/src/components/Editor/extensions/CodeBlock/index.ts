@@ -28,6 +28,22 @@ export const CodeBlock = CodeBlockLowlight.extend({
     return {
       ...this.parent?.(),
 
+      ArrowUp: ({ editor }) => {
+        const { selection } = editor.state;
+        if (selection.$from.parent.type !== this.type) return false;
+        if (!selection.empty) return false;
+
+        // Insert paragraph before if at the start of doc
+        if (selection.$from.index(0) === 0 && selection.$from.pos === 1) {
+          const tr = editor.state.tr;
+          tr.insert(0, editor.schema.nodes.paragraph.create());
+          editor.view.dispatch(tr);
+          return true;
+        }
+
+        return false;
+      },
+
       Backspace: ({ editor }) => {
         const { selection } = editor.state;
         const parent = selection.$from.parent;
