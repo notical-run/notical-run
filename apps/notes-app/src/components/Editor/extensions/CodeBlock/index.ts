@@ -27,6 +27,16 @@ export const CodeBlock = CodeBlockLowlight.extend({
   addKeyboardShortcuts() {
     return {
       ...this.parent?.(),
+
+      Backspace: ({ editor }) => {
+        const { selection } = editor.state;
+        const parent = selection.$from.parent;
+        if (!selection.empty || parent.type.name !== this.name) return false;
+        if (selection.$from.pos !== 1 && parent.textContent.length !== 0) return false;
+
+        return this.editor.commands.clearNodes();
+      },
+
       'Mod-a': ({ editor }) => {
         const { selection } = editor.state;
         const parent = selection.$from.parent;

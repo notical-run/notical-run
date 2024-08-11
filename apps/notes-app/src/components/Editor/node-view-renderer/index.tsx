@@ -51,17 +51,26 @@ export const createSolidNodeView = <A extends Attrs>(
       dom = getNodeView({ ...renderProps, attrs, NodeContent, updateAttributes }) as HTMLElement;
     });
 
+    let lastNode = node;
+
     return {
       dom: dom!,
       contentDOM: contentDOM!,
       update: updatedNode => {
+        if (node.type !== updatedNode.type) return false;
+        if (lastNode === updatedNode) return false;
+        lastNode = updatedNode;
+
         onAttributeUpdate(reconcile(updatedNode.attrs as A));
         return true;
       },
       ignoreMutation: mutation => {
+        // console.log('nodeview mutation', node.type.name, mutation);
         return ['characterData', 'selection'].includes(mutation.type);
       },
-      destroy: () => dispose(),
+      destroy: () => {
+        dispose();
+      },
       ...options,
     };
   };
