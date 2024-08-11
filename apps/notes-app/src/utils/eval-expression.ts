@@ -28,7 +28,7 @@ export const evalExpression = async (
       const val = fromQuickJSHandle(quickVM, result.value);
       return Result.ok(val);
     } catch (error) {
-      console.error(error);
+      console.debug('[VM Error]', error);
       return Result.err(error as Error);
     }
   };

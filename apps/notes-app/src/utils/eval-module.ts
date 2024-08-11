@@ -23,7 +23,7 @@ export const evalModule = async (code: string, engine: EvalEngine, options: Eval
       pos: nodePosAndSize?.[0] ?? options.pos,
       nodeSize: nodePosAndSize?.[1] ?? options.nodeSize,
       id: options.id,
-      __native__: 'anchor',
+      __native__: '',
     });
 
     const moduleCode = `
@@ -68,7 +68,7 @@ ${code}`;
     );
     return Result.ok(exports);
   } catch (e) {
-    console.error(e);
+    console.debug('[VM Error]', e);
     return Result.err(e as Error);
   }
 };

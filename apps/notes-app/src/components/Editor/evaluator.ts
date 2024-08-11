@@ -65,15 +65,18 @@ export const evaluateAllNodes = async (
       if (node.type.name === 'code') {
         const previousCode = engine.nodeCache.get(node.attrs.nodeId);
         const code = node.textContent?.replace(/(^`)|(`$)/g, '') ?? '';
+        let isFirstEvaluation = !previousCode;
         if (previousCode?.code === code) return;
 
         const onResult = (result: Result<Error, any>) => {
           const foundNode = findNodeById(editor, node.attrs.nodeId);
           if (!foundNode) return;
 
+          console.log({ isFirstEvaluation });
           const tr = editor.state.tr;
           tr.setNodeAttribute(foundNode.pos, 'result', result);
-          editor.view.dispatch(tr.setMeta('addToHistory', false));
+          editor.view.dispatch(tr.setMeta('addToHistory', isFirstEvaluation));
+          isFirstEvaluation = false;
         };
 
         previousCode?.cleanup();
