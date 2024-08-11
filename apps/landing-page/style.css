@@ -27,6 +27,7 @@ body * {
 }
 @keyframes anim-highlight {
   0% { filter: blur(3px); background-color: #eee; }
+  50% { filter: blur(0); }
   100% { filter: none; background-color: transparent; }
 }
 
