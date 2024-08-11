@@ -1,6 +1,5 @@
 * Focus
 ** Bugs
-   - ( ) _imp_ Code block inside show content freezes
    - ( ) Fix next.markdown when anchor code is inline
    - ( ) Errors for code blocks and inline code on page load are incorrect
    - ( ) Deleting code block when empty should delete code block (sometimes leaves view)

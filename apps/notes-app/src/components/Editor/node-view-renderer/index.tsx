@@ -58,7 +58,9 @@ export const createSolidNodeView = <A extends Attrs>(
         onAttributeUpdate(reconcile(updatedNode.attrs as A));
         return true;
       },
-      ignoreMutation: () => true,
+      ignoreMutation: mutation => {
+        return ['characterData', 'selection'].includes(mutation.type);
+      },
       destroy: () => dispose(),
       ...options,
     };
