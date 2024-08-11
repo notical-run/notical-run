@@ -88,7 +88,7 @@ services:
     profiles: [e2e]
     image: oven/bun:1.1
     working_dir: /app
-    command: sh -c 'bun i && bun app dev --port 3241'
+    command: sh -c 'bun i --frozen-lockfile && bun app dev --port 3241'
     environment:
       VITE_API_BASE_URL: ${API_BASE_URL:-http://api-e2e:3242}
     ports:

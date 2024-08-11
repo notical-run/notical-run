@@ -1,20 +1,25 @@
 * Focus
 ** Bugs
-   - ( ) Errors for code blocks and inline code on page load are incorrect/Error message on load
+   - ( ) 
+** Evaluation
+   - ( ) Get selected text
+   - ( ) Insert text at selection
+   - ( ) Delete selected text
 ** Product
-   - ( ) More e2e tests
+   - ( ) Pagination
+   - ( ) Navbar dropdown for logout button
 ** Editor
    - ( ) Table add/remove row/col buttons
 
 * Ready to use
 ** Evaluation
-   - ( ) Get selected text
-   - ( ) Insert text at selection
-   - ( ) Delete selected text
+   - ( ) More consistent `fetch` api. (need to polyfill response/request inside quickjs)
+   --- {https://github.com/sebastianwessel/quickjs/blob/main/src/sync/marshal/function.ts} - expose Response, Request, URL, URLSearchParams
    - ( ) Keybindings
    - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Select nodes from document using filter?
 ** Bugs
+   - ( ) Errors for code blocks and inline code on page load are incorrect/Error message on load
    - ( ) Fix issue with inline node deleting backticks should convert to text (some issue with node view?)
    - ( ) Better error presentation for errors caused from callbacks/function calls
 ** Editor
@@ -25,8 +30,9 @@
    - ( ) Disable evaluation toggle for code blocks
    - ( ) Disable evaluation toggle for inline code
 ** Product
-   - ( ) Pagination
-   - ( ) User info on topbar
+   - ( ) More e2e tests
+   - ( ) Component integration tests setup
+   - ( ) User settings page?
    - ( ) Post signup onboarding modal
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
@@ -37,9 +43,8 @@
    - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
    - ( ) Share button (disabled for private notes with hint to make public)
+   - ( ) Fork note
 ** Capabilities
-   - ( ) Proxy server for fetch
-   - ( ) feat: fetch (+ request/response polyfill). Allow fetching data. (Ask for permission per host)
    - ( ) Create a new note programatically?
 ** Infra
    - ( ) Infra setup for api (digitalocean? | aws?)
@@ -50,10 +55,8 @@
 
 * Later
 ** Bugs
-   - ( ) Up key not working from inside code blocks
    - ( ) Things slow down as the number of updates in a session increase. (benchmark this)
    - ( ) memory leak?
-   - ( ) Detect cyclic dependencies of signals
    - ( ) No curor on todo when text is empty
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
 ** Evaluation
@@ -62,16 +65,12 @@
    - ( ) Run evaluation inside "show" content
    - ( ) Update shown content in imported notes (via show.markdown) (save note content)
    - ( ) Update inserted content in imported notes (via insert.markdown) (save note content)
-   - ( ) Delete content programatically
    - ( ) Pause evaluation update loop (for debugging)
    - ( ) Button next to import stmnt to open imported note
-   - ( ) Allow disabling evaluation for a code blocks
-   - ( ) Allow disabling evaluation for inline blocks
    - ( ) Persistant state
    - ( ) Make "show" content collapsible
-   - ( ) Get content programmatically - nodes json (low-level)
+   - ( ) Detect cyclic dependencies of signals
 ** Product
-   - ( ) Fork note
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
    - ( ) reset password
    - ( ) Search note contents
@@ -83,7 +82,7 @@
    - ( ) Save last used workspace and load that by default
    - ( ) With error "note already exists", if note is archived mention that it is archived
    - ( ) Versioning?
-   - ( ) KEep track of note imports/references
+   - ( ) Keep track of note imports/references
 ** Editor
    - ( ) Trap focus inside editor (Tab)
    - ( ) Allow note search for imports inside code blocks?
@@ -112,39 +111,33 @@
    - ( ) freeze `internal` and other objects
    - ( ) Re-map error messages to be more helpful
    --- ( ) better error when there are multiple exports of the same name in a note being imported
-   - ( ) *perf* Prevent re-creating node view on update for code block
-   - ( ) *perf* Only render decoration when result (or show content) changes
    - ( ) Truncate the inline result decoration
-   - ( ) Improve markdown editing experience
-   - ( ) Debounce evaluation checks
    - ( ) Debug view for showing current state
 
 
 * Supported features/ideas
-  - Note based calculator
-  - Task management
-  - Journaling
-  - Unit conversions
-  - Currency conversions
-  - Simplified drawing/diagram tool
-  - Datetime picker
-  - Fetch and present external data
-  - Draft and send custom emails (mail client)?
-  - Email reminders for tasks?
-  - Read section of page
-  - Make requests to openai (how to manage secrets?)
+  - (x) Note based calculator
+  - (x) Task management
+  - ( ) Journaling
+  - ( ) Unit conversions
+  - ( ) Currency conversions
+  - ( ) Simplified drawing/diagram tool
+  - ( ) Datetime picker
+  - (x) Fetch and present external data
+  - (-) Read section of page
+  - ( ) Email reminders for tasks?
+  - ( ) Make requests to openai (how to manage secrets?)
+  - ( ) Draft and send custom emails (mail client)?
 
 * Maybe
   - ( ) Block-ey UI with drag and drop
-  - ( ) Embed note on your website as an iframe?
+  - ( ) Embed note on other websites as an iframe?
   - ( ) Folders? Purely for presenting notes in workspace view
   - ( ) Support images with image upload
   - ( ) Print to PDF (including results)
   - ( ) gist embed? (see if it can be used for evaluation?)
   - ( ) Tab UI?
   - ( ) Vim mode editing?
-  - ( ) Importing js from CDN? (naah)
-  - ( ) If export (or inline func) has args, ask user for input?
 
 * Resources
   - {https://solid-icons.vercel.app/search/note}

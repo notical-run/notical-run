@@ -8,6 +8,7 @@ import { findNodeById } from '@/utils/editor';
 
 const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
 
+// NOTE: Re-think eval + import eval
 export const defaultEvalBlock = async (node: Node, pos: number, engine: EvalEngine) => {
   const exports = await evalModule(node.textContent || 'null', engine, {
     id: node.attrs.nodeId,

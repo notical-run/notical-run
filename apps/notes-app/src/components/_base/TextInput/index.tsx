@@ -21,7 +21,9 @@ export const TextInput = (_props: JSX.InputHTMLAttributes<HTMLInputElement> & Te
         })}
       />
       <Show when={props.error}>
-        <div class="text-xs text-red-700">{props.error}</div>
+        <div role="alert" class="text-xs text-red-700">
+          {props.error}
+        </div>
       </Show>
     </label>
   );

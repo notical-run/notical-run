@@ -57,7 +57,12 @@ const Workspaces = () => {
                         <div class="text-xs text-slate-600">
                           <div class="flex items-center gap-2">
                             {workspace.access === 'private' && (
-                              <AiOutlineLock size={14} class="text-yellow-700" />
+                              <AiOutlineLock
+                                size={14}
+                                class="text-yellow-700"
+                                aria-label="Private workspace"
+                                title="Private workspace"
+                              />
                             )}
                             <span class="truncate">{workspace.name}</span>
                           </div>

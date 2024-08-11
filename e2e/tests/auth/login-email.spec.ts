@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test';
-import { context, describe, it, page } from '../utils/test';
-import { createUser } from '@notical/api/src/factory/user';
+import { context, it, page } from '../utils/test';
+import { factory } from '../utils/db';
 
 page('Login', () => {
   context('when user uses correct credentials', () => {
     it('allows user to log in', async ({ page }) => {
-      await createUser({ email: 'login@email.com', password: '123123123' });
+      await factory.createUser({ email: 'login@email.com', password: '123123123' });
       await page.goto('/login');
 
       await page.getByRole('textbox', { name: /email/i }).fill('login@email.com');
@@ -33,7 +33,7 @@ page('Login', () => {
 
   context('when user uses incorrect password', () => {
     it('shows an error message', async ({ page }) => {
-      await createUser({ email: 'login@email.com', password: '123123123' });
+      await factory.createUser({ email: 'login@email.com', password: '123123123' });
       await page.goto('/login');
 
       await page.getByRole('textbox', { name: /email/i }).fill('login@email.com');

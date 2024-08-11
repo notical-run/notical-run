@@ -71,6 +71,7 @@ export const NewNoteDialog = (props: ParentProps<DialogRootProps>) => {
                   {...props}
                   error={store.error}
                   value={store.value || ''}
+                  aria-label="Note ID"
                   label={
                     <div class="flex items-center gap-2">
                       Note ID

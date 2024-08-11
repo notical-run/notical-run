@@ -14,7 +14,7 @@ export const NoteList = (props: { notes: WorkspaceNotesQueryResult; fallback?: J
     <List>
       <For each={props.notes} fallback={props.fallback}>
         {note => (
-          <List.Item class="flex items-center px-2">
+          <List.Item class="flex items-center px-2" aria-label={`@${slug()}/${note.name}`}>
             <A href={links.workspaceNote(slug(), note.name)} class="block px-2 py-3 flex-1">
               <div class="flex items-center">
                 <span class="text-slate-500 text-xs">@{slug()}</span>

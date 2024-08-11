@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { cleanupData } from '@notical/api/src/utils/test';
+import { resetDB } from './db';
 
 export const describe = test.describe;
 
@@ -10,7 +10,7 @@ export const context = test.describe;
 export const createPageCtx = (descr: (...a: any[]) => any) => (message: string, fn: () => void) => {
   descr(message, () => {
     test.beforeEach(async () => {
-      await cleanupData();
+      await resetDB();
     });
 
     fn();
