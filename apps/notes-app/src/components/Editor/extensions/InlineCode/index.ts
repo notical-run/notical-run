@@ -89,11 +89,15 @@ export const InlineCode = Node.create({
 
         const endPos = state.doc.resolve($from.end($from.depth - 1));
 
-        // Insert newline after node
-        const tr = editor.state.tr;
-        tr.setSelection(Selection.near(endPos));
-        // tr.insert(endPos.pos, editor.schema.nodes.paragraph.create({}));
-        editor.view.dispatch(tr);
+        // If at the start of node, add line before node
+        if ($from.parentOffset === 0) {
+          return editor.commands.insertContentAt($from.before(), { type: 'paragraph' });
+        } else {
+          // Select next line
+          const tr = editor.state.tr;
+          tr.setSelection(Selection.near(endPos));
+          editor.view.dispatch(tr);
+        }
 
         return false;
       },
