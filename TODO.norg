@@ -1,6 +1,5 @@
 * Focus
 ** Bugs
-   - ( ) Fix next.markdown when anchor code is inline
    - ( ) Errors for code blocks and inline code on page load are incorrect/Error message on load
 ** Product
    - ( ) More e2e tests

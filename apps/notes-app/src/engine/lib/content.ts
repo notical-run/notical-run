@@ -73,22 +73,20 @@ const getMarkdownContent = (options: QuickJSContextOptions, hook: any): string =
   if (!hook || typeof hook.pos !== 'number')
     throw new Error('Invalid target given to next.markdown');
 
-  return options.withEditor(primaryEditor => {
-    for (const editor of [primaryEditor, ...options.importedEditorInstances.values()]) {
-      if (!editor) continue;
+  return options.withAllEditors(editors => {
+    for (const editor of editors) {
       const nodePosAndSize = findNodeById(editor, hook.id);
       if (!nodePosAndSize) continue;
 
-      const parentNode = editor.state.doc.resolve(nodePosAndSize.pos).parent;
+      const resPos = editor.state.doc.resolve(nodePosAndSize.pos);
+      const afterPos = resPos.after();
 
-      const nextResPos = editor.state.doc.resolve(nodePosAndSize.pos + parentNode.nodeSize);
-      const nextNode = nextResPos.node(nextResPos.depth);
+      if (afterPos >= editor.state.doc.content.size) return '';
+
+      const nextNode = editor.state.doc.nodeAt(afterPos);
+
       const nodeDoc = editor.schema.topNodeType.create({}, nextNode);
-
-      const mdSerializer = editor.storage.markdown.serializer;
-
-      return mdSerializer.serialize(nodeDoc);
+      return editor.storage.markdown.serializer.serialize(nodeDoc);
     }
-    return undefined;
   });
 };

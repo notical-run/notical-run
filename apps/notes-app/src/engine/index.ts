@@ -12,7 +12,12 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
     importedEditorInstances: new Map(),
     contentUpdateSignal: contentUpdateSignal,
     onContentUpdate: () => contentUpdateSignal[1](b => !b),
-    addCleanup: (f: () => void) => cleanupFunctions.push(f),
+    addCleanup: (fn: () => void) => cleanupFunctions.push(fn),
+    withAllEditors: fn => {
+      return options.withEditor(primaryEditor => {
+        return fn([primaryEditor, ...engine.importedEditorInstances.values()]);
+      });
+    },
     ...options,
   };
 

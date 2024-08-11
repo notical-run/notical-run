@@ -10,7 +10,8 @@ export type EvalEngine = EvalEngineOptions & {
   contentUpdateSignal: Signal<boolean>;
   onContentUpdate: () => void;
   destroy: () => void;
-  addCleanup: (f: () => void) => void;
+  addCleanup: (fn: () => void) => void;
+  withAllEditors: <R>(fn: (editor: Editor[]) => R) => R;
 };
 
 export type QuickJSContextOptions = Omit<EvalEngine, 'quickVM' | 'destroy'>;
