@@ -55,9 +55,11 @@ export const getExtensions = ({
     }),
     Link.configure({
       protocols: ['http', 'https', 'mailto'],
+      autolink: false,
       openOnClick: true,
       linkOnPaste: false,
       HTMLAttributes: { class: 'text-violet-900 underline' },
+      // validate: url => true,
     }),
     readonly || disableTrailingNode || TrailingNode,
 
