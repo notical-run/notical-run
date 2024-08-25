@@ -4,7 +4,7 @@ import { registerHTTPLIb } from '@/engine/lib/http';
 import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
 import { registerUILib } from '@/engine/lib/ui';
-import { getQuickJSRuntime } from '@/engine/quickjs';
+import { getQuickJSRuntime, INTERNALS_KEY } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 
 export const createQuickJSContext = async (options: QuickJSContextOptions) => {
@@ -30,7 +30,7 @@ export const createQuickJSContext = async (options: QuickJSContextOptions) => {
   quickVM
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
-Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internals' }, writable: false });
+Object.defineProperty(globalThis, '${INTERNALS_KEY}', { value: { __native__: 'internals' }, writable: false });
 }`),
     )
     .dispose();

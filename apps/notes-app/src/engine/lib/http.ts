@@ -1,11 +1,6 @@
-import { objectToQuickJSProxyHandle, toQuickJSHandle } from '@/engine/quickjs';
+import { asAsync, objectToQuickJSProxyHandle, toQuickJSHandle } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
-
-const asAsync =
-  (fn: (...a: any[]) => any) =>
-  (...args: any[]) =>
-    fn(...args);
 
 export const registerHTTPLIb = async (
   quickVM: QuickJSAsyncContext,

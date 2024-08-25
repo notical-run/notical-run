@@ -30,6 +30,11 @@ export async function getQuickJSRuntime() {
 
 export const INTERNALS_KEY = '_internals';
 
+export const asAsync =
+  (fn: (...a: any[]) => any) =>
+  (...args: any[]) =>
+    fn(...args);
+
 export const getInternalsHandle = (quickVM: QuickJSAsyncContext) =>
   quickVM.getProp(quickVM.global, INTERNALS_KEY);
 
@@ -125,6 +130,7 @@ export const toQuickJSHandle = <T>(
   val: T,
   { _debugKey: _debugKey }: { _debugKey?: any } = {},
 ): QuickJSHandle => {
+  if (val === window) return quickVM.null;
   if (val === null) return quickVM.null;
   if (val === undefined) return quickVM.undefined;
   if (val instanceof Lifetime) return val;
@@ -180,7 +186,11 @@ export const toQuickJSHandle = <T>(
   return newObjectH;
 };
 
-export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: QuickJSHandle): T => {
+export const fromQuickJSHandle = <T>(
+  quickVM: QuickJSAsyncContext,
+  handle: QuickJSHandle,
+  { ignoreContext }: { ignoreContext?: boolean } = {},
+): T => {
   if (handle === quickVM.undefined) return undefined as T;
   if (handle === quickVM.null) return null as T;
   if (handle === quickVM.global) return null as T;
@@ -196,7 +206,8 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
     const fnHandle = handle.consume(f => f.dup()); // Create a copy to keep it alive inside closure
     function func(this: any, ...fnArgs: any[]) {
       const fnArgsHandles = fnArgs.map(arg => toQuickJSHandle(quickVM, arg));
-      const res = quickVM.callFunction(fnHandle, toQuickJSHandle(quickVM, this), ...fnArgsHandles);
+      const ctx = toQuickJSHandle(quickVM, this);
+      const res = quickVM.callFunction(fnHandle, ctx, ...fnArgsHandles);
       return fromQuickJSHandle(quickVM, quickVM.unwrapResult(res));
     }
     (func as any).displayName = quickVM.getProp(fnHandle, 'displayName').consume(quickVM.dump);

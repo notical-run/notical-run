@@ -1,6 +1,7 @@
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from './result';
 import { Editor } from '@tiptap/core';
+import { fromQuickJSHandle, getQJSPropPath } from '@/engine/quickjs';
 
 const findNodeById = (editor: Editor, id: string): [number, number] | null => {
   let foundNodePos = null;
@@ -44,17 +45,17 @@ ${code}`;
     }
     const exportsHandle = moduleResult.value;
 
-    const keysResult = quickVM
-      .getProp(quickVM.global, 'Object')
-      .consume(object => quickVM.getProp(object, 'keys'))
-      .consume(objectKeys => quickVM.callFunction(objectKeys, quickVM.undefined, exportsHandle));
-
+    const keysResult = getQJSPropPath(quickVM, ['Object', 'keys']).consume(objectKeys =>
+      quickVM.callFunction(objectKeys, quickVM.undefined, exportsHandle),
+    );
     const exportKeys: string[] = quickVM.unwrapResult(keysResult).consume(quickVM.dump);
 
     const toExport = (key: string) => {
       const isFunction = quickVM
         .getProp(exportsHandle, key)
         .consume(f => quickVM.typeof(f) === 'function');
+
+      // fromQuickJSHandle(quickVM, quickVM.getProp(exportsHandle, key));
 
       if (!isFunction) return null;
       return () =>

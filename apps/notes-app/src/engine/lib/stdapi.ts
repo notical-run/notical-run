@@ -1,4 +1,10 @@
-import { fromQuickJSHandle, getInternalsHandle, toQuickJSHandle } from '@/engine/quickjs';
+import {
+  fromQuickJSHandle,
+  getInternalsHandle,
+  toFunctionHandle,
+  toFunctionHandleWithoutContext,
+  toQuickJSHandle,
+} from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 
@@ -27,7 +33,7 @@ export const registerStdApiLib = async (
       .consume(f => quickVM!.setProp(consoleObj, 'log', f));
     // TODO: console.error, console.warn, console.debug...
 
-    toQuickJSHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
+    toFunctionHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
       const timer = setTimeout(...args);
       options.addCleanup(() => clearTimeout(timer));
       return timer;
