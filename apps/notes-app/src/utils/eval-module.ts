@@ -51,17 +51,7 @@ ${code}`;
     const exportKeys: string[] = quickVM.unwrapResult(keysResult).consume(quickVM.dump);
 
     const toExport = (key: string) => {
-      const isFunction = quickVM
-        .getProp(exportsHandle, key)
-        .consume(f => quickVM.typeof(f) === 'function');
-
-      // fromQuickJSHandle(quickVM, quickVM.getProp(exportsHandle, key));
-
-      if (!isFunction) return null;
-      return () =>
-        quickVM.getProp(exportsHandle, key).consume(funcH => {
-          quickVM!.unwrapResult(quickVM!.callFunction(funcH, quickVM.global)).consume(() => {});
-        });
+      return fromQuickJSHandle(quickVM, quickVM.getProp(exportsHandle, key));
     };
 
     const exports = Object.fromEntries(

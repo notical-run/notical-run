@@ -2,7 +2,6 @@ import {
   fromQuickJSHandle,
   getInternalsHandle,
   toFunctionHandle,
-  toFunctionHandleWithoutContext,
   toQuickJSHandle,
 } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
@@ -15,7 +14,9 @@ export const registerStdApiLib = async (
   quickVM
     .unwrapResult(
       await quickVM.evalCodeAsync(
-        `{ Object.defineProperty(globalThis, 'console', { value: {}, writable: false }); }`,
+        `
+Object.defineProperty(globalThis, 'console', { value: {}, writable: false });
+`,
       ),
     )
     .dispose();
@@ -53,8 +54,8 @@ export const registerStdApiLib = async (
       quickVM.setProp(quickVM.global, 'clearTimeout', f),
     );
 
-    // TODO: Find cleaner way to expose Intl?
-    toQuickJSHandle(quickVM, (date: string, ...args: any[]) =>
+    // TODO: Expose Intl
+    toQuickJSHandle(quickVM, (date: Date | string, ...args: any[]) =>
       Intl.DateTimeFormat(...args).format(new Date(date)),
     ).consume(f => quickVM.setProp(internals, 'formatDateTime', f));
   });

@@ -150,6 +150,10 @@ export const toQuickJSHandle = <T>(
   if (typeof val === 'function') {
     return toFunctionHandle(quickVM, val as any);
   }
+  if (val instanceof Date) {
+    const date = quickVM.newString(val.toString());
+    return callFunctionCode(quickVM, `ds => new Date(ds)`, null, date);
+  }
 
   const objectDefineProperties = getQJSPropPath(quickVM, ['Object', 'defineProperties']);
   const objectSetPrototypeOf = getQJSPropPath(quickVM, ['Object', 'setPrototypeOf']);
@@ -186,21 +190,25 @@ export const toQuickJSHandle = <T>(
   return newObjectH;
 };
 
-export const fromQuickJSHandle = <T>(
+export const handleInstanceOf = (
   quickVM: QuickJSAsyncContext,
-  handle: QuickJSHandle,
-  { ignoreContext }: { ignoreContext?: boolean } = {},
-): T => {
+  h: QuickJSHandle,
+  instance: string,
+) => {
+  const res = callFunctionCode(quickVM, `val => val instanceof ${instance}`, null, h);
+  return quickVM.dump(res);
+};
+
+export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: QuickJSHandle): T => {
   if (handle === quickVM.undefined) return undefined as T;
   if (handle === quickVM.null) return null as T;
   if (handle === quickVM.global) return null as T;
-  const native = quickVM.getString(quickVM.getProp(handle, '__native__'));
-  if (['global', 'globalThis', 'state'].includes(native)) return { __native__: native } as T;
-
   const primitiveTypes = ['string', 'number', 'boolean', 'undefined', 'symbol'];
   if (primitiveTypes.includes(quickVM.typeof(handle))) {
     return handle.consume(quickVM.dump) as T;
   }
+  const native = quickVM.getString(quickVM.getProp(handle, '__native__'));
+  if (['global', 'globalThis', 'state'].includes(native)) return { __native__: native } as T;
 
   if (quickVM.typeof(handle) === 'function') {
     const fnHandle = handle.consume(f => f.dup()); // Create a copy to keep it alive inside closure
@@ -219,6 +227,11 @@ export const fromQuickJSHandle = <T>(
     return quickVM.resolvePromise(handle).then(x => {
       return quickVM.unwrapResult(x);
     }) as T;
+  }
+
+  if (handleInstanceOf(quickVM, handle, 'Date')) {
+    const ds = handle.consume(h => quickVM.getString(h));
+    return new Date(ds) as T;
   }
 
   return handle.consume(objH => {
