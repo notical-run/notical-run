@@ -1,6 +1,6 @@
 * Focus
 ** Bugs
-   - ( ) 
+   - ( ) Async code not presenting exports/results/errors
 ** Evaluation
    - ( ) Get selected text
    - ( ) Insert text at selection
@@ -13,8 +13,6 @@
 
 * Ready to use
 ** Evaluation
-   - ( ) More consistent `fetch` api. (need to polyfill response/request inside quickjs)
-   --- {https://github.com/sebastianwessel/quickjs/blob/main/src/sync/marshal/function.ts} - expose Response, Request, URL, URLSearchParams
    - ( ) Keybindings
    - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Select nodes from document using filter?

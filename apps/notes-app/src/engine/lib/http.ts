@@ -1,4 +1,4 @@
-import { toQuickJSHandle } from '@/engine/quickjs';
+import { objectToQuickJSProxyHandle, toQuickJSHandle } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
@@ -11,10 +11,11 @@ export const registerHTTPLIb = async (
   quickVM: QuickJSAsyncContext,
   options: QuickJSContextOptions,
 ) => {
-  const httpFetch = async (url: string, requestInit: RequestInit): Promise<Response> => {
-    requestInit.method ??= 'GET';
-    requestInit.method = requestInit.method.trim();
-    if (/get|delete/i.test(requestInit.method ?? '')) {
+  const httpFetch = async (url: string, requestInit?: RequestInit): Promise<Response> => {
+    requestInit ??= {};
+    requestInit.method ??= 'get';
+    requestInit.method = requestInit.method.trim().toLowerCase();
+    if (['get', 'delete'].includes(requestInit.method)) {
       delete requestInit.body;
     }
     const request = new Request(url, requestInit);
@@ -28,6 +29,22 @@ export const registerHTTPLIb = async (
       return null;
     }
   };
+
+  toQuickJSHandle(quickVM, (...args: ConstructorParameters<typeof Request>) => {
+    return objectToQuickJSProxyHandle(quickVM, new Request(...args));
+  }).consume(c => quickVM.setProp(quickVM.global, 'Request', c));
+
+  toQuickJSHandle(quickVM, (...args: ConstructorParameters<typeof Response>) => {
+    return objectToQuickJSProxyHandle(quickVM, new Response(...args));
+  }).consume(c => quickVM.setProp(quickVM.global, 'Response', c));
+
+  toQuickJSHandle(
+    quickVM,
+    asAsync(async (url: string, requestInit: RequestInit) => {
+      const response = await httpFetch(url, requestInit);
+      return objectToQuickJSProxyHandle(quickVM, response);
+    }),
+  ).consume(c => quickVM.setProp(quickVM.global, 'fetch', c));
 
   // Fetch JSON
   toQuickJSHandle(
@@ -46,7 +63,7 @@ export const registerHTTPLIb = async (
     quickVM!.setProp(quickVM.global, 'fetchJSON', f);
   });
 
-  // Fetch JSON
+  // Fetch text
   toQuickJSHandle(
     quickVM,
     asAsync(async (url: string, requestInit: RequestInit) => {

@@ -35,12 +35,13 @@ Object.defineProperty(globalThis, '_internals', { value: { __native__: 'internal
     )
     .dispose();
 
+  await registerStdApiLib(quickVM, options);
   await registerStateLib(quickVM, options);
   await registerContentLib(quickVM, options);
-  await registerStdApiLib(quickVM, options);
   await registerUILib(quickVM, options);
-  await registerGlobalProxy(quickVM, options);
   await registerHTTPLIb(quickVM, options);
 
+  // NOTE: This has to be last because it turns globalThis into a proxy
+  await registerGlobalProxy(quickVM, options);
   return quickVM;
 };

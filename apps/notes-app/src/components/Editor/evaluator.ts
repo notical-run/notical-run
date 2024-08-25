@@ -73,7 +73,6 @@ export const evaluateAllNodes = async (
           const foundNode = findNodeById(editor, node.attrs.nodeId);
           if (!foundNode) return;
 
-          console.log({ isFirstEvaluation });
           const tr = editor.state.tr;
           tr.setNodeAttribute(foundNode.pos, 'result', result);
           editor.view.dispatch(tr.setMeta('addToHistory', isFirstEvaluation));

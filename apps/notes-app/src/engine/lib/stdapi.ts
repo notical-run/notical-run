@@ -1,4 +1,4 @@
-import { getInternalsHandle, toQuickJSHandle } from '@/engine/quickjs';
+import { fromQuickJSHandle, getInternalsHandle, toQuickJSHandle } from '@/engine/quickjs';
 import { QuickJSContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 
@@ -18,9 +18,14 @@ export const registerStdApiLib = async (
     const consoleObj = scope.manage(quickVM.getProp(quickVM.global, 'console'));
     const internals = scope.manage(getInternalsHandle(quickVM));
 
-    toQuickJSHandle(quickVM, (...args: any[]) => {
-      console.log('[vm]', ...args);
-    }).consume(f => quickVM!.setProp(consoleObj, 'log', f));
+    // Doesn't use toQuickJSHandle here to make debugging easier
+    // Might change later when toQuickJSHandle is stable enough
+    quickVM
+      .newFunction('consoleLog', (...args) => {
+        console.log('[vm]', ...args.map(arg => fromQuickJSHandle(quickVM, arg)));
+      })
+      .consume(f => quickVM!.setProp(consoleObj, 'log', f));
+    // TODO: console.error, console.warn, console.debug...
 
     toQuickJSHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
       const timer = setTimeout(...args);
