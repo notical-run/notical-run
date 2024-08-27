@@ -1,49 +1,55 @@
-* Focus
+* MVP
 ** Bugs
+   - ( ) Array ser/deser
+   - ( ) Nested objects from proxied objects (response.headers.entries())
    - ( ) Async code not presenting exports/results/errors
+   - ( ) Select + Copy inside code block doesn't copy all selection
 ** Evaluation
    - ( ) Get selected text
    - ( ) Insert text at selection
    - ( ) Delete selected text
+   - ( ) Get/Insert/Show node as json
+   - ( ) Update codeblock on signal? (or use default as effectful)
+   - ( ) Unit test evaluation engine
 ** Product
    - ( ) Pagination
    - ( ) Navbar dropdown for logout button
-** Editor
-   - ( ) Table add/remove row/col buttons
-
-* Ready to use
-** Evaluation
-   - ( ) Keybindings
-   - ( ) Update codeblock on signal? (or use default as effectful)
-   - ( ) Select nodes from document using filter?
-** Bugs
-   - ( ) Errors for code blocks and inline code on page load are incorrect/Error message on load
-   - ( ) Fix issue with inline node deleting backticks should convert to text (some issue with node view?)
-   - ( ) Better error presentation for errors caused from callbacks/function calls
-** Editor
-   - ( ) Tab inside code block should indent
-   - ( ) Update entire link instead of just the selected text (inline floating menu)
-   - ( ) Show floating menu if cursor is inside link
-   - ( ) Don't show floating menu inside inline code nodes?
-   - ( ) Disable evaluation toggle for code blocks
-   - ( ) Disable evaluation toggle for inline code
-** Product
-   - ( ) More e2e tests
    - ( ) Component integration tests setup
-   - ( ) User settings page?
-   - ( ) Post signup onboarding modal
+   - ( ) Post signup onboarding (pages or modal?)
    - ( ) github oauth
    - ( ) Examples workspace @examples/*
    - ( ) Documentation workspace @docs/*
    - ( ) Common library/utilities workspace @notical/*
    - (-) landing page
+   - ( ) Share button (disabled for private notes with hint to make public)
+   - ( ) Fork note
+** Editor
+   - ( ) Table add/remove row/col buttons
+   - ( ) Tab inside code block should indent
+   - ( ) Update entire link instead of just the selected text (inline floating menu)
+   - ( ) Disable evaluation toggle for code blocks
+   - ( ) Disable evaluation toggle for inline code
+** Infra
+   - ( ) Simple infra
+
+* Ready to use
+** Evaluation
+   - ( ) Keybindings
+   - ( ) Select nodes from document using filter?
+   - ( ) Create a new note programatically?
+** Bugs
+   - ( ) Errors for code blocks and inline code on page load are incorrect/Error message on load
+   - ( ) Better error presentation for errors caused from callbacks/function calls
+** Editor
+   - ( ) Show floating menu if cursor is inside link
+   - ( ) Don't show floating menu inside inline code nodes?
+   - ( ) Auto indent when going to next line?
+** Product
+   - ( ) More e2e tests
+   - ( ) User settings page?
    - ( ) Make nav bar responsive for small screens
    - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
-   - ( ) Share button (disabled for private notes with hint to make public)
-   - ( ) Fork note
-** Capabilities
-   - ( ) Create a new note programatically?
 ** Infra
    - ( ) Infra setup for api (digitalocean? | aws?)
    - ( ) Cleanup compose setup

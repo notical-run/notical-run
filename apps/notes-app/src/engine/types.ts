@@ -1,20 +1,36 @@
+import { Result } from '@/utils/result';
 import { Editor } from '@tiptap/core';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 import { Signal } from 'solid-js';
 
-export type EvalEngine = EvalEngineOptions & {
+export type EvalEngine = EvalEngineContextOptions & {
   quickVM: QuickJSAsyncContext;
+  destroy: () => void;
   nodeCache: Map<string, { code: string; cleanup: () => void }>;
+  evalExpression: (
+    code: string,
+    options: {
+      onResult: (res: Result<Error, any>) => void;
+      options: EvalNodeOptions;
+    },
+  ) => Promise<void>;
+  evalModule: (
+    code: string,
+    options: {
+      onResult: (res: Result<Error, any>) => void;
+      options: EvalNodeOptions;
+    },
+  ) => Promise<void>;
+};
+
+export type EvalEngineContextOptions = EvalEngineOptions & {
   stateStore: Map<string, Signal<any>>;
   importedEditorInstances: Map<string, Editor>;
   contentUpdateSignal: Signal<boolean>;
   onContentUpdate: () => void;
-  destroy: () => void;
-  addCleanup: (fn: () => void) => void;
+  onCleanup: (fn: () => void) => void;
   withAllEditors: <R>(fn: (editor: Editor[]) => R) => R;
 };
-
-export type QuickJSContextOptions = Omit<EvalEngine, 'quickVM' | 'destroy'>;
 
 export type ModuleLoader = (modulePath: string) => Promise<string>;
 

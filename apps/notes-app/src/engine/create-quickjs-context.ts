@@ -5,9 +5,9 @@ import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
 import { registerUILib } from '@/engine/lib/ui';
 import { getQuickJSRuntime, INTERNALS_KEY } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 
-export const createQuickJSContext = async (options: QuickJSContextOptions) => {
+export const createQuickJSContext = async (options: EvalEngineContextOptions) => {
   const quickRuntime = await getQuickJSRuntime();
   quickRuntime.setModuleLoader(async (modulePath, ctx) => {
     try {

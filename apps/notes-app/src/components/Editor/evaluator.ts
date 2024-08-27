@@ -1,30 +1,31 @@
 import type { Node } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/core';
-import { evalExpression } from '@/utils/eval-expression';
-import { evalModule } from '@/utils/eval-module';
 import { Result } from '@/utils/result';
 import { EvalEngine } from '@/engine/types';
 import { findNodeById } from '@/utils/editor';
 
 const isEvalable = (node: Node) => [null, 'javascript'].includes(node.attrs.language);
 
-// NOTE: Re-think eval + import eval
-export const defaultEvalBlock = async (node: Node, pos: number, engine: EvalEngine) => {
-  const exports = await evalModule(node.textContent || 'null', engine, {
-    id: node.attrs.nodeId,
-    pos,
-    nodeSize: node.nodeSize,
-  });
-
-  engine.withEditor(editor => {
-    const tr = editor.state.tr;
-    tr.setNodeAttribute(pos, 'exports', exports);
-    editor.view.dispatch(tr.setMeta('addToHistory', false));
-  });
-};
-
 type Options = {
   evalBlock?: (node: Node, pos: number, engine: EvalEngine) => Promise<void> | void;
+};
+
+// NOTE: Re-think eval + import eval
+export const defaultEvalBlock: Options['evalBlock'] = async (node, pos, engine) => {
+  await engine.evalModule(node.textContent, {
+    options: {
+      id: node.attrs.nodeId,
+      pos,
+      nodeSize: node.nodeSize,
+    },
+    onResult: exports => {
+      engine.withEditor(editor => {
+        const tr = editor.state.tr;
+        tr.setNodeAttribute(pos, 'exports', exports);
+        editor.view.dispatch(tr.setMeta('addToHistory', false));
+      });
+    },
+  });
 };
 
 export const evaluateAllNodes = async (
@@ -81,12 +82,8 @@ export const evaluateAllNodes = async (
 
         previousCode?.cleanup();
 
-        await evalExpression(code || 'null', {
+        await engine.evalExpression(code, {
           onResult,
-          handleCleanup: cleanup => {
-            engine.nodeCache.set(node.attrs.nodeId, { code, cleanup });
-          },
-          engine,
           options: {
             pos,
             id: node.attrs.nodeId,

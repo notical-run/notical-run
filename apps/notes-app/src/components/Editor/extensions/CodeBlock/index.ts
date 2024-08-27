@@ -28,6 +28,29 @@ export const CodeBlock = CodeBlockLowlight.extend({
     return {
       ...this.parent?.(),
 
+      Tab: ({ editor }) => {
+        const { selection } = editor.state;
+        const { $from, $to } = selection;
+        if ($from.parent.type !== this.type) return false;
+
+        const TAB = '  ';
+
+        console.log(selection.empty);
+        console.log(selection.$from, selection.$to);
+        console.log(editor.state.doc.textBetween($from.pos, $to.pos));
+        if (selection.empty) {
+          const tr = editor.state.tr;
+          tr.insert(selection.$from.pos, editor.schema.text(TAB));
+          editor.view.dispatch(tr);
+          return true;
+        } else {
+          // TODO: Insert indent between text
+          // console.log(editor.state.doc.textBetween($from.pos, $to.pos));
+        }
+
+        return false;
+      },
+
       ArrowUp: ({ editor }) => {
         const { selection } = editor.state;
         if (selection.$from.parent.type !== this.type) return false;

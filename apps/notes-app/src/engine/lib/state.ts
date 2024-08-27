@@ -1,11 +1,11 @@
 import { getInternalsHandle, INTERNALS_KEY, toQuickJSHandle } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 import { createSignal } from 'solid-js';
 
 export const registerStateLib = async (
   quickVM: QuickJSAsyncContext,
-  options: QuickJSContextOptions,
+  options: EvalEngineContextOptions,
 ) => {
   quickVM
     .unwrapResult(

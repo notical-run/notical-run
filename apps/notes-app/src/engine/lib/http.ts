@@ -1,10 +1,10 @@
 import { asAsync, objectToQuickJSProxyHandle, toQuickJSHandle } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
 export const registerHTTPLIb = async (
   quickVM: QuickJSAsyncContext,
-  options: QuickJSContextOptions,
+  options: EvalEngineContextOptions,
 ) => {
   const httpFetch = async (url: string, requestInit?: RequestInit): Promise<Response> => {
     requestInit ??= {};

@@ -1,5 +1,5 @@
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
-import { Result } from './result';
+import { Result } from '../utils/result';
 import { Editor } from '@tiptap/core';
 import { fromQuickJSHandle, getQJSPropPath } from '@/engine/quickjs';
 
@@ -15,7 +15,22 @@ const findNodeById = (editor: Editor, id: string): [number, number] | null => {
   return foundNodePos;
 };
 
-export const evalModule = async (code: string, engine: EvalEngine, options: EvalNodeOptions) => {
+export const evalModule = async (
+  code: string,
+  {
+    options,
+    engine,
+    onResult,
+    handleCleanup,
+  }: {
+    onResult: (res: Result<Error, any>) => void;
+    engine: EvalEngine;
+    handleCleanup: (cleanup: () => void) => void;
+    options: EvalNodeOptions;
+  },
+) => {
+  handleCleanup(() => {}); // TODO: Add module scoped cleanup + reactive evaluation
+
   try {
     const quickVM = engine.quickVM;
 
@@ -57,9 +72,9 @@ ${code}`;
     const exports = Object.fromEntries(
       exportKeys.map(key => [key, toExport(key)]).filter(([_, f]) => f),
     );
-    return Result.ok(exports);
+    return onResult(Result.ok(exports));
   } catch (e) {
     console.debug('[VM Error]', e);
-    return Result.err(e as Error);
+    return onResult(Result.err(e as Error));
   }
 };

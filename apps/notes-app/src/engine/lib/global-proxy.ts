@@ -1,9 +1,9 @@
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
 export const registerGlobalProxy = async (
   quickVM: QuickJSAsyncContext,
-  _options: QuickJSContextOptions,
+  _options: EvalEngineContextOptions,
 ) => {
   quickVM
     .unwrapResult(

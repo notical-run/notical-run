@@ -1,11 +1,11 @@
 import { getInternalsHandle, toQuickJSHandle } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { findNodeById } from '@/utils/editor';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 
 export const registerContentLib = async (
   quickVM: QuickJSAsyncContext,
-  options: QuickJSContextOptions,
+  options: EvalEngineContextOptions,
 ) => {
   quickVM
     .unwrapResult(
@@ -43,7 +43,7 @@ export const registerContentLib = async (
   });
 };
 
-const insertMarkdownContent = (options: QuickJSContextOptions, hook: any, text: string) => {
+const insertMarkdownContent = (options: EvalEngineContextOptions, hook: any, text: string) => {
   if (!hook || typeof hook.pos !== 'number')
     throw new Error('Invalid target given to insert.markdown');
 
@@ -55,7 +55,7 @@ const insertMarkdownContent = (options: QuickJSContextOptions, hook: any, text: 
   });
 };
 
-const showMarkdownContent = (options: QuickJSContextOptions, hook: any, text: string) => {
+const showMarkdownContent = (options: EvalEngineContextOptions, hook: any, text: string) => {
   if (!hook || typeof hook.pos !== 'number')
     throw new Error('Invalid target given to show.markdown');
 
@@ -69,7 +69,7 @@ const showMarkdownContent = (options: QuickJSContextOptions, hook: any, text: st
   });
 };
 
-const getMarkdownContent = (options: QuickJSContextOptions, hook: any): string => {
+const getMarkdownContent = (options: EvalEngineContextOptions, hook: any): string => {
   if (!hook || typeof hook.pos !== 'number')
     throw new Error('Invalid target given to next.markdown');
 

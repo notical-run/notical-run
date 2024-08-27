@@ -1,10 +1,10 @@
 import { toQuickJSHandle } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
 export const registerUILib = async (
   quickVM: QuickJSAsyncContext,
-  options: QuickJSContextOptions,
+  options: EvalEngineContextOptions,
 ) => {
   // button() helper for labelled inline buttons
   quickVM

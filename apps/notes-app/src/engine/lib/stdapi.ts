@@ -4,12 +4,12 @@ import {
   toFunctionHandle,
   toQuickJSHandle,
 } from '@/engine/quickjs';
-import { QuickJSContextOptions } from '@/engine/types';
+import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 
 export const registerStdApiLib = async (
   quickVM: QuickJSAsyncContext,
-  options: QuickJSContextOptions,
+  options: EvalEngineContextOptions,
 ) => {
   quickVM
     .unwrapResult(
@@ -36,13 +36,13 @@ Object.defineProperty(globalThis, 'console', { value: {}, writable: false });
 
     toFunctionHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
       const timer = setTimeout(...args);
-      options.addCleanup(() => clearTimeout(timer));
+      options.onCleanup(() => clearTimeout(timer));
       return timer;
     }).consume(f => quickVM.setProp(quickVM.global, 'setTimeout', f));
 
     toQuickJSHandle(quickVM, (...args: Parameters<typeof setInterval>) => {
       const timer = setInterval(...args);
-      options.addCleanup(() => clearInterval(timer));
+      options.onCleanup(() => clearInterval(timer));
       return timer;
     }).consume(f => quickVM.setProp(quickVM.global, 'setInterval', f));
 

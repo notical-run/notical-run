@@ -1,7 +1,7 @@
 import { createEffect, createRoot } from 'solid-js';
 import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
-import { Result } from './result';
+import { Result } from '../utils/result';
 import { findNodeById } from '@/utils/editor';
 import { fromQuickJSHandle } from '@/engine/quickjs';
 
@@ -53,7 +53,7 @@ const here = () => {
   return ${hereRef};
 };
 
-${code}
+${code || 'undefined'}
 }`,
         'global.js',
         { strict: false },
