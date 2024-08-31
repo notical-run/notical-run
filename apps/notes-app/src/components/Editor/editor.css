@@ -13,3 +13,7 @@
 pre, code {
   font-family: FiraCode, DejaVu Sans Mono, Courier New, monospace;
 }
+
+.tiptap table .selectedCell {
+  @apply bg-blue-50 border border-blue-300;
+}

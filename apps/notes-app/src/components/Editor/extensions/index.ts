@@ -70,7 +70,7 @@ export const getExtensions = ({
           shouldShow: ({ editor, state }) => {
             if (!editor.isActive('paragraph')) return false;
             if (editor.isActive('code')) return false;
-            return state.selection.from !== state.selection.to;
+            return !state.selection.empty;
           },
         })),
     readonly || SlashCommandsExtension,
