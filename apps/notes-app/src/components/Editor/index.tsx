@@ -14,8 +14,8 @@ import { InlineStyleBar } from '@/components/Editor/components/InlineStyleBar';
 import { cn } from '@/utils/classname';
 import { PromptModal } from '@/components/Editor/components/PromptModal';
 import { ConfirmModal } from '@/components/Editor/components/ConfirmModal';
-import { AlertToast } from '@/components/Editor/components/AlertToast';
 import { fetchViaProxyApi } from '@/api/queries/proxy-api';
+import toast from 'solid-toast';
 
 export type EditorProps = {
   editable?: boolean;
@@ -28,8 +28,7 @@ export type EditorProps = {
 type ModalKind =
   | { kind: 'none'; message?: never }
   | { kind: 'prompt'; message: string; onValue: (value: string | null) => void }
-  | { kind: 'confirm'; message: string; onConfirm: () => void; onCancel: () => void }
-  | { kind: 'alert'; message: string; onClose: () => void };
+  | { kind: 'confirm'; message: string; onConfirm: () => void; onCancel: () => void };
 
 export const Editor = (props: EditorProps) => {
   const [editor, setEditor] = createSignal<TiptapEditor>();
@@ -68,8 +67,8 @@ export const Editor = (props: EditorProps) => {
       '[&_th:not(:last-child)]:border-r prose-th:border-slate-200 prose-th:bg-slate-100',
       '[&_tr:not(:last-child)]:border-b prose-tr:border-slate-200',
       'prose-td:px-3 prose-td:border-r prose-td:border-slate-200',
-      '[&_table_p]:my-1',
-      '[&_th_p]:my-0.5',
+      '[&_table_p]:my-0',
+      '[&_th_p]:my-0',
     );
 
     engine = await createEvalEngine({
@@ -81,7 +80,7 @@ export const Editor = (props: EditorProps) => {
         return module.moduleCode;
       },
       apiHelpers: {
-        alert: opts => setCurrentModal({ kind: 'alert', ...opts }),
+        alert: opts => toast.success(opts.message || 'Alert'),
         confirm: opts => setCurrentModal({ kind: 'confirm', ...opts }),
         prompt: opts => setCurrentModal({ kind: 'prompt', ...opts }),
         fetch: fetchViaProxyApi,
@@ -145,8 +144,9 @@ export const Editor = (props: EditorProps) => {
             onSubmit={value => {
               try {
                 (currentModal() as any)?.onValue(value);
-              } catch (e) {} // eslint-disable-line no-empty
-              setCurrentModal({ kind: 'none' });
+              } finally {
+                setCurrentModal({ kind: 'none' });
+              }
             }}
           />
         </Match>
@@ -156,25 +156,16 @@ export const Editor = (props: EditorProps) => {
             onConfirm={() => {
               try {
                 (currentModal() as any)?.onConfirm();
-              } catch (e) {} // eslint-disable-line no-empty
-              setCurrentModal({ kind: 'none' });
+              } finally {
+                setCurrentModal({ kind: 'none' });
+              }
             }}
             onCancel={() => {
               try {
                 (currentModal() as any)?.onCancel();
-              } catch (e) {} // eslint-disable-line no-empty
-              setCurrentModal({ kind: 'none' });
-            }}
-          />
-        </Match>
-        <Match when={currentModal()?.kind === 'alert'}>
-          <AlertToast
-            title={currentModal()?.message || 'Alert'}
-            onClose={() => {
-              try {
-                (currentModal() as any)?.onClose();
-              } catch (e) {} // eslint-disable-line no-empty
-              setCurrentModal({ kind: 'none' });
+              } finally {
+                setCurrentModal({ kind: 'none' });
+              }
             }}
           />
         </Match>

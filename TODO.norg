@@ -30,7 +30,7 @@
    - ( ) Disable evaluation toggle for code blocks
    - ( ) Disable evaluation toggle for inline code
 ** Infra
-   - ( ) Simple infra
+   - ( ) Infra (digital ocean + neon + github pages for starting out)
 
 * Ready to use
 ** Evaluation
