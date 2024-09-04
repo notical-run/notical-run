@@ -1,5 +1,4 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { Popover } from '@/components/_base/Popover';
 import { HiOutlineArchiveBoxXMark } from 'solid-icons/hi';
 import { BsThreeDotsVertical } from 'solid-icons/bs';
 import { NoteArchiveConfirm } from '@/components/Note/NoteArchiveConfirm';
@@ -11,6 +10,7 @@ import { Authorize, useAuthorizationRules } from '@/components/Auth/Session';
 import { useNote } from '@/api/queries/workspace';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 import { NoteAccessChangeConfirm } from '@/components/Note/NoteAccessChangeConfirm';
+import { DropdownMenu } from '@/components/_base/DropdownMenu';
 
 type NoteDropdownProps = {
   workspaceSlug: string;
@@ -36,97 +36,77 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
 
   return (
     <>
-      <Popover placement="bottom-end" offset={0}>
+      <DropdownMenu>
         <Show when={canManageWorkspace || props.editor}>
-          <Popover.Trigger class="flex items-center justify-center size-8 mx-0 rounded-full hover:bg-slate-200">
+          <DropdownMenu.Trigger class="flex items-center justify-center size-8 mx-0 rounded-full hover:bg-slate-200">
             <BsThreeDotsVertical />
-          </Popover.Trigger>
+          </DropdownMenu.Trigger>
         </Show>
 
-        <Popover.Content>
-          <Popover.Content.Body>
-            <div class="text-sm flex flex-col" role="listbox">
-              <Show when={props.editor}>
-                <Popover.Close
-                  role="listitem"
-                  class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
-                  onClick={copyAsMarkdown}
+        <DropdownMenu.Items>
+          <Show when={props.editor}>
+            <DropdownMenu.Item onClick={copyAsMarkdown}>
+              <FaBrandsMarkdown />
+              Copy as markdown
+            </DropdownMenu.Item>
+          </Show>
+
+          <Authorize user="logged_in" workspace="manage">
+            <Show when={noteQuery.data?.id}>
+              <NoteAccessChangeConfirm
+                workspaceSlug={props.workspaceSlug}
+                noteId={noteQuery.data!.name!}
+                noteAccess={noteQuery.data!.access === 'private' ? 'public' : 'private'}
+              >
+                <Dialog.Trigger as={DropdownMenu.Item}>
+                  {noteQuery.data!.access === 'private' ? (
+                    <>
+                      <AiOutlineUnlock class="text-green-600" />
+                      Make the note public
+                    </>
+                  ) : (
+                    <>
+                      <AiOutlineLock class="text-yellow-700" />
+                      Make the note private
+                    </>
+                  )}
+                </Dialog.Trigger>
+              </NoteAccessChangeConfirm>
+            </Show>
+          </Authorize>
+
+          <Authorize user="logged_in" workspace="manage">
+            <Switch>
+              <Match when={noteQuery.data?.archivedAt}>
+                <NoteArchiveConfirm
+                  unarchive
+                  workspaceSlug={props.workspaceSlug}
+                  noteId={props.noteId}
+                  onArchive={props.onArchive}
                 >
-                  <FaBrandsMarkdown />
-                  Copy as markdown
-                </Popover.Close>
-              </Show>
+                  <Dialog.Trigger as={DropdownMenu.Item}>
+                    <HiOutlineArchiveBoxXMark />
+                    Restore
+                  </Dialog.Trigger>
+                </NoteArchiveConfirm>
+              </Match>
 
-              <Authorize user="logged_in" workspace="manage">
-                <Show when={noteQuery.data?.id}>
-                  <NoteAccessChangeConfirm
-                    workspaceSlug={props.workspaceSlug}
-                    noteId={noteQuery.data!.name!}
-                    noteAccess={noteQuery.data!.access === 'private' ? 'public' : 'private'}
-                  >
-                    <Dialog.Trigger
-                      as={Popover.Close}
-                      role="listitem"
-                      class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
-                    >
-                      {noteQuery.data!.access === 'private' ? (
-                        <>
-                          <AiOutlineUnlock class="text-green-600" />
-                          Make the note public
-                        </>
-                      ) : (
-                        <>
-                          <AiOutlineLock class="text-yellow-700" />
-                          Make the note private
-                        </>
-                      )}
-                    </Dialog.Trigger>
-                  </NoteAccessChangeConfirm>
-                </Show>
-              </Authorize>
-
-              <Authorize user="logged_in" workspace="manage">
-                <Switch>
-                  <Match when={noteQuery.data?.archivedAt}>
-                    <NoteArchiveConfirm
-                      unarchive
-                      workspaceSlug={props.workspaceSlug}
-                      noteId={props.noteId}
-                      onArchive={props.onArchive}
-                    >
-                      <Dialog.Trigger
-                        as={Popover.Close}
-                        role="listitem"
-                        class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
-                      >
-                        <HiOutlineArchiveBoxXMark />
-                        Restore
-                      </Dialog.Trigger>
-                    </NoteArchiveConfirm>
-                  </Match>
-
-                  <Match when={noteQuery.data?.archivedAt === null}>
-                    <NoteArchiveConfirm
-                      workspaceSlug={props.workspaceSlug}
-                      noteId={props.noteId}
-                      onArchive={props.onArchive}
-                    >
-                      <Dialog.Trigger
-                        as={Popover.Close}
-                        role="listitem"
-                        class="flex flex-1 items-center justify-start gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 w-full"
-                      >
-                        <HiOutlineArchiveBoxXMark />
-                        Archive
-                      </Dialog.Trigger>
-                    </NoteArchiveConfirm>
-                  </Match>
-                </Switch>
-              </Authorize>
-            </div>
-          </Popover.Content.Body>
-        </Popover.Content>
-      </Popover>
+              <Match when={noteQuery.data?.archivedAt === null}>
+                <NoteArchiveConfirm
+                  workspaceSlug={props.workspaceSlug}
+                  noteId={props.noteId}
+                  onArchive={props.onArchive}
+                >
+                  <Dialog.Trigger as={DropdownMenu.Item}>
+                    <HiOutlineArchiveBoxXMark />
+                    Archive
+                  </Dialog.Trigger>
+                </NoteArchiveConfirm>
+              </Match>
+            </Switch>
+          </Authorize>
+        </DropdownMenu.Items>
+      </DropdownMenu>
     </>
   );
 };

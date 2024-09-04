@@ -20,7 +20,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
 
   return (
     <>
-      <Popover.Root>
+      <Popover>
         <div class="flex items-center gap-2">
           <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
           <Authorize user="logged_in" workspace="manage">
@@ -81,7 +81,7 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
             </Popover.Content.Body>
           </div>
         </Popover.Content>
-      </Popover.Root>
+      </Popover>
 
       <NewWorkspaceDialog open={dialogOpen()} onOpenChange={setDialogOpen} />
     </>
