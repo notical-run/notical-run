@@ -23,7 +23,11 @@ const withTimeout = <T>(timeout: number, f: (b: AbortController) => Promise<T>):
       abortCtrl.abort('timeout');
       return Promise.reject(
         new HTTPException(408, {
-          message: 'Request took too long',
+          res: new Response(JSON.stringify({ error: 'Request took too long' }), {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }),
         }),
       );
     }),
