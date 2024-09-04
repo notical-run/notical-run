@@ -24,7 +24,6 @@
    - ( ) Share button (disabled for private notes with hint to make public)
    - ( ) Fork note
 ** Editor
-   - ( ) Tab inside code block should indent
    - ( ) Update entire link instead of just the selected text (inline floating menu)
    - ( ) Disable evaluation toggle for code blocks
    - ( ) Disable evaluation toggle for inline code
