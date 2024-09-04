@@ -10,6 +10,9 @@ import {
 import { DropdownMenu } from '@/components/_base/DropdownMenu';
 import { TbTableDown, TbTableImport } from 'solid-icons/tb';
 import { AiOutlineDelete } from 'solid-icons/ai';
+import { Extension } from '@tiptap/core';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
 
 const tableRowActions = createSolidDecoration(({ editor }) => {
   return (
@@ -31,9 +34,23 @@ const tableRowActions = createSolidDecoration(({ editor }) => {
             <TbTableDown />
             Add row after
           </DropdownMenu.Item>
+
+          <DropdownMenu.Item onClick={() => editor.chain().focus().addColumnBefore().run()}>
+            <TbTableImport />
+            Add column before
+          </DropdownMenu.Item>
+          <DropdownMenu.Item onClick={() => editor.chain().focus().addColumnAfter().run()}>
+            <TbTableDown />
+            Add column after
+          </DropdownMenu.Item>
+
           <DropdownMenu.Item onClick={() => editor.chain().focus().deleteRow().run()}>
             <AiOutlineDelete />
             Delete row
+          </DropdownMenu.Item>
+          <DropdownMenu.Item onClick={() => editor.chain().focus().deleteColumn().run()}>
+            <AiOutlineDelete />
+            Delete column
           </DropdownMenu.Item>
         </DropdownMenu.Items>
       </DropdownMenu>
@@ -41,27 +58,38 @@ const tableRowActions = createSolidDecoration(({ editor }) => {
   );
 });
 
-export const TableRowWithHandle = TableRow.extend({
+export const TableRowWithHandle = Extension.create({
   addProseMirrorPlugins() {
-    const { editor, type: tableRowType } = this;
+    const { editor } = this;
+    const tableCellType = editor.schema.nodes[TableCell.name];
+    const tableHeaderType = editor.schema.nodes[TableHeader.name];
+    const tableRowType = editor.schema.nodes[TableRow.name];
 
-    const getTableRowNode = (pos: ResolvedPos) => {
-      for (let i = 2; i <= pos.depth; i++) {
+    const getTableCellSelection = (pos: ResolvedPos) => {
+      for (let i = pos.depth; i >= 2; i--) {
         const node = pos.node(i);
-        if (node.type === tableRowType) return [node, i] as const;
+        if (node.type === tableCellType || node.type === tableHeaderType)
+          return {
+            cell: node,
+            row: pos.node(i - 1),
+            cellDepth: i,
+            rowDepth: i - 1,
+          };
       }
-      return [null, null];
+      return null;
     };
 
     let sharedRenderers: DecorationRenderer[] = [];
 
     const createRenderer = ({ selection }: EditorState) => {
-      const [selectedRow, _depth] = getTableRowNode(selection.$anchor);
+      const tableSelection = getTableCellSelection(selection.$anchor);
+      const selectedRow = tableSelection?.row;
       if (!selectedRow) return null;
+
       const getPos = () => {
-        const [selectedRow, depth] = getTableRowNode(selection.$anchor);
+        const tableSelection = getTableCellSelection(selection.$anchor);
         if (!selectedRow) return selection.anchor;
-        return selection.$from.before(depth);
+        return selection.$anchor.before(tableSelection?.rowDepth);
       };
 
       const renderer = tableRowActions({ node: selectedRow, editor, getPos });
@@ -81,11 +109,12 @@ export const TableRowWithHandle = TableRow.extend({
           apply(_tr, value, _oldState, state) {
             const { selection } = state;
             if (!value?.renderer) return { renderer: createRenderer(state) };
-            const [selectedRow, _depth] = getTableRowNode(selection.$anchor);
-            if (selectedRow) value.renderer.update(selectedRow);
+            const tableSelection = getTableCellSelection(selection.$anchor);
+            if (tableSelection?.row) value.renderer.update(tableSelection.row);
             return value;
           },
         },
+
         view() {
           return {
             destroy: () => {
@@ -94,14 +123,16 @@ export const TableRowWithHandle = TableRow.extend({
             },
           };
         },
+
         props: {
           decorations(state) {
             const { doc, selection } = state;
             if (!editor.isEditable) return;
-            const [selectedRow, depth] = getTableRowNode(selection.$anchor);
+            const tableSelection = getTableCellSelection(selection.$anchor);
+            const selectedRow = tableSelection?.row;
             if (!selectedRow) return;
-            const rowStart = selection.$from.before(depth);
-            const rowEnd = selection.$from.after(depth);
+            const rowStart = selection.$anchor.before(tableSelection?.rowDepth);
+            const rowEnd = selection.$anchor.after(tableSelection?.rowDepth);
 
             const decorations: Decoration[] = [];
 
@@ -110,7 +141,13 @@ export const TableRowWithHandle = TableRow.extend({
               if (node?.type !== tableRowType) return;
               if (rowStart > pos || rowEnd <= pos) return;
 
+              const cellPos = selection.$anchor.posAtIndex(0, tableSelection.cellDepth);
+              const cellEl = editor.view.domAtPos(cellPos);
               const $element = decoratorState?.renderer?.dom as HTMLElement;
+              if (cellEl?.node) {
+                const left = (cellEl.node as HTMLElement).offsetLeft;
+                $element.style.left = `${left}px`;
+              }
               decorations.push(Decoration.widget(pos, $element));
 
               return false;

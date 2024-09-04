@@ -5,6 +5,7 @@ import { createStore, reconcile, SetStoreFunction } from 'solid-js/store';
 
 type GetDecorator<A extends Attrs> = (props: {
   editor: Editor;
+  getPos: () => number;
   attrs: A;
   updateAttributes: (attrs: Partial<A>, opts?: { skipHistory?: boolean }) => void;
 }) => JSX.Element;
@@ -20,7 +21,9 @@ export const createSolidDecoration = <A extends Attrs>(getDecorator: GetDecorato
     node,
     getPos,
     editor,
-  }: Pick<NodeViewRendererProps, 'node' | 'editor' | 'getPos'>): DecorationRenderer => {
+  }: Pick<NodeViewRendererProps, 'node' | 'editor'> & {
+    getPos: () => number;
+  }): DecorationRenderer => {
     let dom: HTMLElement;
     let onAttributeUpdate: SetStoreFunction<A>;
     let dispose = () => {};
@@ -40,7 +43,7 @@ export const createSolidDecoration = <A extends Attrs>(getDecorator: GetDecorato
         editor.view.dispatch(tr);
       };
 
-      dom = getDecorator({ editor, attrs, updateAttributes }) as HTMLElement;
+      dom = getDecorator({ editor, getPos, attrs, updateAttributes }) as HTMLElement;
     });
 
     return {

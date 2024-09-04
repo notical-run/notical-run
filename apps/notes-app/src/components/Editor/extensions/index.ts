@@ -98,7 +98,7 @@ export const getExtensions = ({
     }),
 
     Table.configure({ resizable: true }),
-    // TableRow,
+    TableRow,
     TableRowWithHandle,
     TableHeader,
     TableCell,
