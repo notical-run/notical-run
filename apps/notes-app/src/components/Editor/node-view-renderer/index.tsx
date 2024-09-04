@@ -20,6 +20,8 @@ export const createSolidNodeView = <A extends Attrs>(
   return renderProps => {
     const { node, getPos, editor } = renderProps;
 
+    console.log('new render for some reason');
+
     return createRoot(dispose => {
       let contentDOM: HTMLElement;
       const NodeContent = (props: any) => (
