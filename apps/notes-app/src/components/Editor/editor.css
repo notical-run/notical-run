@@ -17,3 +17,22 @@ pre, code {
 .tiptap table .selectedCell {
   @apply bg-blue-50 border border-blue-300;
 }
+.tiptap table tr, .tiptap table th, .tiptap table td {
+  @apply relative;
+}
+
+.tiptap .row-resize-handle {
+  @apply bg-red-600 border-2 border-red-600;
+}
+
+.tiptap.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.tiptap td .column-resize-handle {
+  @apply bg-indigo-500 absolute pointer-events-none w-0.5;
+  bottom: -2px;
+  right: -2px;
+  top: 0;
+}

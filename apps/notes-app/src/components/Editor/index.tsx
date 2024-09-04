@@ -50,7 +50,7 @@ export const Editor = (props: EditorProps) => {
     window.addEventListener('keydown', onKeyDown);
 
     const editorClass = cn(
-      'prose prose-base focus:outline-none p-4 max-w-full',
+      'prose prose-base focus:outline-none p-4 max-w-full overflow-x-auto',
       'prose-blockquote:text-slate-500',
 
       // Headings
