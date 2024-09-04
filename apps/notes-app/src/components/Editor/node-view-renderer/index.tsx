@@ -2,7 +2,7 @@ import { NodeViewRenderer, NodeViewRendererProps } from '@tiptap/core';
 import { Attrs } from '@tiptap/pm/model';
 import { NodeView } from '@tiptap/pm/view';
 import { createRoot, JSX } from 'solid-js';
-import { createStore, reconcile, SetStoreFunction } from 'solid-js/store';
+import { createStore, reconcile } from 'solid-js/store';
 import { Dynamic } from 'solid-js/web';
 
 type GetNodeView<A extends Attrs> = (
@@ -20,14 +20,8 @@ export const createSolidNodeView = <A extends Attrs>(
   return renderProps => {
     const { node, getPos, editor } = renderProps;
 
-    let contentDOM: HTMLElement;
-    let dom: HTMLElement;
-    let onAttributeUpdate: SetStoreFunction<A>;
-    let dispose = () => {};
-
-    createRoot(disposeFn => {
-      dispose = disposeFn;
-
+    return createRoot(dispose => {
+      let contentDOM: HTMLElement;
       const NodeContent = (props: any) => (
         <Dynamic
           component={props.as}
@@ -38,7 +32,6 @@ export const createSolidNodeView = <A extends Attrs>(
       );
 
       const [attrs, setStore] = createStore<A>(node.attrs as A);
-      onAttributeUpdate = setStore;
 
       const updateAttributes = (update: Partial<A>, opts?: { skipHistory?: boolean }) => {
         if (typeof getPos !== 'function') return;
@@ -48,30 +41,33 @@ export const createSolidNodeView = <A extends Attrs>(
         editor.view.dispatch(tr);
       };
 
-      dom = getNodeView({ ...renderProps, attrs, NodeContent, updateAttributes }) as HTMLElement;
+      const dom = getNodeView({
+        ...renderProps,
+        attrs,
+        NodeContent,
+        updateAttributes,
+      }) as HTMLElement;
+
+      let currentNode = node;
+      return {
+        dom: dom!,
+        contentDOM: contentDOM!,
+        update: updatedNode => {
+          if (node.type !== updatedNode.type) return false;
+          if (currentNode === updatedNode) return false;
+          currentNode = updatedNode;
+
+          setStore(reconcile(updatedNode.attrs as A));
+          return true;
+        },
+        ignoreMutation: mutation => {
+          return ['characterData'].includes(mutation.type);
+        },
+        destroy: () => {
+          dispose();
+        },
+        ...options,
+      };
     });
-
-    let lastNode = node;
-
-    return {
-      dom: dom!,
-      contentDOM: contentDOM!,
-      update: updatedNode => {
-        if (node.type !== updatedNode.type) return false;
-        if (lastNode === updatedNode) return false;
-        lastNode = updatedNode;
-
-        onAttributeUpdate(reconcile(updatedNode.attrs as A));
-        return true;
-      },
-      ignoreMutation: mutation => {
-        // console.log('nodeview mutation', node.type.name, mutation);
-        return ['characterData', 'selection'].includes(mutation.type);
-      },
-      destroy: () => {
-        dispose();
-      },
-      ...options,
-    };
   };
 };

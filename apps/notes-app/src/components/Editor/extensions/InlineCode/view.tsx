@@ -37,6 +37,10 @@ export const inlineCodeNodeView = createSolidNodeView<InlineCodeAttrs>(
       </span>
     );
   },
+  {
+    // Bug fix: Forgot what bug it was. Will document here when I figure it out.
+    ignoreMutation: mutation => ['selection', 'characterData'].includes(mutation.type),
+  },
 );
 
 export const AnchoredContent = (props: {
