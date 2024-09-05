@@ -1,18 +1,25 @@
-* MVP
+* Current
 ** Bugs
    - ( ) Array ser/deser
    - ( ) Nested objects from proxied objects (response.headers.entries())
    - ( ) Async code not presenting exports/results/errors
-   - ( ) Select + Copy inside code block doesn't copy all selection
+   - ( ) Switching between notes sometimes show old content
 ** Evaluation
    - ( ) Get selected text
-   - ( ) Insert text at selection
+   - ( ) Insert markdown at cursor start?
    - ( ) Delete selected text
-   - ( ) Get/Insert/Show node as json
-   - ( ) Update codeblock on signal? (or use default as effectful)
    - ( ) Unit test evaluation engine
 ** Product
    - ( ) Pagination
+** Infra
+   - ( ) Infra (digital ocean + neon + github pages for starting out)
+
+* MVP
+** Evaluation
+   - ( ) Get/Insert/Show node as json
+   - ( ) Update codeblock on signal? (or use default as effectful)
+** Product
+   - ( ) Get feedback from close devs
    - ( ) Navbar dropdown for logout button
    - ( ) Component integration tests setup
    - ( ) Post signup onboarding (pages or modal?)
@@ -27,8 +34,6 @@
    - ( ) Update entire link instead of just the selected text (inline floating menu)
    - ( ) Disable evaluation toggle for code blocks
    - ( ) Disable evaluation toggle for inline code
-** Infra
-   - ( ) Infra (digital ocean + neon + github pages for starting out)
 
 * Ready to use
 ** Evaluation
@@ -43,6 +48,7 @@
    - ( ) Don't show floating menu inside inline code nodes?
    - ( ) Auto indent when going to next line?
 ** Product
+   - ( ) Offline support + sw workers
    - ( ) More e2e tests
    - ( ) User settings page?
    - ( ) Make nav bar responsive for small screens
@@ -63,7 +69,6 @@
    - ( ) Fix issue with forever loading/api freeze in dev (maybe bun run issue? test please)
 ** Evaluation
    - ( ) Remove content update listener signal
-   - ( ) Offline support + sw workers
    - ( ) Run evaluation inside "show" content
    - ( ) Update shown content in imported notes (via show.markdown) (save note content)
    - ( ) Update inserted content in imported notes (via insert.markdown) (save note content)
@@ -74,6 +79,7 @@
    - ( ) Detect cyclic dependencies of signals
 ** Product
    - ( ) confirm email (+ resend/mailgun/sendgrid/postmark)
+   - ( ) Desktop application (with offline)
    - ( ) reset password
    - ( ) Search note contents
    - ( ) Star notes

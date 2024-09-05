@@ -1,20 +1,17 @@
-import { Editor as TiptapEditor } from '@tiptap/core';
-import { fetchNote, useUpdateNote } from '@/api/queries/workspace';
-import { Editor } from '@/components/Editor';
+import { NoteQueryResult, useUpdateNote } from '@/api/queries/workspace';
 import { useWorkspaceContext } from '@/context/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { onCleanup, onMount, Ref } from 'solid-js';
+import { onCleanup, onMount } from 'solid-js';
 import * as Y from 'yjs';
+import { NoticalEditor } from '@/components/Editor/NoticalEditor';
 
 export type NoteEditorProps = {
-  note: Awaited<ReturnType<typeof fetchNote>>;
-  ref?: Ref<TiptapEditor>;
+  note: NoteQueryResult;
 };
 
 export const NoteEditor = (props: NoteEditorProps) => {
   const { slug } = useWorkspaceContext();
-  const importCache = new Map<string, Y.Doc>();
   const noteUpdater = useUpdateNote(slug(), props.note.name);
 
   const yDoc = new Y.Doc();
@@ -41,34 +38,17 @@ export const NoteEditor = (props: NoteEditorProps) => {
 
   onCleanup(() => {
     yDoc.off('updateV2', updateNote);
+    yDoc.destroy();
   });
 
-  const moduleLoader = async (modulePath: string) => {
-    if (!modulePath) throw new Error('Module path cannot be empty');
-    if (importCache.has(modulePath)) return importCache.get(modulePath)!;
-
-    const importMatch = modulePath.match(/^@([a-z0-9-_]+)\/([a-z0-9-_]+)$/i);
-    if (!importMatch || importMatch.length < 3) throw new Error('Invalid import path');
-
-    const [_, workspace, noteId] = importMatch;
-    const response = await fetchNote(workspace, noteId);
-    if (!response) throw new Error('Invalid response for note');
-
-    const moduleYDoc = new Y.Doc();
-    Y.applyUpdateV2(moduleYDoc, toUint8Array(response.content ?? ''));
-
-    importCache.set(modulePath, moduleYDoc);
-
-    return moduleYDoc;
-  };
-
   return (
-    <Editor
-      editable={props.note?.permissions.canEdit}
-      document={yDoc}
-      moduleLoader={moduleLoader}
-      defaultContent={props.note?.content === null ? props.note.defaultMarkdownContent : null}
-      ref={props.ref}
-    />
+    <>
+      <NoticalEditor.Content
+        editable={props.note?.permissions.canEdit}
+        document={yDoc}
+        defaultContent={props.note?.content === null ? props.note.defaultMarkdownContent : null}
+      />
+      <NoticalEditor.Engine />
+    </>
   );
 };

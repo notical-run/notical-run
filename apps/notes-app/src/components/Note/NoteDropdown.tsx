@@ -1,9 +1,8 @@
-import { Editor as TiptapEditor } from '@tiptap/core';
 import { HiOutlineArchiveBoxXMark } from 'solid-icons/hi';
 import { BsThreeDotsVertical } from 'solid-icons/bs';
 import { NoteArchiveConfirm } from '@/components/Note/NoteArchiveConfirm';
 import { Dialog } from '@/components/_base/Dialog';
-import { Match, Show, Switch } from 'solid-js';
+import { Match, Show, Switch, useContext } from 'solid-js';
 import { FaBrandsMarkdown } from 'solid-icons/fa';
 import toast from 'solid-toast';
 import { Authorize, useAuthorizationRules } from '@/components/Auth/Session';
@@ -11,15 +10,16 @@ import { useNote } from '@/api/queries/workspace';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 import { NoteAccessChangeConfirm } from '@/components/Note/NoteAccessChangeConfirm';
 import { DropdownMenu } from '@/components/_base/DropdownMenu';
+import { EditorContext } from '@/components/Editor/context';
 
 type NoteDropdownProps = {
   workspaceSlug: string;
   noteId: string;
-  editor?: TiptapEditor;
   onArchive?: () => void;
 };
 
 export const NoteActionsDropdown = (props: NoteDropdownProps) => {
+  const editorContext = useContext(EditorContext);
   const noteQuery = useNote(
     () => props.workspaceSlug,
     () => props.noteId,
@@ -27,7 +27,7 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
   const authorizationRules = useAuthorizationRules();
 
   const copyAsMarkdown = async () => {
-    const markdown = props.editor!.storage.markdown.getMarkdown() ?? '';
+    const markdown = editorContext?.editor()!.storage.markdown.getMarkdown() ?? '';
     await navigator.clipboard.writeText(markdown);
     toast.success('Copied markdown to clipboard');
   };
@@ -37,14 +37,14 @@ export const NoteActionsDropdown = (props: NoteDropdownProps) => {
   return (
     <>
       <DropdownMenu>
-        <Show when={canManageWorkspace || props.editor}>
+        <Show when={canManageWorkspace || editorContext?.editor()}>
           <DropdownMenu.Trigger class="flex items-center justify-center size-8 mx-0 rounded-full hover:bg-slate-200">
             <BsThreeDotsVertical />
           </DropdownMenu.Trigger>
         </Show>
 
         <DropdownMenu.Items>
-          <Show when={props.editor}>
+          <Show when={editorContext?.editor()}>
             <DropdownMenu.Item onClick={copyAsMarkdown}>
               <FaBrandsMarkdown />
               Copy as markdown
