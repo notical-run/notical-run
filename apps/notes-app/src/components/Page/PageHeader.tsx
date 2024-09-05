@@ -1,6 +1,6 @@
 import { Button } from '@/components/_base/Button';
 import { Authorize } from '@/components/Auth/Session';
-import { links } from '@/components/Navigation';
+import { Link } from '@/components/Navigation';
 import { A } from '@solidjs/router';
 import { ParentProps, For, JSX } from 'solid-js';
 
@@ -32,12 +32,12 @@ export const PageHeader = (props: ParentProps<PageHeaderProps>) => {
           <Authorize
             user="session"
             fallback={
-              <Button as={A} href={links.login()} size="sm" variant="accent-link">
+              <Button as={Link.Login} size="sm" variant="accent-link">
                 Login
               </Button>
             }
           >
-            <Button as={A} href={links.logout()} size="sm" variant="accent-link">
+            <Button as={Link.Logout} size="sm" variant="accent-link">
               Logout
             </Button>
           </Authorize>

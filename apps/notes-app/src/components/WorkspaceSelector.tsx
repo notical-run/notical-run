@@ -1,7 +1,7 @@
 import { useUserWorkspaces } from '@/api/queries/workspace';
 import { Button } from '@/components/_base/Button';
 import { Popover } from '@/components/_base/Popover';
-import { links } from '@/components/Navigation';
+import { Link, links } from '@/components/Navigation';
 import { A } from '@solidjs/router';
 import { createSignal, For } from 'solid-js';
 import { RiArrowsArrowDownSLine } from 'solid-icons/ri';
@@ -22,7 +22,8 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
     <>
       <Popover>
         <div class="flex items-center gap-2">
-          <A href={links.workspaceNotes(props.selected)}>@{props.selected}</A>
+          <Link.WorkspaceNotes slug={props.selected}>@{props.selected}</Link.WorkspaceNotes>
+
           <Authorize user="logged_in" workspace="manage">
             <Popover.Trigger class="flex items-center justify-center size-5 rounded-full hover:bg-slate-300">
               <RiArrowsArrowDownSLine size={14} />
@@ -47,8 +48,8 @@ export const WorkspaceSelector = (props: WorkspaceSelectorProps) => {
               >
                 {workspace => (
                   <Popover.Close
-                    as={A}
-                    href={links.workspaceNotes(workspace.slug)}
+                    as={Link.WorkspaceNotes}
+                    slug={workspace.slug}
                     class={cn(
                       'text-slate-700 w-full py-2 px-3',
                       'flex items-center justify-between gap-2',

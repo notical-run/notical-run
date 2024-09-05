@@ -6,8 +6,7 @@ import { toApiErrorMessage } from '@/utils/api-client';
 import { ErrorView, LoadingView } from '@/components/ViewStates';
 import { NoteList } from '@/pages/WorkspaceNotes/components/NoteList';
 import { List } from '@/components/_base/ListItems';
-import { A } from '@solidjs/router';
-import { links } from '@/components/Navigation';
+import { Link } from '@/components/Navigation';
 import { FaSolidAngleLeft } from 'solid-icons/fa';
 
 const ArchivedWorkspaceNotes = () => {
@@ -31,13 +30,13 @@ const ArchivedWorkspaceNotes = () => {
           <Match when={notesQuery.isSuccess && notesQuery.data}>
             <div class="pb-2">
               <div class="flex gap-2 items-center">
-                <A
-                  href={links.workspaceNotes(slug())}
+                <Link.WorkspaceNotes
+                  slug={slug()}
                   class="text-xs flex items-center gap-2 text-slate-800 hover:bg-slate-200 px-2 py-1 rounded"
                 >
                   <FaSolidAngleLeft />
                   Back
-                </A>
+                </Link.WorkspaceNotes>
 
                 <div class="truncate text-xs text-slate-400 max-w-60">{workspace()?.name}</div>
               </div>

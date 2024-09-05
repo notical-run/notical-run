@@ -1,11 +1,10 @@
 import { useWorkspaceNotes } from '@/api/queries/workspace';
 import { Authorize } from '@/components/Auth/Session';
-import { links } from '@/components/Navigation';
+import { Link } from '@/components/Navigation';
 import { Page } from '@/components/Page';
 import { useLayoutContext } from '@/components/Page/layout';
 import { useWorkspaceContext } from '@/context/workspace';
 import { NewNoteDialog } from '@/pages/WorkspaceNotes/components/NewNoteDialog';
-import { A } from '@solidjs/router';
 import { AiOutlineLock } from 'solid-icons/ai';
 import { BiSolidNote } from 'solid-icons/bi';
 import { FaSolidPlus } from 'solid-icons/fa';
@@ -27,8 +26,9 @@ export const NoteSidebar = () => {
           <div class="flex flex-col mt-1">
             <For each={notesQuery.data ?? []}>
               {note => (
-                <A
-                  href={links.workspaceNote(slug(), note.name)}
+                <Link.Note
+                  slug={slug()}
+                  noteId={note.name}
                   class="flex items-center gap-2 px-2 text-sm py-1"
                   activeClass="text-slate-400 cursor-default"
                   inactiveClass="text-slate-600 hover:text-slate-900"
@@ -39,7 +39,7 @@ export const NoteSidebar = () => {
                     <BiSolidNote size={14} />
                   )}
                   {note.name}
-                </A>
+                </Link.Note>
               )}
             </For>
           </div>

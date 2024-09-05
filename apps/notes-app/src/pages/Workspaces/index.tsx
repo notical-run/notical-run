@@ -1,6 +1,6 @@
 import { A } from '@solidjs/router';
 import { useUserWorkspaces } from '@/api/queries/workspace';
-import { links } from '@/components/Navigation';
+import { Link, links } from '@/components/Navigation';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
 import { createSignal, For, Match, Switch } from 'solid-js';
 import { Button } from '@/components/_base/Button';
@@ -52,7 +52,7 @@ const Workspaces = () => {
               <For each={workspacesResult.data ?? []}>
                 {workspace => (
                   <List.Item aria-label={`Workspace ${workspace.slug}`}>
-                    <A href={links.workspaceNotes(workspace.slug)} class="block px-4 py-3">
+                    <Link.WorkspaceNotes slug={workspace.slug} class="block px-4 py-3">
                       <div class="pb-1">
                         <div class="text-xs text-slate-600">
                           <div class="flex items-center gap-2">
@@ -70,7 +70,7 @@ const Workspaces = () => {
                         <span class="text-slate-900 font-bold">@{workspace.slug}</span>
                       </div>
                       <div class="text-slate-600 text-sm">{workspace.notesCount} notes</div>
-                    </A>
+                    </Link.WorkspaceNotes>
                   </List.Item>
                 )}
               </For>

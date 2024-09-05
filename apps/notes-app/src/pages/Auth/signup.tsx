@@ -3,7 +3,7 @@ import { A, useNavigate } from '@solidjs/router';
 import { useSignup } from '@/api/queries/auth';
 import { TextInput } from '@/components/_base/TextInput';
 import { Button } from '@/components/_base/Button';
-import { links } from '@/components/Navigation';
+import { Link, links } from '@/components/Navigation';
 import { createForm, SubmitHandler, zodForm } from '@modular-forms/solid';
 import { z } from 'zod';
 import { Show } from 'solid-js';
@@ -89,9 +89,9 @@ const Signup = () => {
           Signup
         </Button>
 
-        <A href={links.login()} class="block text-sm text-slate-600 mt-4 hover:text-slate-900">
+        <Link.Login class="block text-sm text-slate-600 mt-4 hover:text-slate-900">
           Already have an account? Login
-        </A>
+        </Link.Login>
       </Form>
     </div>
   );
