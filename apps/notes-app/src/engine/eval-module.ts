@@ -1,7 +1,8 @@
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from '../utils/result';
 import { Editor } from '@tiptap/core';
-import { fromQuickJSHandle, getQJSPropPath } from '@/engine/quickjs';
+import { fromQuickJSHandle } from '@/engine/quickjs';
+import { getQJSPropPath } from '@/engine/quickjs/utils';
 
 const findNodeById = (editor: Editor, id: string): [number, number] | null => {
   let foundNodePos = null;

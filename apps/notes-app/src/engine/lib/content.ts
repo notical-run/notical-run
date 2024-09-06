@@ -1,4 +1,5 @@
-import { getInternalsHandle, toQuickJSHandle } from '@/engine/quickjs';
+import { toQuickJSHandle } from '@/engine/quickjs';
+import { getInternalsHandle } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
 import { findNodeById } from '@/utils/editor';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';

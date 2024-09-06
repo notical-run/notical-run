@@ -4,7 +4,8 @@ import { registerHTTPLIb } from '@/engine/lib/http';
 import { registerStateLib } from '@/engine/lib/state';
 import { registerStdApiLib } from '@/engine/lib/stdapi';
 import { registerUILib } from '@/engine/lib/ui';
-import { getQuickJSRuntime, INTERNALS_KEY } from '@/engine/quickjs';
+import { getQuickJSRuntime } from '@/engine/quickjs/runtime';
+import { INTERNALS_KEY } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
 
 export const createQuickJSContext = async (options: EvalEngineContextOptions) => {

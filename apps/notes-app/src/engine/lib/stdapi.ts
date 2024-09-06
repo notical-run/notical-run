@@ -1,9 +1,5 @@
-import {
-  fromQuickJSHandle,
-  getInternalsHandle,
-  toFunctionHandle,
-  toQuickJSHandle,
-} from '@/engine/quickjs';
+import { fromQuickJSHandle, toQuickJSHandle } from '@/engine/quickjs';
+import { getInternalsHandle } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
 
@@ -34,7 +30,7 @@ Object.defineProperty(globalThis, 'console', { value: {}, writable: false });
       .consume(f => quickVM!.setProp(consoleObj, 'log', f));
     // TODO: console.error, console.warn, console.debug...
 
-    toFunctionHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
+    toQuickJSHandle(quickVM, (...args: Parameters<typeof setTimeout>) => {
       const timer = setTimeout(...args);
       options.onCleanup(() => clearTimeout(timer));
       return timer;

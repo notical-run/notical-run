@@ -1,4 +1,6 @@
-import { asAsync, objectToQuickJSProxyHandle, toQuickJSHandle } from '@/engine/quickjs';
+import { toQuickJSHandle } from '@/engine/quickjs';
+import { objectToQuickJSProxyHandle } from '@/engine/quickjs/serialize/proxy-object';
+import { asAsync } from '@/engine/quickjs/utils';
 import { EvalEngineContextOptions } from '@/engine/types';
 import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
