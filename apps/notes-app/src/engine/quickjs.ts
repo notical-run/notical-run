@@ -208,6 +208,7 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
     return handle.consume(quickVM.dump) as T;
   }
   const native = quickVM.getString(quickVM.getProp(handle, '__native__'));
+  // TODO: Dispose handle inside
   if (['global', 'globalThis', 'state'].includes(native)) return { __native__: native } as T;
 
   if (quickVM.typeof(handle) === 'function') {
@@ -224,6 +225,7 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
 
   const promiseState: any = quickVM.getPromiseState(handle);
   if (!promiseState.notAPromise) {
+    // TODO: Consume handle
     return quickVM.resolvePromise(handle).then(x => {
       return quickVM.unwrapResult(x);
     }) as T;
@@ -247,9 +249,14 @@ return proto && proto !== Object.prototype && proto !== Array.prototype ? proto 
       .consume(getPrototype => {
         return quickVM.unwrapResult(quickVM.callFunction(getPrototype, quickVM.undefined, objH));
       });
-
     const prototype: object = fromQuickJSHandle(quickVM, prototypeH);
-    const obj = {};
+
+    const isArrayFnH = getQJSPropPath(quickVM, ['Array', 'isArray']);
+    const isArray: boolean = quickVM
+      .unwrapResult(isArrayFnH.consume(f => quickVM.callFunction(f, objH)))
+      .consume(quickVM.dump);
+
+    const obj = isArray ? [] : {};
     if (prototype) {
       Object.setPrototypeOf(obj, prototype);
     }
