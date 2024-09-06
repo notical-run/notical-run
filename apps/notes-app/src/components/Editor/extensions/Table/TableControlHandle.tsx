@@ -1,64 +1,14 @@
-import TableRow from '@tiptap/extension-table-row';
-import { EditorState, Plugin, PluginKey } from '@tiptap/pm/state';
-import { Decoration, DecorationSet } from '@tiptap/pm/view';
-import { ResolvedPos } from '@tiptap/pm/model';
-import { BsThreeDotsVertical } from 'solid-icons/bs';
-import {
-  createSolidDecoration,
-  DecorationRenderer,
-} from '@/components/Editor/node-view-renderer/decoration';
-import { DropdownMenu } from '@/components/_base/DropdownMenu';
-import { TbTableDown, TbTableImport } from 'solid-icons/tb';
-import { AiOutlineDelete } from 'solid-icons/ai';
 import { Extension } from '@tiptap/core';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
+import { ResolvedPos } from '@tiptap/pm/model';
+import { EditorState, Plugin, PluginKey } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
+import { DecorationRenderer } from '@/components/Editor/node-view-renderer/decoration';
+import { tableControlHandleDecorator } from '@/components/Editor/extensions/Table/TableControlHandleDecorator';
 
-const tableRowActions = createSolidDecoration(({ editor }) => {
-  return (
-    <div class="relative w-0 h-0 z-[1]">
-      <DropdownMenu placement="bottom-start" offset={10}>
-        <DropdownMenu.Trigger
-          as="button"
-          class="absolute -left-2.5 top-0 bg-slate-50 rounded w-4 h-6 shadow border border-slate-50 flex justify-center items-center"
-        >
-          <BsThreeDotsVertical />
-        </DropdownMenu.Trigger>
-
-        <DropdownMenu.Items>
-          <DropdownMenu.Item onClick={() => editor.chain().focus().addRowBefore().run()}>
-            <TbTableImport />
-            Add row before
-          </DropdownMenu.Item>
-          <DropdownMenu.Item onClick={() => editor.chain().focus().addRowAfter().run()}>
-            <TbTableDown />
-            Add row after
-          </DropdownMenu.Item>
-
-          <DropdownMenu.Item onClick={() => editor.chain().focus().addColumnBefore().run()}>
-            <TbTableImport />
-            Add column before
-          </DropdownMenu.Item>
-          <DropdownMenu.Item onClick={() => editor.chain().focus().addColumnAfter().run()}>
-            <TbTableDown />
-            Add column after
-          </DropdownMenu.Item>
-
-          <DropdownMenu.Item onClick={() => editor.chain().focus().deleteRow().run()}>
-            <AiOutlineDelete />
-            Delete row
-          </DropdownMenu.Item>
-          <DropdownMenu.Item onClick={() => editor.chain().focus().deleteColumn().run()}>
-            <AiOutlineDelete />
-            Delete column
-          </DropdownMenu.Item>
-        </DropdownMenu.Items>
-      </DropdownMenu>
-    </div>
-  );
-});
-
-export const TableRowWithHandle = Extension.create({
+export const TableControlHandle = Extension.create({
   addProseMirrorPlugins() {
     const { editor } = this;
     const tableCellType = editor.schema.nodes[TableCell.name];
@@ -92,7 +42,7 @@ export const TableRowWithHandle = Extension.create({
         return selection.$anchor.before(tableSelection?.rowDepth);
       };
 
-      const renderer = tableRowActions({ node: selectedRow, editor, getPos });
+      const renderer = tableControlHandleDecorator({ node: selectedRow, editor, getPos });
       sharedRenderers.push(renderer);
       return renderer;
     };
@@ -145,7 +95,8 @@ export const TableRowWithHandle = Extension.create({
               const cellEl = editor.view.domAtPos(cellPos);
               const $element = decoratorState?.renderer?.dom as HTMLElement;
               if (cellEl?.node) {
-                const left = (cellEl.node as HTMLElement).offsetLeft;
+                const $cell = cellEl.node as HTMLElement;
+                const left = $cell.offsetLeft + $cell.clientWidth - 10;
                 $element.style.left = `${left}px`;
               }
               decorations.push(Decoration.widget(pos, $element));

@@ -20,7 +20,7 @@ import { GlobalNodeId } from './GlobalNodeId';
 import { InlineCode } from './InlineCode';
 import { CodeBlock } from './CodeBlock';
 import { TrailingNode } from './TrailingNode';
-import { TableRowWithHandle } from '@/components/Editor/extensions/Table/TableRow';
+import { TableControlHandle } from '@/components/Editor/extensions/Table/TableControlHandle';
 
 export const getExtensions = ({
   document: yDoc,
@@ -98,8 +98,8 @@ export const getExtensions = ({
     }),
 
     Table.configure({ resizable: true }),
+    TableControlHandle,
     TableRow,
-    TableRowWithHandle,
     TableHeader,
     TableCell,
 
