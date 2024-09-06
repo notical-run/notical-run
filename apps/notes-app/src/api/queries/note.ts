@@ -51,10 +51,18 @@ export const useUpdateNote = (
         .$patch({ param, json: body })
         .then(responseJson),
     enabled: Boolean(workspaceSlug && noteId),
-    onSuccess() {
+    onSuccess(_, variables) {
       if (invalidateCache) {
         queryClient.invalidateQueries({ queryKey: queryKeys.workspaceNotes(workspaceSlug) });
         queryClient.invalidateQueries({ queryKey: queryKeys.note(workspaceSlug, noteId) });
+      } else {
+        queryClient.setQueryData(
+          queryKeys.note(workspaceSlug, noteId),
+          (data: NoteQueryResult): NoteQueryResult => ({
+            ...data,
+            ...variables,
+          }),
+        );
       }
     },
   }));

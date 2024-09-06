@@ -1,6 +1,5 @@
 * Current
 ** Bugs
-   - ( ) Switching between notes sometimes show old content
    - ( ) Nested objects from proxied objects (response.headers.entries())
    - ( ) Async code not presenting exports/results/errors
 ** Evaluation
@@ -53,6 +52,7 @@
    - ( ) Make nav bar responsive for small screens
    - ( ) Make sidebar floating on really small screens?
    - ( ) Dark theme
+   - ( ) Some basic analytics?
 ** Infra
    - ( ) Infra setup for api (digitalocean? | aws?)
    - ( ) Cleanup compose setup
