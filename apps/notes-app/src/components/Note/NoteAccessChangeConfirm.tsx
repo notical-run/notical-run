@@ -1,4 +1,4 @@
-import { NoteQueryResult, useUpdateNote } from '@/api/queries/workspace';
+import { NoteQueryResult, useUpdateNote } from '@/api/queries/note';
 import { Alert } from '@/components/_base/Alert';
 import { Button } from '@/components/_base/Button';
 import { Dialog } from '@/components/_base/Dialog';

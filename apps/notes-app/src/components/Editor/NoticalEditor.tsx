@@ -1,4 +1,4 @@
-import { fetchNote } from '@/api/queries/workspace';
+import { fetchNote } from '@/api/queries/note';
 import { EditorContext } from '@/components/Editor/context';
 import { evaluateAllNodes } from '@/components/Editor/evaluator';
 import { NoticalEditorContent } from '@/components/Editor/NoticalEditorContent';

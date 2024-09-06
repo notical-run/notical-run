@@ -1,7 +1,6 @@
-import { Editor as TiptapEditor } from '@tiptap/core';
 import { useNavigate, useParams } from '@solidjs/router';
-import { useNote } from '../../api/queries/workspace';
-import { createSignal, Match, Show, Switch } from 'solid-js';
+import { useNote } from '@/api/queries/note';
+import { Match, Show, Switch } from 'solid-js';
 import { useWorkspaceContext } from '@/context/workspace';
 import { NoteEditor } from '@/pages/Note/components/NoteEditor';
 import { LoadingView, ErrorView } from '@/components/ViewStates';

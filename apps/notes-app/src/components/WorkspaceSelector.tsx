@@ -1,8 +1,7 @@
 import { useUserWorkspaces } from '@/api/queries/workspace';
 import { Button } from '@/components/_base/Button';
 import { Popover } from '@/components/_base/Popover';
-import { Link, links } from '@/components/Navigation';
-import { A } from '@solidjs/router';
+import { Link } from '@/components/Navigation';
 import { createSignal, For } from 'solid-js';
 import { RiArrowsArrowDownSLine } from 'solid-icons/ri';
 import { FaSolidPlus } from 'solid-icons/fa';

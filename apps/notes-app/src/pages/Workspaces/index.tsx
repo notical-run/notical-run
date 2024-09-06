@@ -1,6 +1,5 @@
-import { A } from '@solidjs/router';
 import { useUserWorkspaces } from '@/api/queries/workspace';
-import { Link, links } from '@/components/Navigation';
+import { Link } from '@/components/Navigation';
 import { NewWorkspaceDialog } from '@/pages/Workspaces/components/NewWorkspaceDialog';
 import { createSignal, For, Match, Switch } from 'solid-js';
 import { Button } from '@/components/_base/Button';

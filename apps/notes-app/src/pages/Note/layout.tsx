@@ -1,6 +1,5 @@
 import { useParams } from '@solidjs/router';
-import { useNote } from '../../api/queries/workspace';
-import { Page } from '../../components/Page';
+import { Page } from '@/components/Page';
 import { ParentProps } from 'solid-js';
 import { useWorkspaceContext } from '@/context/workspace';
 import { WorkspaceSelector } from '@/components/WorkspaceSelector';
@@ -10,14 +9,13 @@ import { Authorize } from '@/components/Auth/Session';
 export const LayoutWorkspaceNote = (props: ParentProps) => {
   const { slug } = useWorkspaceContext();
   const params = useParams<{ noteId: string }>();
-  const noteQuery = useNote(slug, () => params.noteId); // TODO: maybe use just params?
 
   return (
     <Page title={`@${slug()}/${params.noteId}`}>
       <Page.Header
         breadcrumbs={[
           { content: <WorkspaceSelector selected={slug()} /> },
-          { content: <>{noteQuery.data?.name ?? '-'}</> },
+          { content: <>{params.noteId}</> },
         ]}
       />
       <Page.Body>

@@ -1,4 +1,4 @@
-import { useCreateNote } from '@/api/queries/workspace';
+import { useCreateNote } from '@/api/queries/note';
 import { Button } from '@/components/_base/Button';
 import { Dialog, DialogRootProps } from '@/components/_base/Dialog';
 import { TextInput } from '@/components/_base/TextInput';

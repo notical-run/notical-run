@@ -6,7 +6,7 @@ import { Match, Show, Switch, useContext } from 'solid-js';
 import { FaBrandsMarkdown } from 'solid-icons/fa';
 import toast from 'solid-toast';
 import { Authorize, useAuthorizationRules } from '@/components/Auth/Session';
-import { useNote } from '@/api/queries/workspace';
+import { useNote } from '@/api/queries/note';
 import { AiOutlineLock, AiOutlineUnlock } from 'solid-icons/ai';
 import { NoteAccessChangeConfirm } from '@/components/Note/NoteAccessChangeConfirm';
 import { DropdownMenu } from '@/components/_base/DropdownMenu';

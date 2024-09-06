@@ -1,9 +1,8 @@
 * Current
 ** Bugs
-   - ( ) Array ser/deser
+   - ( ) Switching between notes sometimes show old content
    - ( ) Nested objects from proxied objects (response.headers.entries())
    - ( ) Async code not presenting exports/results/errors
-   - ( ) Switching between notes sometimes show old content
 ** Evaluation
    - ( ) Get selected text
    - ( ) Insert markdown at cursor start?
@@ -92,7 +91,6 @@
    - ( ) Versioning?
    - ( ) Keep track of note imports/references
 ** Editor
-   - ( ) Trap focus inside editor (Tab)
    - ( ) Allow note search for imports inside code blocks?
    - ( ) Checkbox with 3 states (done, in progress, unchecked)
    - ( ) Collapsable inline code

@@ -1,4 +1,4 @@
-import { NoteQueryResult, useUpdateNote } from '@/api/queries/workspace';
+import { NoteQueryResult, useUpdateNote } from '@/api/queries/note';
 import { useWorkspaceContext } from '@/context/workspace';
 import { useDebounced } from '@/utils/use-debounced';
 import { fromUint8Array, toUint8Array } from 'js-base64';

@@ -1,4 +1,4 @@
-import { useArchiveNote, useUnarchiveNote } from '@/api/queries/workspace';
+import { useArchiveNote, useUnarchiveNote } from '@/api/queries/note';
 import { Button } from '@/components/_base/Button';
 import { Dialog } from '@/components/_base/Dialog';
 import { useDialogContext } from '@corvu/popover';
