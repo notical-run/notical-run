@@ -39,8 +39,10 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
     return handle.consume(quickVM.dump) as T;
   }
   const native = quickVM.getString(quickVM.getProp(handle, '__native__'));
-  // TODO: Dispose handle inside
-  if (['global', 'globalThis', 'state'].includes(native)) return { __native__: native } as T;
+  if (['global', 'globalThis', 'state'].includes(native)) {
+    handle.dispose(); // Free handle as it wont be used
+    return { __native__: native } as T;
+  }
 
   if (quickVM.typeof(handle) === 'function') {
     const fnHandle = handle.consume(f => f.dup()); // Create a copy to keep it alive inside closure
@@ -56,10 +58,8 @@ export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: Quick
 
   const promiseState: any = quickVM.getPromiseState(handle);
   if (!promiseState.notAPromise) {
-    // TODO: Consume handle
-    return quickVM.resolvePromise(handle).then(x => {
-      return quickVM.unwrapResult(x);
-    }) as T;
+    const promise = handle.consume(quickVM.resolvePromise);
+    return promise.then(res => quickVM.unwrapResult(res)) as T;
   }
 
   if (isHandleInstanceOf(quickVM, handle, 'Date')) {

@@ -2,6 +2,7 @@
 ** Bugs
    - ( ) Nested objects from proxied objects (response.headers.entries())
    - ( ) Async code not presenting exports/results/errors
+   - ( ) "can't access property "state", editor is undefined", "QuickJSUseAfterFree: Lifetime not alive" errors (switching between notes)
 ** Evaluation
    - ( ) Get selected text
    - ( ) Insert markdown at cursor start?

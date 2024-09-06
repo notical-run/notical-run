@@ -11,6 +11,16 @@ export const getQJSPropPath = (
   obj: QuickJSHandle = quickVM.global,
 ) => path.reduce((result, key) => quickVM.getProp(result, key), obj);
 
+export const callFunction = (
+  quickVM: QuickJSAsyncContext,
+  fnH: QuickJSHandle,
+  ctx: QuickJSHandle | null | undefined,
+  ...args: QuickJSHandle[]
+): QuickJSHandle => {
+  const result = fnH.consume(f => quickVM.callFunction(f, ctx ?? quickVM.undefined, ...args));
+  return quickVM.unwrapResult(result);
+};
+
 export const callFunctionCode = (
   quickVM: QuickJSAsyncContext,
   fnCode: string,
@@ -18,8 +28,7 @@ export const callFunctionCode = (
   ...args: QuickJSHandle[]
 ): QuickJSHandle => {
   const fnH = quickVM.unwrapResult(quickVM.evalCode(fnCode));
-  const result = fnH.consume(f => quickVM.callFunction(f, ctx ?? quickVM.undefined, ...args));
-  return quickVM.unwrapResult(result);
+  return callFunction(quickVM, fnH, ctx, ...args);
 };
 
 export const isHandleInstanceOf = (
@@ -33,10 +42,7 @@ export const isHandleInstanceOf = (
 
 export const isHandleArray = (quickVM: QuickJSAsyncContext, arrayH: QuickJSHandle): boolean => {
   const isArrayFnH = getQJSPropPath(quickVM, ['Array', 'isArray']);
-  const isArray: boolean = quickVM
-    .unwrapResult(quickVM.callFunction(isArrayFnH, arrayH))
-    .consume(quickVM.dump);
-  isArrayFnH.dispose();
+  const isArray: boolean = callFunction(quickVM, isArrayFnH, null, arrayH).consume(quickVM.dump);
   return isArray;
 };
 
