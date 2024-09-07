@@ -1,14 +1,17 @@
 import { QuickJSBridge } from '@/engine/quickjs/types';
 import { callFunctionCode, getQJSPropPath } from '@/engine/quickjs/utils';
+import { Maybe } from '@/utils/maybe';
 import { QuickJSHandle } from 'quickjs-emscripten-core';
 
-export const toObjectHandle = (bridge: QuickJSBridge, value: any): QuickJSHandle => {
-  const quickVM = bridge.quickVM;
+export const toObjectHandle = (bridge: QuickJSBridge, value: any): Maybe<QuickJSHandle> => {
+  const { quickVM } = bridge;
+
+  if (typeof value !== 'object') return Maybe.Nothing();
 
   // Date
   if (value instanceof Date) {
     const date = quickVM.newString(value.toString());
-    return callFunctionCode(quickVM, `ds => new Date(ds)`, null, date);
+    return Maybe.Just(callFunctionCode(quickVM, `ds => new Date(ds)`, null, date));
   }
 
   const objectDefineProperties = getQJSPropPath(quickVM, ['Object', 'defineProperties']);
@@ -43,5 +46,5 @@ export const toObjectHandle = (bridge: QuickJSBridge, value: any): QuickJSHandle
   descriptorsH.dispose();
   objectDefineProperties.dispose();
 
-  return objectH;
+  return Maybe.Just(objectH);
 };

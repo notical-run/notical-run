@@ -20,21 +20,20 @@ export const createBridge = (quickVM: QuickJSAsyncContext): QuickJSBridge => {
 
 export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJSHandle => {
   const bridge = createBridge(quickVM);
+  const handleMaybe = toPrimitivesHandle(bridge, val)
+    .or(() => toFunctionHandle(bridge, val as any))
+    .or(() => toPromiseHandle(bridge, val as any))
+    .or(() => toObjectHandle(bridge, val));
 
-  return (
-    toPrimitivesHandle(bridge, val) ??
-    toFunctionHandle(bridge, val as any) ??
-    toPromiseHandle(bridge, val as any) ??
-    toObjectHandle(bridge, val)
-  );
+  return Maybe.asValue(handleMaybe) ?? quickVM.undefined;
 };
 
 export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: QuickJSHandle): T => {
   const bridge = createBridge(quickVM);
-  const maybe = fromPrimitivesHandle<T>(bridge, handle)
+  const valueMaybe = fromPrimitivesHandle<T>(bridge, handle)
     .or(() => fromFunctionHandle<T>(bridge, handle))
     .or(() => fromPromiseHandle<T>(bridge, handle))
     .or(() => fromObjectHandle<T>(bridge, handle));
 
-  return Maybe.asValue(maybe) as T;
+  return Maybe.asValue(valueMaybe) as T;
 };

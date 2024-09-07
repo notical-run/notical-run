@@ -1,14 +1,15 @@
 import { QuickJSHandle } from 'quickjs-emscripten-core';
 import { callFunctionCode } from '@/engine/quickjs/utils';
 import { QuickJSBridge } from '@/engine/quickjs/types';
+import { Maybe } from '@/utils/maybe';
 
 export const toFunctionHandle = (
   bridge: QuickJSBridge,
   fn: (...a: any[]) => any,
-): QuickJSHandle | null => {
-  if (typeof fn !== 'function') return null;
+): Maybe<QuickJSHandle> => {
+  if (typeof fn !== 'function') return Maybe.Nothing();
 
-  const quickVM = bridge.quickVM;
+  const { quickVM } = bridge;
 
   const toInternalFunction = (fnHandle: QuickJSHandle) => {
     const exposedFnCode = `oldFn => {
@@ -22,18 +23,22 @@ return fn;
 
   // Async functions
   if (fn instanceof (async () => {}).constructor) {
-    return quickVM.newAsyncifiedFunction(fn.name, async function (...args) {
+    const fnH = quickVM.newAsyncifiedFunction(fn.name, async function (...args) {
       const argsVal = args.map(a => bridge.fromHandle(a));
       const ctx = bridge.fromHandle(this);
       return bridge.toHandle(await fn.call(ctx, ...argsVal));
     });
+
+    return Maybe.Just(fnH);
   }
 
-  return toInternalFunction(
+  const fnH = toInternalFunction(
     quickVM.newFunction(fn.name, function (...args) {
       const argsVal = args.map(a => bridge.fromHandle(a));
       const ctx = bridge.fromHandle(this);
       return bridge.toHandle(fn.call(ctx, ...argsVal));
     }),
   );
+
+  return Maybe.Just(fnH);
 };

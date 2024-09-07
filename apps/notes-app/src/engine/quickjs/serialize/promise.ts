@@ -1,12 +1,13 @@
 import { QuickJSBridge } from '@/engine/quickjs/types';
+import { Maybe } from '@/utils/maybe';
 import { QuickJSHandle } from 'quickjs-emscripten-core';
 
 export const toPromiseHandle = (
   bridge: QuickJSBridge,
   value: Promise<any>,
-): QuickJSHandle | null => {
+): Maybe<QuickJSHandle> => {
   if (!value || typeof value?.then !== 'function' || typeof value?.catch !== 'function')
-    return null;
+    return Maybe.Nothing();
 
   const promH = bridge.quickVM.newPromise();
 
@@ -16,5 +17,5 @@ export const toPromiseHandle = (
 
   promH.settled.then(bridge.quickVM.runtime.executePendingJobs);
 
-  return promH.handle;
+  return Maybe.Just(promH.handle);
 };
