@@ -1,7 +1,6 @@
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from '../utils/result';
 import { Editor } from '@tiptap/core';
-import { fromQuickJSHandle } from '@/engine/quickjs';
 import { getQJSPropPath } from '@/engine/quickjs/utils';
 
 const findNodeById = (editor: Editor, id: string): [number, number] | null => {
@@ -33,7 +32,7 @@ export const evalModule = async (
   handleCleanup(() => {}); // TODO: Add module scoped cleanup + reactive evaluation
 
   try {
-    const quickVM = engine.quickVM;
+    const { quickVM } = engine.bridge;
 
     const nodePosAndSize = engine.withEditor(editor => findNodeById(editor, options.id));
     const hereRef = JSON.stringify({
@@ -67,7 +66,7 @@ ${code}`;
     const exportKeys: string[] = quickVM.unwrapResult(keysResult).consume(quickVM.dump);
 
     const toExport = (key: string) => {
-      return fromQuickJSHandle(quickVM, quickVM.getProp(exportsHandle, key));
+      return engine.bridge.fromHandle(quickVM.getProp(exportsHandle, key));
     };
 
     const exports = Object.fromEntries(

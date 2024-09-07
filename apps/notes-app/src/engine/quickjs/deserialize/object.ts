@@ -1,4 +1,3 @@
-import { fromQuickJSHandle } from '@/engine/quickjs';
 import { QuickJSBridge } from '@/engine/quickjs/types';
 import {
   isHandleInstanceOf,
@@ -25,7 +24,7 @@ export const fromObjectHandle = <T>(bridge: QuickJSBridge, handle: QuickJSHandle
     // For normal objects, de-serialize and set prototype
     if (!isArray) {
       const prototypeH = getPrototypeOfHandle(quickVM, objH);
-      const prototype: object = fromQuickJSHandle(quickVM, prototypeH);
+      const prototype: object = bridge.fromHandle(prototypeH);
       if (prototype) Object.setPrototypeOf(obj, prototype);
     }
 
@@ -42,7 +41,7 @@ export const fromObjectHandle = <T>(bridge: QuickJSBridge, handle: QuickJSHandle
     const forEachPropertyDescriptorH = quickVM.newFunction('_', (keyH, pKeyH, descH) => {
       const key = quickVM.getString(keyH);
       const pKey = quickVM.getString(pKeyH) as keyof PropertyDescriptor;
-      const desc: PropertyDescriptor = fromQuickJSHandle(quickVM, descH);
+      const desc: PropertyDescriptor = bridge.fromHandle(descH);
       descriptors[key] ??= {};
       descriptors[key][pKey] = desc;
     });

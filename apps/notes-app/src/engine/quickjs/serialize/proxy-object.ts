@@ -1,17 +1,19 @@
-import { QuickJSAsyncContext, QuickJSHandle, Scope } from 'quickjs-emscripten-core';
-import { toQuickJSHandle } from '@/engine/quickjs';
+import { QuickJSHandle, Scope } from 'quickjs-emscripten-core';
 import { callFunctionCode } from '@/engine/quickjs/utils';
+import { QuickJSBridge } from '@/engine/quickjs/types';
 
 export const objectToQuickJSProxyHandle = <T extends Record<any, any>>(
-  quickVM: QuickJSAsyncContext,
+  bridge: QuickJSBridge,
   obj: T,
 ): QuickJSHandle => {
+  const { quickVM } = bridge;
+
   return Scope.withScope(scope => {
     const getter = scope.manage(
-      toQuickJSHandle(quickVM, (prop: string) => {
+      bridge.toHandle((prop: string) => {
         const result = obj[prop];
         if (typeof result === 'function') {
-          return toQuickJSHandle(quickVM, (...args: any[]) => {
+          return bridge.toHandle((...args: any[]) => {
             return result.call(obj, ...args);
           });
         }
@@ -19,7 +21,7 @@ export const objectToQuickJSProxyHandle = <T extends Record<any, any>>(
       }),
     );
     const setter = scope.manage(
-      toQuickJSHandle(quickVM, (prop: string, value: any) => {
+      bridge.toHandle((prop: string, value: any) => {
         return Reflect.set(obj, prop, value);
       }),
     );

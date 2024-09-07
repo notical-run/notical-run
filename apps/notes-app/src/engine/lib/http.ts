@@ -27,13 +27,13 @@ export const registerHTTPLIb = async (bridge: QuickJSBridge, options: EvalEngine
 
   bridge
     .toHandle((...args: ConstructorParameters<typeof Request>) => {
-      return objectToQuickJSProxyHandle(quickVM, new Request(...args));
+      return objectToQuickJSProxyHandle(bridge, new Request(...args));
     })
     .consume(c => quickVM.setProp(quickVM.global, 'Request', c));
 
   bridge
     .toHandle((...args: ConstructorParameters<typeof Response>) => {
-      return objectToQuickJSProxyHandle(quickVM, new Response(...args));
+      return objectToQuickJSProxyHandle(bridge, new Response(...args));
     })
     .consume(c => quickVM.setProp(quickVM.global, 'Response', c));
 
@@ -41,7 +41,7 @@ export const registerHTTPLIb = async (bridge: QuickJSBridge, options: EvalEngine
     .toHandle(
       asAsync(async (url: string, requestInit: RequestInit) => {
         const response = await httpFetch(url, requestInit);
-        return objectToQuickJSProxyHandle(quickVM, response);
+        return objectToQuickJSProxyHandle(bridge, response);
       }),
     )
     .consume(c => quickVM.setProp(quickVM.global, 'fetch', c));

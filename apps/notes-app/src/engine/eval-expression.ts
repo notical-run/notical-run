@@ -3,7 +3,6 @@ import { QuickJSHandle, VmCallResult } from 'quickjs-emscripten-core';
 import { EvalEngine, EvalNodeOptions } from '@/engine/types';
 import { Result } from '../utils/result';
 import { findNodeById } from '@/utils/editor';
-import { fromQuickJSHandle } from '@/engine/quickjs';
 
 export const evalExpression = async (
   code: string,
@@ -19,13 +18,13 @@ export const evalExpression = async (
     options: EvalNodeOptions;
   },
 ) => {
-  const quickVM = engine.quickVM;
+  const { quickVM } = engine.bridge;
 
   const toResult = (result: VmCallResult<QuickJSHandle>): Result<Error, any> => {
     try {
       if (result.error) throw result.error.consume(quickVM.dump);
 
-      const val = fromQuickJSHandle(quickVM, result.value);
+      const val = engine.bridge.fromHandle(result.value);
       return Result.ok(val);
     } catch (error) {
       console.debug('[VM Error]', error);

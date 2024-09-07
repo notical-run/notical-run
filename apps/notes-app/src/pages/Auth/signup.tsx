@@ -1,5 +1,5 @@
 import { useSessionId } from '@/components/Auth/Session';
-import { A, useNavigate } from '@solidjs/router';
+import { useNavigate } from '@solidjs/router';
 import { useSignup } from '@/api/queries/auth';
 import { TextInput } from '@/components/_base/TextInput';
 import { Button } from '@/components/_base/Button';

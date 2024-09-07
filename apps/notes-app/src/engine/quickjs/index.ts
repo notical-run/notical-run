@@ -11,25 +11,24 @@ import { Maybe } from '@/utils/maybe';
 import { QuickJSAsyncContext, QuickJSHandle } from 'quickjs-emscripten-core';
 
 export const createBridge = (quickVM: QuickJSAsyncContext): QuickJSBridge => {
-  return {
+  const bridge: QuickJSBridge = {
     quickVM,
-    toHandle: value => toQuickJSHandle(quickVM, value),
-    fromHandle: handle => fromQuickJSHandle(quickVM, handle),
+    toHandle: value => toQuickJSHandle(bridge, value),
+    fromHandle: handle => fromQuickJSHandle(bridge, handle),
   };
+  return bridge;
 };
 
-export const toQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, val: T): QuickJSHandle => {
-  const bridge = createBridge(quickVM);
+const toQuickJSHandle = <T>(bridge: QuickJSBridge, val: T): QuickJSHandle => {
   const handleMaybe = toPrimitivesHandle(bridge, val)
     .or(() => toFunctionHandle(bridge, val as any))
     .or(() => toPromiseHandle(bridge, val as any))
     .or(() => toObjectHandle(bridge, val));
 
-  return Maybe.asValue(handleMaybe) ?? quickVM.undefined;
+  return Maybe.asValue(handleMaybe) ?? bridge.quickVM.undefined;
 };
 
-export const fromQuickJSHandle = <T>(quickVM: QuickJSAsyncContext, handle: QuickJSHandle): T => {
-  const bridge = createBridge(quickVM);
+const fromQuickJSHandle = <T>(bridge: QuickJSBridge, handle: QuickJSHandle): T => {
   const valueMaybe = fromPrimitivesHandle<T>(bridge, handle)
     .or(() => fromFunctionHandle<T>(bridge, handle))
     .or(() => fromPromiseHandle<T>(bridge, handle))

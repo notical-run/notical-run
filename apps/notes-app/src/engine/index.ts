@@ -22,12 +22,12 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
     ...options,
   };
 
-  const quickVM = await createQuickJSContext(engine);
+  const bridge = await createQuickJSContext(engine);
 
   const destroy = () => {
     engine.importedEditorInstances.forEach(editor => editor.destroy());
     cleanupFunctions.forEach(f => f?.());
-    quickVM.dispose();
+    bridge.quickVM.dispose();
   };
 
   const nodeCache = new Map<string, { code: string; cleanup: () => void }>();
@@ -50,7 +50,7 @@ export const createEvalEngine = async (options: EvalEngineOptions): Promise<Eval
 
   const engineInstance: EvalEngine = Object.assign(engine, {
     nodeCache,
-    quickVM,
+    bridge,
     destroy,
     evalExpression: evalExpr,
     evalModule: moduleEvaluator,

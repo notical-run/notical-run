@@ -47,5 +47,6 @@ Object.defineProperty(globalThis, '${INTERNALS_KEY}', { value: { __native__: 'in
 
   // NOTE: This has to be last because it turns globalThis into a proxy
   await registerGlobalProxy(bridge, options);
-  return quickVM;
+
+  return bridge;
 };

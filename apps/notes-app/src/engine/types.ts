@@ -1,10 +1,10 @@
+import { QuickJSBridge } from '@/engine/quickjs/types';
 import { Result } from '@/utils/result';
 import { Editor } from '@tiptap/core';
-import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 import { Signal } from 'solid-js';
 
 export type EvalEngine = EvalEngineContextOptions & {
-  quickVM: QuickJSAsyncContext;
+  bridge: QuickJSBridge;
   destroy: () => void;
   nodeCache: Map<string, { code: string; cleanup: () => void }>;
   evalExpression: (

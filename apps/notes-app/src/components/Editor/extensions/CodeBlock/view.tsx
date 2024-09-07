@@ -2,7 +2,7 @@ import { createSolidNodeView } from '@/components/Editor/node-view-renderer';
 import { cn } from '@/utils/classname';
 import { Result } from '@/utils/result';
 import { Switch, Match, For } from 'solid-js';
-import { BsArrowsExpand, BsPlay, BsPlayCircle } from 'solid-icons/bs';
+import { BsArrowsExpand, BsPlayCircle } from 'solid-icons/bs';
 import { AiOutlineMinus, AiOutlineStop } from 'solid-icons/ai';
 import { Button } from '@/components/_base/Button';
 
