@@ -1,13 +1,14 @@
-import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
-import { toQuickJSHandle } from '@/engine/quickjs';
+import { Scope } from 'quickjs-emscripten-core';
 import { getInternalsHandle, INTERNALS_KEY } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
 import { createSignal } from 'solid-js';
+import { QuickJSBridge } from '@/engine/quickjs/types';
 
 export const registerStateLib = async (
-  quickVM: QuickJSAsyncContext,
+  bridge: QuickJSBridge,
   options: EvalEngineContextOptions,
 ) => {
+  const { quickVM } = bridge;
   quickVM
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
@@ -37,14 +38,18 @@ export const registerStateLib = async (
       return options.stateStore.get(key)!;
     };
 
-    toQuickJSHandle(quickVM, (key: string, val: any) => {
-      const [_, setState] = getSignal(key);
-      setState(val);
-    }).consume(f => quickVM!.setProp(internals, 'setState', f));
+    bridge
+      .toHandle((key: string, val: any) => {
+        const [_, setState] = getSignal(key);
+        setState(val);
+      })
+      .consume(f => quickVM!.setProp(internals, 'setState', f));
 
-    toQuickJSHandle(quickVM, (key: string) => {
-      const [getState] = getSignal(key);
-      return getState();
-    }).consume(f => quickVM!.setProp(internals, 'getState', f));
+    bridge
+      .toHandle((key: string) => {
+        const [getState] = getSignal(key);
+        return getState();
+      })
+      .consume(f => quickVM!.setProp(internals, 'getState', f));
   });
 };

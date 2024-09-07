@@ -7,6 +7,7 @@ import { registerUILib } from '@/engine/lib/ui';
 import { getQuickJSRuntime } from '@/engine/quickjs/runtime';
 import { INTERNALS_KEY } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
+import { createBridge } from '@/engine/quickjs';
 
 export const createQuickJSContext = async (options: EvalEngineContextOptions) => {
   const quickRuntime = await getQuickJSRuntime();
@@ -36,13 +37,15 @@ Object.defineProperty(globalThis, '${INTERNALS_KEY}', { value: { __native__: 'in
     )
     .dispose();
 
-  await registerStdApiLib(quickVM, options);
-  await registerStateLib(quickVM, options);
-  await registerContentLib(quickVM, options);
-  await registerUILib(quickVM, options);
-  await registerHTTPLIb(quickVM, options);
+  const bridge = createBridge(quickVM);
+
+  await registerStdApiLib(bridge, options);
+  await registerStateLib(bridge, options);
+  await registerContentLib(bridge, options);
+  await registerUILib(bridge, options);
+  await registerHTTPLIb(bridge, options);
 
   // NOTE: This has to be last because it turns globalThis into a proxy
-  await registerGlobalProxy(quickVM, options);
+  await registerGlobalProxy(bridge, options);
   return quickVM;
 };

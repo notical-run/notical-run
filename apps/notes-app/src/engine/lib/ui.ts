@@ -1,11 +1,9 @@
-import { toQuickJSHandle } from '@/engine/quickjs';
+import { QuickJSBridge } from '@/engine/quickjs/types';
 import { EvalEngineContextOptions } from '@/engine/types';
-import { QuickJSAsyncContext } from 'quickjs-emscripten-core';
 
-export const registerUILib = async (
-  quickVM: QuickJSAsyncContext,
-  options: EvalEngineContextOptions,
-) => {
+export const registerUILib = async (bridge: QuickJSBridge, options: EvalEngineContextOptions) => {
+  const { quickVM } = bridge;
+
   // button() helper for labelled inline buttons
   quickVM
     .unwrapResult(
@@ -18,6 +16,7 @@ Object.defineProperty(globalThis, 'button', {
 Object.defineProperty(globalThis, 'table', {
   writable: false,
   value: (rows_, headings_) => {
+    if (!headings_ && !rows_?.length) throw new Error('Cant create a table with no items')
     const headings = headings_ || Object.keys(rows_[0]);
     const row = vals => \`| \${vals.join(' | ')} |\`;
     const heading = row(headings);
@@ -31,33 +30,39 @@ Object.defineProperty(globalThis, 'table', {
     .dispose();
 
   // Alert/Notify
-  toQuickJSHandle(quickVM, async (message: string) => {
-    await new Promise(resolve => {
-      options.apiHelpers.alert({ message, onClose: () => resolve(undefined) });
+  bridge
+    .toHandle(async (message: string) => {
+      await new Promise(resolve => {
+        options.apiHelpers.alert({ message, onClose: () => resolve(undefined) });
+      });
+    })
+    .consume(f => {
+      quickVM!.setProp(quickVM.global, 'alert', f);
+      quickVM!.setProp(quickVM.global, 'notify', f.dup());
     });
-  }).consume(f => {
-    quickVM!.setProp(quickVM.global, 'alert', f);
-    quickVM!.setProp(quickVM.global, 'notify', f.dup());
-  });
 
   // Confirm dialog
-  toQuickJSHandle(quickVM, async (message: string) => {
-    return new Promise(resolve => {
-      options.apiHelpers.confirm({
-        message,
-        onConfirm: () => resolve(true),
-        onCancel: () => resolve(false),
+  bridge
+    .toHandle(async (message: string) => {
+      return new Promise(resolve => {
+        options.apiHelpers.confirm({
+          message,
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false),
+        });
       });
-    });
-  }).consume(f => quickVM!.setProp(quickVM.global, 'confirm', f));
+    })
+    .consume(f => quickVM!.setProp(quickVM.global, 'confirm', f));
 
   // Prompt dialog
-  toQuickJSHandle(quickVM, async (message: string, defaultValue?: string) => {
-    return new Promise(resolve => {
-      options.apiHelpers.prompt({
-        message,
-        onValue: value => resolve(value ?? defaultValue),
+  bridge
+    .toHandle(async (message: string, defaultValue?: string) => {
+      return new Promise(resolve => {
+        options.apiHelpers.prompt({
+          message,
+          onValue: value => resolve(value ?? defaultValue),
+        });
       });
-    });
-  }).consume(f => quickVM!.setProp(quickVM.global, 'prompt', f));
+    })
+    .consume(f => quickVM!.setProp(quickVM.global, 'prompt', f));
 };

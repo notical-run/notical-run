@@ -14,6 +14,8 @@
    - ( ) Infra (digital ocean + neon + github pages for starting out)
 
 * MVP
+** Bugs
+   - ( ) Update to `show` should not be included in history
 ** Evaluation
    - ( ) Get/Insert/Show node as json
    - ( ) Update codeblock on signal? (or use default as effectful)

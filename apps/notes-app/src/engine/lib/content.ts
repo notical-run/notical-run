@@ -1,13 +1,15 @@
-import { toQuickJSHandle } from '@/engine/quickjs';
 import { getInternalsHandle } from '@/engine/internals';
 import { EvalEngineContextOptions } from '@/engine/types';
 import { findNodeById } from '@/utils/editor';
-import { QuickJSAsyncContext, Scope } from 'quickjs-emscripten-core';
+import { Scope } from 'quickjs-emscripten-core';
+import { QuickJSBridge } from '@/engine/quickjs/types';
 
 export const registerContentLib = async (
-  quickVM: QuickJSAsyncContext,
+  bridge: QuickJSBridge,
   options: EvalEngineContextOptions,
 ) => {
+  const { quickVM } = bridge;
+
   quickVM
     .unwrapResult(
       await quickVM.evalCodeAsync(`{
@@ -24,23 +26,31 @@ export const registerContentLib = async (
     const next = scope.manage(quickVM.getProp(quickVM.global, 'next'));
     const internals = scope.manage(getInternalsHandle(quickVM));
 
-    toQuickJSHandle(quickVM, (hook: any, text: string) => {
-      insertMarkdownContent(options, hook, text);
-      return { __native__: '' };
-    }).consume(f => quickVM!.setProp(insert, 'markdown', f));
+    bridge
+      .toHandle((hook: any, text: string) => {
+        insertMarkdownContent(options, hook, text);
+        return { __native__: '' };
+      })
+      .consume(f => quickVM!.setProp(insert, 'markdown', f));
 
-    toQuickJSHandle(quickVM, (hook: any, text: string) => {
-      showMarkdownContent(options, hook, text);
-      return { __native__: '' };
-    }).consume(f => quickVM!.setProp(show, 'markdown', f));
+    bridge
+      .toHandle((hook: any, text: string) => {
+        showMarkdownContent(options, hook, text);
+        return { __native__: '' };
+      })
+      .consume(f => quickVM!.setProp(show, 'markdown', f));
 
-    toQuickJSHandle(quickVM, (hook: any) => {
-      return getMarkdownContent(options, hook);
-    }).consume(f => quickVM!.setProp(next, 'markdown', f));
+    bridge
+      .toHandle((hook: any) => {
+        return getMarkdownContent(options, hook);
+      })
+      .consume(f => quickVM!.setProp(next, 'markdown', f));
 
-    toQuickJSHandle(quickVM, () => {
-      options.contentUpdateSignal[0]();
-    }).consume(f => quickVM!.setProp(internals, 'listenToUpdate', f));
+    bridge
+      .toHandle(() => {
+        options.contentUpdateSignal[0]();
+      })
+      .consume(f => quickVM!.setProp(internals, 'listenToUpdate', f));
   });
 };
 
